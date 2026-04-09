@@ -1,0 +1,98 @@
+#######################################
+# GLOBAL
+#######################################
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment variables (NO subir secretos)
+.env
+.env.*
+!.env.example
+
+# IDEs
+.vscode/
+.idea/
+*.iml
+
+# Coverage
+coverage/
+*.lcov
+
+# Temp
+*.tmp
+*.swp
+
+#######################################
+# SERVER (Node.js / NestJS / Express)
+#######################################
+
+# Dependencies
+server/node_modules/
+
+# Build
+server/dist/
+server/build/
+
+# Cache
+server/.cache/
+server/.turbo/
+
+# Logs
+server/logs/
+
+# Test
+server/coverage/
+
+#######################################
+# FRONTEND (React)
+#######################################
+
+# Dependencies
+hogas-experto-facil/node_modules/
+
+# Build
+hogas-experto-facil/dist/     # Vite
+hogas-experto-facil/build/    # CRA
+
+# Cache
+hogas-experto-facil/.vite/
+hogas-experto-facil/.cache/
+
+# Testing
+hogas-experto-facil/coverage/
+
+# Env específicos React
+hogas-experto-facil/.env
+hogas-experto-facil/.env.*
+
+#######################################
+# DOCKER
+#######################################
+
+docker-data/
+*.pid
+
+#######################################
+# SECURITY
+#######################################
+
+*.pem
+*.key
+*.crt
+*.p12
+
+#######################################
+# OPTIONAL (si usas uploads locales)
+#######################################
+
+server/uploads/
