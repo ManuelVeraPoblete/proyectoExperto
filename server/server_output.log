@@ -1,0 +1,1903 @@
+[dotenv@17.3.1] injecting env (0) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+[dotenv@17.3.1] injecting env (0) from .env -- tip: 🛡️ auth for agents: https://vestauth.com
+Base de datos sincronizada
+API corriendo en http://localhost:3001
+
+[6/4/2026, 3:41:24 p. m.] GET /api/experts?category_id=1 (14ms)
+QUERY: {
+  "category_id": "1"
+}
+ENTRADA: undefined
+SALIDA: [
+  {
+    "id": 7,
+    "nombres": "Gabriela",
+    "apellidos": "Vera",
+    "telefono": "+56949099485",
+    "direccion": "PUCON 293 POBLACION RENE SCHNEIDER",
+    "region": "Biobío",
+    "provincia": "Concepción",
+    "comuna": "Hualpén",
+    "bio": null,
+    "avatar_url": null,
+    "createdAt": "2026-04-04T17:07:11.000Z",
+    "updatedAt": "2026-04-04T17:07:11.000Z",
+    "userId": "3dd7f6bc-a951-4495-8053-95a4d3f3df7f",
+    "Subcategories": [
+      {
+        "id": 266,
+        "category_id": 1,
+        "name": "Ventanas de aluminio",
+        "slug": "ventanas-aluminio",
+        "description": "Fabricación y reparación de marcos metálicos",
+        "keywords": "ventana, aluminio, marco, corredera, manilla, cierre, riel",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 266
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 262,
+        "category_id": 1,
+        "name": "Reparación de techumbres",
+        "slug": "reparacion-techumbres",
+        "description": "Solución de goteras y daños en techos",
+        "keywords": "techo, teja, zinc, techumbre, filtración, gotera, cumbrera, estructura",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 262
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 267,
+        "category_id": 1,
+        "name": "Reparación de revestimientos",
+        "slug": "reparacion-revestimientos",
+        "description": "Arreglo de piezas de piso o muro dañadas",
+        "keywords": "suelto, roto, picado, cerámica, piso, reparación, fragüe",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 267
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 258,
+        "category_id": 1,
+        "name": "Remodelaciones",
+        "slug": "remodelaciones",
+        "description": "Renovación de espacios existentes",
+        "keywords": "reforma, modernización, cambio, mejora, interiorismo, diseño, actualización, casa, departamento",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 258
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 256,
+        "category_id": 1,
+        "name": "Radieres",
+        "slug": "radieres",
+        "description": "Pisos de concreto y nivelación",
+        "keywords": "piso, concreto, cemento, hormigón, radier, nivelado, malla acma, carretilla, alisado, fundaciones, mezcla",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 256
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 265,
+        "category_id": 1,
+        "name": "Instalación de vidrios",
+        "slug": "instalacion-vidrios",
+        "description": "Reposición y montaje de cristales",
+        "keywords": "vidrio, roto, ventana, cristal, termo panel, templado, laminado",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 265
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 263,
+        "category_id": 1,
+        "name": "Instalación de cubiertas",
+        "slug": "instalacion-cubiertas",
+        "description": "Montaje de techos nuevos",
+        "keywords": "techo, zinc, pizarreño, teja asfáltica, cubierta, policarbonato, instalación",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 263
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 261,
+        "category_id": 1,
+        "name": "Hormigón y cemento",
+        "slug": "hormigon-cemento",
+        "description": "Trabajos técnicos en concreto",
+        "keywords": "concreto, fraguado, mezcla, trompo, enfierradura, moldaje, vibrado, losa",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 261
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 260,
+        "category_id": 1,
+        "name": "Excavaciones menores",
+        "slug": "excavaciones-menores",
+        "description": "Zanjas y pozos manuales",
+        "keywords": "zanja, pozo, hoyo, tierra, picota, pala, excavar, piscina pequeña, drenaje",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 260
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 259,
+        "category_id": 1,
+        "name": "Demoliciones menores",
+        "slug": "demoliciones-menores",
+        "description": "Retiro de estructuras pequeñas",
+        "keywords": "derribar, botar muro, picar, escombros, mazo, retiro, despeje, desmantelar",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 259
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 255,
+        "category_id": 1,
+        "name": "Construcción de muros",
+        "slug": "construccion-muros",
+        "description": "Levantamiento de paredes y cierres",
+        "keywords": "pared, muro, pandereta, bloque, ladrillo, tabique, vulcanita, albañil, estructural, contención",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 255
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 264,
+        "category_id": 1,
+        "name": "Cerámicos y porcelanatos",
+        "slug": "ceramicos-porcelanatos",
+        "description": "Instalación de palmetas de piso y muro",
+        "keywords": "piso, cerámica, porcelanato, fragüe, muro, baldosa, instalación",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 264
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 257,
+        "category_id": 1,
+        "name": "Ampliaciones",
+        "slug": "ampliaciones",
+        "description": "Extensión de espacios habitables",
+        "keywords": "segundo piso, pieza nueva, dormitorio, cocina ampliada, logia, cobertizo, remodelación, estructura",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 257
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 254,
+        "category_id": 1,
+        "name": "Albañilería",
+        "slug": "albanileria",
+        "description": "Trabajos generales de construcción",
+        "keywords": "ladrillo, bloque, cemento, mezcla, construcción, muro, pared, radier, concreto, hormigón, cimiento, pilar, viga, estuco, nivelación",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 254
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      }
+    ],
+    "User": {
+      "id": "3dd7f6bc-a951-4495-8053-95a4d3f3df7f",
+      "email": "gabriela@gmail.com"
+    }
+  }
+]
+--------------------------------------------------
+
+[6/4/2026, 3:41:24 p. m.] GET /api/experts (38ms)
+QUERY: {}
+ENTRADA: undefined
+SALIDA: [
+  {
+    "id": 6,
+    "nombres": "Reinaldo",
+    "apellidos": "Vera",
+    "telefono": "+56949099485",
+    "direccion": "PUCON 293 POBLACION RENE SCHNEIDER",
+    "region": "Biobío",
+    "provincia": "Concepción",
+    "comuna": "San Pedro de la Paz",
+    "bio": null,
+    "avatar_url": null,
+    "createdAt": "2026-04-02T22:24:49.000Z",
+    "updatedAt": "2026-04-02T22:24:49.000Z",
+    "userId": "16abe7e3-d626-4140-9746-4edd1424ebf1",
+    "Subcategories": [
+      {
+        "id": 31,
+        "category_id": 5,
+        "name": "Muebles a medida",
+        "slug": "muebles-a-medida",
+        "description": "Fabricación de muebles personalizados",
+        "keywords": "madera, mueble, diseño, melamina, medida, carpintero, fabricación, plano",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 31
+        },
+        "Category": {
+          "id": 5,
+          "name": "Carpintería y Muebles",
+          "slug": "carpinteria-y-muebles",
+          "description": "Fabricación, reparación e instalación de muebles y madera",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 32,
+        "category_id": 5,
+        "name": "Reparación de muebles",
+        "slug": "reparacion-de-muebles",
+        "description": "Reparación estructural y estética de muebles",
+        "keywords": "roto, suelto, restauración, barnizado, encolado, cajón, bisagra, silla, mesa",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 32
+        },
+        "Category": {
+          "id": 5,
+          "name": "Carpintería y Muebles",
+          "slug": "carpinteria-y-muebles",
+          "description": "Fabricación, reparación e instalación de muebles y madera",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 33,
+        "category_id": 5,
+        "name": "Closets y muebles empotrados",
+        "slug": "closets-y-muebles-empotrados",
+        "description": "Diseño e instalación de muebles empotrados",
+        "keywords": "closet, ropero, vestidor, despensa, empotrado, melamina, cajonera, colgador",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 33
+        },
+        "Category": {
+          "id": 5,
+          "name": "Carpintería y Muebles",
+          "slug": "carpinteria-y-muebles",
+          "description": "Fabricación, reparación e instalación de muebles y madera",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 34,
+        "category_id": 5,
+        "name": "Instalación de puertas de madera",
+        "slug": "instalacion-de-puertas-de-madera",
+        "description": "Puertas, marcos y ajustes",
+        "keywords": "puerta, marco, bisagra, cepillado, chapa, ajuste, madera, acceso, dormitorio",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 34
+        },
+        "Category": {
+          "id": 5,
+          "name": "Carpintería y Muebles",
+          "slug": "carpinteria-y-muebles",
+          "description": "Fabricación, reparación e instalación de muebles y madera",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 35,
+        "category_id": 5,
+        "name": "Deck y terrazas de madera",
+        "slug": "deck-y-terrazas-de-madera",
+        "description": "Construcción de deck y superficies de madera",
+        "keywords": "deck, terraza, madera, pino, impregnado, piso exterior, pérgola, barniz",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 35
+        },
+        "Category": {
+          "id": 5,
+          "name": "Carpintería y Muebles",
+          "slug": "carpinteria-y-muebles",
+          "description": "Fabricación, reparación e instalación de muebles y madera",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 36,
+        "category_id": 5,
+        "name": "Cocinas y muebles de cocina",
+        "slug": "cocinas-y-muebles-de-cocina",
+        "description": "Fabricación e instalación de cocinas",
+        "keywords": "repostería, despensa, encimera, mueble cocina, cajones, bisagras, tiradores",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 36
+        },
+        "Category": {
+          "id": 5,
+          "name": "Carpintería y Muebles",
+          "slug": "carpinteria-y-muebles",
+          "description": "Fabricación, reparación e instalación de muebles y madera",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 54,
+        "category_id": 9,
+        "name": "Limpieza domiciliaria",
+        "slug": "limpieza-domiciliaria",
+        "description": "Limpieza general del hogar",
+        "keywords": "aseo, casa, departamento, limpieza, piezas, cocina, baño",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 54
+        },
+        "Category": {
+          "id": 9,
+          "name": "Limpieza",
+          "slug": "limpieza",
+          "description": "Limpieza general, profunda y especializada",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 55,
+        "category_id": 9,
+        "name": "Limpieza profunda",
+        "slug": "limpieza-profunda",
+        "description": "Limpieza intensiva de espacios",
+        "keywords": "profundo, detallado, cocina, baño, desinfección, suciedad acumulada",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 55
+        },
+        "Category": {
+          "id": 9,
+          "name": "Limpieza",
+          "slug": "limpieza",
+          "description": "Limpieza general, profunda y especializada",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 56,
+        "category_id": 9,
+        "name": "Limpieza post construcción",
+        "slug": "limpieza-post-construccion",
+        "description": "Limpieza especializada tras obras",
+        "keywords": "obra, construcción, polvo, fin de obra, restos, pintura, limpieza final",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 56
+        },
+        "Category": {
+          "id": 9,
+          "name": "Limpieza",
+          "slug": "limpieza",
+          "description": "Limpieza general, profunda y especializada",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 57,
+        "category_id": 9,
+        "name": "Sanitización",
+        "slug": "sanitizacion",
+        "description": "Sanitización de espacios y superficies",
+        "keywords": "virus, bacterias, covid, amonio, desinfección, sanitizado, nebulización",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 57
+        },
+        "Category": {
+          "id": 9,
+          "name": "Limpieza",
+          "slug": "limpieza",
+          "description": "Limpieza general, profunda y especializada",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 58,
+        "category_id": 9,
+        "name": "Limpieza de alfombras y tapices",
+        "slug": "limpieza-de-alfombras-y-tapices",
+        "description": "Lavado y limpieza de textiles",
+        "keywords": "alfombra, sillón, sofá, tapiz, lavado, aspirado, vapor, mancha",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 58
+        },
+        "Category": {
+          "id": 9,
+          "name": "Limpieza",
+          "slug": "limpieza",
+          "description": "Limpieza general, profunda y especializada",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 59,
+        "category_id": 9,
+        "name": "Limpieza de vidrios",
+        "slug": "limpieza-de-vidrios",
+        "description": "Limpieza de ventanas, vitrinas y mamparas",
+        "keywords": "vidrio, ventana, cristal, altura, limpieza, mancha, ventanal",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 59
+        },
+        "Category": {
+          "id": 9,
+          "name": "Limpieza",
+          "slug": "limpieza",
+          "description": "Limpieza general, profunda y especializada",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 60,
+        "category_id": 10,
+        "name": "Instalación de cámaras CCTV",
+        "slug": "instalacion-de-camaras-cctv",
+        "description": "Montaje de cámaras de vigilancia",
+        "keywords": "cámara, seguridad, cctv, dvr, nvr, ip, vigilancia, monitoreo, grabación",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 60
+        },
+        "Category": {
+          "id": 10,
+          "name": "Seguridad",
+          "slug": "seguridad",
+          "description": "Sistemas de seguridad y control de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 61,
+        "category_id": 10,
+        "name": "Alarmas domiciliarias",
+        "slug": "alarmas-domiciliarias",
+        "description": "Instalación y configuración de alarmas",
+        "keywords": "alarma, sensor, sirena, pánico, seguridad, intrusión, central, inalámbrica",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 61
+        },
+        "Category": {
+          "id": 10,
+          "name": "Seguridad",
+          "slug": "seguridad",
+          "description": "Sistemas de seguridad y control de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 62,
+        "category_id": 10,
+        "name": "Video porteros",
+        "slug": "video-porteros",
+        "description": "Instalación de porteros y video porteros",
+        "keywords": "cámara, portero, pantalla, timbre, video, acceso, seguridad",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 62
+        },
+        "Category": {
+          "id": 10,
+          "name": "Seguridad",
+          "slug": "seguridad",
+          "description": "Sistemas de seguridad y control de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 63,
+        "category_id": 10,
+        "name": "Control de acceso",
+        "slug": "control-de-acceso",
+        "description": "Sistemas de acceso con clave, tarjeta o biometría",
+        "keywords": "tarjeta, huella, teclado, clave, acceso, cerradura eléctrica, magnética",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 63
+        },
+        "Category": {
+          "id": 10,
+          "name": "Seguridad",
+          "slug": "seguridad",
+          "description": "Sistemas de seguridad y control de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 64,
+        "category_id": 10,
+        "name": "Cercos eléctricos",
+        "slug": "cercos-electricos",
+        "description": "Instalación y mantención de cercos eléctricos",
+        "keywords": "cerco, corriente, seguridad, perímetro, choque, electrificado, protección",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 64
+        },
+        "Category": {
+          "id": 10,
+          "name": "Seguridad",
+          "slug": "seguridad",
+          "description": "Sistemas de seguridad y control de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 65,
+        "category_id": 11,
+        "name": "Reparación de lavadoras",
+        "slug": "reparacion-de-lavadoras",
+        "description": "Diagnóstico y reparación de lavadoras",
+        "keywords": "lavadora, secadora, carga frontal, motor, tambor, no bota agua, ruido, bomba",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 65
+        },
+        "Category": {
+          "id": 11,
+          "name": "Electrodomésticos",
+          "slug": "electrodomesticos",
+          "description": "Reparación e instalación de electrodomésticos",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 66,
+        "category_id": 11,
+        "name": "Reparación de refrigeradores",
+        "slug": "reparacion-de-refrigeradores",
+        "description": "Servicio técnico de refrigeradores",
+        "keywords": "refrigerador, nevera, no enfría, gas, motor, compresor, hongo, filtro, placa",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 66
+        },
+        "Category": {
+          "id": 11,
+          "name": "Electrodomésticos",
+          "slug": "electrodomesticos",
+          "description": "Reparación e instalación de electrodomésticos",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 67,
+        "category_id": 11,
+        "name": "Reparación de hornos y cocinas",
+        "slug": "reparacion-de-hornos-y-cocinas",
+        "description": "Servicio técnico de cocina y horno",
+        "keywords": "horno, cocina, encimera, gas, quemador, chispero, resistencia, eléctrico",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 67
+        },
+        "Category": {
+          "id": 11,
+          "name": "Electrodomésticos",
+          "slug": "electrodomesticos",
+          "description": "Reparación e instalación de electrodomésticos",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 68,
+        "category_id": 11,
+        "name": "Reparación de microondas",
+        "slug": "reparacion-de-microondas",
+        "description": "Diagnóstico y reparación de microondas",
+        "keywords": "microondas, plato, magnetrón, no calienta, cortocircuito, reparación",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 68
+        },
+        "Category": {
+          "id": 11,
+          "name": "Electrodomésticos",
+          "slug": "electrodomesticos",
+          "description": "Reparación e instalación de electrodomésticos",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 69,
+        "category_id": 11,
+        "name": "Instalación de electrodomésticos",
+        "slug": "instalacion-de-electrodomesticos",
+        "description": "Montaje y conexión de artefactos",
+        "keywords": "lavadora, lavavajillas, cocina, horno, empotrado, instalación, conexión",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 69
+        },
+        "Category": {
+          "id": 11,
+          "name": "Electrodomésticos",
+          "slug": "electrodomesticos",
+          "description": "Reparación e instalación de electrodomésticos",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 101,
+        "category_id": 17,
+        "name": "Apertura de puertas",
+        "slug": "apertura-de-puertas",
+        "description": "Apertura de puertas bloqueadas o cerradas",
+        "keywords": "abrir, puerta, emergencia, llave adentro, pérdida, trabado, cerrajero",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 101
+        },
+        "Category": {
+          "id": 17,
+          "name": "Cerrajería",
+          "slug": "cerrajeria",
+          "description": "Aperturas, cerraduras y sistemas de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 102,
+        "category_id": 17,
+        "name": "Cambio de cerraduras",
+        "slug": "cambio-de-cerraduras",
+        "description": "Reemplazo de cerraduras y cilindros",
+        "keywords": "cambiar, chapa, cerradura, cilindro, pomo, seguridad, llave nueva",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 102
+        },
+        "Category": {
+          "id": 17,
+          "name": "Cerrajería",
+          "slug": "cerrajeria",
+          "description": "Aperturas, cerraduras y sistemas de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 103,
+        "category_id": 17,
+        "name": "Copia e instalación de llaves",
+        "slug": "copia-e-instalacion-de-llaves",
+        "description": "Duplicado y ajuste de llaves",
+        "keywords": "copia, llave, duplicado, instalación, cerrajería, taller",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 103
+        },
+        "Category": {
+          "id": 17,
+          "name": "Cerrajería",
+          "slug": "cerrajeria",
+          "description": "Aperturas, cerraduras y sistemas de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 104,
+        "category_id": 17,
+        "name": "Cerraduras de seguridad",
+        "slug": "cerraduras-de-seguridad",
+        "description": "Instalación de sistemas reforzados",
+        "keywords": "seguridad, blindada, multipunto, cerrojo, protección, reforzada, chapa",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-02T22:24:49.000Z",
+          "updatedAt": "2026-04-02T22:24:49.000Z",
+          "experto_id": 6,
+          "subcategory_id": 104
+        },
+        "Category": {
+          "id": 17,
+          "name": "Cerrajería",
+          "slug": "cerrajeria",
+          "description": "Aperturas, cerraduras y sistemas de acceso",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      }
+    ],
+    "User": {
+      "id": "16abe7e3-d626-4140-9746-4edd1424ebf1",
+      "email": "reinaldo@gmail.com"
+    }
+  },
+  {
+    "id": 7,
+    "nombres": "Gabriela",
+    "apellidos": "Vera",
+    "telefono": "+56949099485",
+    "direccion": "PUCON 293 POBLACION RENE SCHNEIDER",
+    "region": "Biobío",
+    "provincia": "Concepción",
+    "comuna": "Hualpén",
+    "bio": null,
+    "avatar_url": null,
+    "createdAt": "2026-04-04T17:07:11.000Z",
+    "updatedAt": "2026-04-04T17:07:11.000Z",
+    "userId": "3dd7f6bc-a951-4495-8053-95a4d3f3df7f",
+    "Subcategories": [
+      {
+        "id": 9,
+        "category_id": 2,
+        "name": "Instalación eléctrica domiciliaria",
+        "slug": "instalacion-electrica-domiciliaria",
+        "description": "Instalación eléctrica para viviendas",
+        "keywords": "luz, cables, corriente, circuitos, planos, instalación, empalme, normativa, técnico, electricista",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 9
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 10,
+        "category_id": 2,
+        "name": "Reparaciones eléctricas",
+        "slug": "reparaciones-electricas",
+        "description": "Diagnóstico y reparación de fallas eléctricas",
+        "keywords": "corto circuito, falla, chispas, olor a quemado, no hay luz, revisión, mantención, emergencia",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 10
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 11,
+        "category_id": 2,
+        "name": "Tableros eléctricos",
+        "slug": "tableros-electricos",
+        "description": "Instalación y mantención de tableros",
+        "keywords": "automático, diferencial, térmica, caja, breakers, fase, neutro, tierra, protección",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 11
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 12,
+        "category_id": 2,
+        "name": "Enchufes e interruptores",
+        "slug": "enchufes-e-interruptores",
+        "description": "Instalación y cambio de enchufes e interruptores",
+        "keywords": "toma de corriente, punto, apagador, interruptor, módulo, doble, triple, usb, empotrado",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 12
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 13,
+        "category_id": 2,
+        "name": "Luminarias y focos",
+        "slug": "luminarias-y-focos",
+        "description": "Instalación de lámparas, focos y luminarias",
+        "keywords": "lámpara, foco, led, dicroico, panel, colgante, apliqué, foco exterior, iluminación, plafón",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 13
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 14,
+        "category_id": 2,
+        "name": "Citofonía y timbres",
+        "slug": "citofonia-y-timbres",
+        "description": "Instalación y reparación de timbres y citófonos",
+        "keywords": "citófono, intercomunicador, timbre, campana, botón, inalámbrico, portero, audio",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 14
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 15,
+        "category_id": 2,
+        "name": "Generadores y respaldo UPS",
+        "slug": "generadores-y-respaldo-ups",
+        "description": "Sistemas eléctricos de respaldo",
+        "keywords": "batería, respaldo, ups, generador, bencina, diesel, corte de luz, estabilizador, energía",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 15
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 16,
+        "category_id": 2,
+        "name": "Automatización eléctrica",
+        "slug": "automatizacion-electrica",
+        "description": "Automatización básica de circuitos y dispositivos",
+        "keywords": "reloj, timer, sensor de movimiento, fotocelda, encendido automático, control, domótica básica",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 16
+        },
+        "Category": {
+          "id": 2,
+          "name": "Electricidad",
+          "slug": "electricidad",
+          "description": "Instalaciones, reparaciones y mantenimiento eléctrico",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 17,
+        "category_id": 3,
+        "name": "Reparación de fugas",
+        "slug": "reparacion-de-fugas",
+        "description": "Detección y reparación de fugas de agua",
+        "keywords": "gotera, fuga, humedad, cañería rota, filtración, sello, llave pasa, pérdida agua, detector",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 17
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 18,
+        "category_id": 3,
+        "name": "Instalación de cañerías",
+        "slug": "instalacion-de-canerias",
+        "description": "Instalación y reemplazo de cañerías",
+        "keywords": "tubo, ppr, cobre, pvc, cpvc, red, agua, alimentación, soldadura, unión",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 18
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 19,
+        "category_id": 3,
+        "name": "Destape de desagües",
+        "slug": "destape-de-desagues",
+        "description": "Destape de lavaplatos, lavamanos y desagües",
+        "keywords": "tapado, obstrucción, desagüe, baño, alcantarillado, cámara, sonda, máquina, sopaipilla, químico",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 19
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 20,
+        "category_id": 3,
+        "name": "Instalación de grifería",
+        "slug": "instalacion-de-griferia",
+        "description": "Instalación y cambio de llaves y grifería",
+        "keywords": "grifo, llave, monomando, ducha, mezclador, lavamanos, lavaplatos, bidet, flexible",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 20
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 21,
+        "category_id": 3,
+        "name": "Instalación de WC",
+        "slug": "instalacion-de-wc",
+        "description": "Montaje y reparación de inodoros",
+        "keywords": "baño, inodoro, taza, descarga, estanque, fitting, gomas, sello, pernos, filtración wc",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 21
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 22,
+        "category_id": 3,
+        "name": "Instalación de lavaplatos y lavamanos",
+        "slug": "instalacion-de-lavaplatos-y-lavamanos",
+        "description": "Montaje y conexión de artefactos sanitarios",
+        "keywords": "lavaplatos, lavamanos, vanitorio, sifón, desagüe, instalación, cocina, baño",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 22
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 23,
+        "category_id": 3,
+        "name": "Calefont y termos",
+        "slug": "calefont-y-termos",
+        "description": "Instalación y mantención de calefont y termos",
+        "keywords": "calefont, termo, caldera, agua caliente, no calienta, piloto, membrana, chispero, serpentín",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 23
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 24,
+        "category_id": 3,
+        "name": "Redes de gas",
+        "slug": "redes-de-gas",
+        "description": "Instalaciones y mantención de redes de gas",
+        "keywords": "gas, cobre, cañería, cocina, estufa, calefont, sello verde, fuga gas, regulador, cilindro",
+        "is_active": true,
+        "created_at": "2026-04-02T15:55:32.000Z",
+        "updated_at": "2026-04-02T15:55:32.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 24
+        },
+        "Category": {
+          "id": 3,
+          "name": "Gasfitería",
+          "slug": "gasfiteria",
+          "description": "Servicios de plomería, agua, desagüe y gas",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 254,
+        "category_id": 1,
+        "name": "Albañilería",
+        "slug": "albanileria",
+        "description": "Trabajos generales de construcción",
+        "keywords": "ladrillo, bloque, cemento, mezcla, construcción, muro, pared, radier, concreto, hormigón, cimiento, pilar, viga, estuco, nivelación",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 254
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 255,
+        "category_id": 1,
+        "name": "Construcción de muros",
+        "slug": "construccion-muros",
+        "description": "Levantamiento de paredes y cierres",
+        "keywords": "pared, muro, pandereta, bloque, ladrillo, tabique, vulcanita, albañil, estructural, contención",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 255
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 256,
+        "category_id": 1,
+        "name": "Radieres",
+        "slug": "radieres",
+        "description": "Pisos de concreto y nivelación",
+        "keywords": "piso, concreto, cemento, hormigón, radier, nivelado, malla acma, carretilla, alisado, fundaciones, mezcla",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 256
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 257,
+        "category_id": 1,
+        "name": "Ampliaciones",
+        "slug": "ampliaciones",
+        "description": "Extensión de espacios habitables",
+        "keywords": "segundo piso, pieza nueva, dormitorio, cocina ampliada, logia, cobertizo, remodelación, estructura",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 257
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 258,
+        "category_id": 1,
+        "name": "Remodelaciones",
+        "slug": "remodelaciones",
+        "description": "Renovación de espacios existentes",
+        "keywords": "reforma, modernización, cambio, mejora, interiorismo, diseño, actualización, casa, departamento",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 258
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 259,
+        "category_id": 1,
+        "name": "Demoliciones menores",
+        "slug": "demoliciones-menores",
+        "description": "Retiro de estructuras pequeñas",
+        "keywords": "derribar, botar muro, picar, escombros, mazo, retiro, despeje, desmantelar",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 259
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 260,
+        "category_id": 1,
+        "name": "Excavaciones menores",
+        "slug": "excavaciones-menores",
+        "description": "Zanjas y pozos manuales",
+        "keywords": "zanja, pozo, hoyo, tierra, picota, pala, excavar, piscina pequeña, drenaje",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 260
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 261,
+        "category_id": 1,
+        "name": "Hormigón y cemento",
+        "slug": "hormigon-cemento",
+        "description": "Trabajos técnicos en concreto",
+        "keywords": "concreto, fraguado, mezcla, trompo, enfierradura, moldaje, vibrado, losa",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 261
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 262,
+        "category_id": 1,
+        "name": "Reparación de techumbres",
+        "slug": "reparacion-techumbres",
+        "description": "Solución de goteras y daños en techos",
+        "keywords": "techo, teja, zinc, techumbre, filtración, gotera, cumbrera, estructura",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 262
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 263,
+        "category_id": 1,
+        "name": "Instalación de cubiertas",
+        "slug": "instalacion-cubiertas",
+        "description": "Montaje de techos nuevos",
+        "keywords": "techo, zinc, pizarreño, teja asfáltica, cubierta, policarbonato, instalación",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 263
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 264,
+        "category_id": 1,
+        "name": "Cerámicos y porcelanatos",
+        "slug": "ceramicos-porcelanatos",
+        "description": "Instalación de palmetas de piso y muro",
+        "keywords": "piso, cerámica, porcelanato, fragüe, muro, baldosa, instalación",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 264
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 265,
+        "category_id": 1,
+        "name": "Instalación de vidrios",
+        "slug": "instalacion-vidrios",
+        "description": "Reposición y montaje de cristales",
+        "keywords": "vidrio, roto, ventana, cristal, termo panel, templado, laminado",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 265
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 266,
+        "category_id": 1,
+        "name": "Ventanas de aluminio",
+        "slug": "ventanas-aluminio",
+        "description": "Fabricación y reparación de marcos metálicos",
+        "keywords": "ventana, aluminio, marco, corredera, manilla, cierre, riel",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 266
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      },
+      {
+        "id": 267,
+        "category_id": 1,
+        "name": "Reparación de revestimientos",
+        "slug": "reparacion-revestimientos",
+        "description": "Arreglo de piezas de piso o muro dañadas",
+        "keywords": "suelto, roto, picado, cerámica, piso, reparación, fragüe",
+        "is_active": true,
+        "created_at": "2026-04-04T13:22:18.000Z",
+        "updated_at": "2026-04-04T13:22:18.000Z",
+        "experto_subcategories": {
+          "createdAt": "2026-04-04T17:07:11.000Z",
+          "updatedAt": "2026-04-04T17:07:11.000Z",
+          "experto_id": 7,
+          "subcategory_id": 267
+        },
+        "Category": {
+          "id": 1,
+          "name": "Construcción y Obras",
+          "slug": "construccion-y-obras",
+          "description": "Servicios de construcción, remodelación y obras estructurales",
+          "is_active": true,
+          "created_at": "2026-04-02T15:48:47.000Z",
+          "updated_at": "2026-04-02T15:48:47.000Z"
+        }
+      }
+    ],
+    "User": {
+      "id": "3dd7f6bc-a951-4495-8053-95a4d3f3df7f",
+      "email": "gabriela@gmail.com"
+    }
+  }
+]
+--------------------------------------------------
