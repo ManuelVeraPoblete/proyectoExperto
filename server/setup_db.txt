@@ -1,0 +1,77 @@
+-- EXPERTHANDS DATABASE SETUP (MySQL) - ESTRUCTURA FINAL 4 TABLAS
+-- ----------------------------------------------------------------
+
+CREATE DATABASE IF NOT EXISTS experthands_db;
+USE experthands_db;
+
+-- 1. Tabla de Usuarios (Solo credenciales de logeo)
+CREATE TABLE IF NOT EXISTS user (
+    id CHAR(36) PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    user_type ENUM('cliente', 'experto', 'admin') NOT NULL,
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+-- 2. Tabla de Perfil para Clientes
+CREATE TABLE IF NOT EXISTS cliente_profile (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombres VARCHAR(255) NOT NULL,
+    apellidos VARCHAR(255) NOT NULL,
+    telefono VARCHAR(255),
+    direccion TEXT,
+    region VARCHAR(255),
+    provincia VARCHAR(255),
+    comuna VARCHAR(255),
+    avatar_url VARCHAR(255),
+    userId CHAR(36),
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 3. Tabla de Perfil para Expertos
+CREATE TABLE IF NOT EXISTS experto_profile (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombres VARCHAR(255) NOT NULL,
+    apellidos VARCHAR(255) NOT NULL,
+    telefono VARCHAR(255),
+    direccion TEXT,
+    region VARCHAR(255),
+    provincia VARCHAR(255),
+    comuna VARCHAR(255),
+    bio TEXT,
+    avatar_url VARCHAR(255),
+    userId CHAR(36),
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL,
+    FOREIGN KEY (userId) REFERENCES user(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- 4. Tabla de Especialidades (Catálogo maestro)
+CREATE TABLE IF NOT EXISTS Specialties (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL
+) ENGINE=InnoDB;
+
+-- * Tabla de relación Expertos-Especialidades (Necesaria para la funcionalidad)
+CREATE TABLE IF NOT EXISTS experto_specialties (
+    createdAt DATETIME NOT NULL,
+    updatedAt DATETIME NOT NULL,
+    ExpertoProfileId INT,
+    SpecialtyId INT,
+    PRIMARY KEY (ExpertoProfileId, SpecialtyId),
+    FOREIGN KEY (ExpertoProfileId) REFERENCES experto_profile(id) ON DELETE CASCADE,
+    FOREIGN KEY (SpecialtyId) REFERENCES Specialties(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- Carga de Especialidades por defecto
+INSERT IGNORE INTO Specialties (name, createdAt, updatedAt) VALUES
+('Plomería', NOW(), NOW()),
+('Electricidad', NOW(), NOW()),
+('Carpintería', NOW(), NOW()),
+('Pintura', NOW(), NOW()),
+('Albañilería', NOW(), NOW());

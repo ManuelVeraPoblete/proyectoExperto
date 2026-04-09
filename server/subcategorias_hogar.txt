@@ -1,0 +1,176 @@
+-- SQL para insertar/actualizar 114 subcategorías con Keywords Inteligentes
+-- Se asume que category_id = 1 corresponde a la categoría principal (ej: Hogar/Servicios)
+
+INSERT INTO `subcategories` 
+  (`category_id`, `name`, `slug`, `description`, `keywords`, `is_active`, `created_at`, `updated_at`) 
+VALUES 
+  -- ALBAÑILERÍA Y OBRA
+  (1, 'Albañilería', 'albanileria', 'Trabajos generales de construcción', 'ladrillo, bloque, cemento, mezcla, construcción, muro, pared, radier, concreto, hormigón, cimiento, pilar, viga, estuco, nivelación', 1, NOW(), NOW()),
+  (1, 'Construcción de muros', 'construccion-muros', 'Levantamiento de paredes y cierres', 'pared, muro, pandereta, bloque, ladrillo, tabique, vulcanita, albañil, estructural, contención', 1, NOW(), NOW()),
+  (1, 'Radieres', 'radieres', 'Pisos de concreto y nivelación', 'piso, concreto, cemento, hormigón, radier, nivelado, malla acma, carretilla, alisado, fundaciones', 1, NOW(), NOW()),
+  (1, 'Ampliaciones', 'ampliaciones', 'Extensión de espacios habitables', 'segundo piso, pieza nueva, dormitorio, cocina ampliada, logia, cobertizo, remodelación, estructura', 1, NOW(), NOW()),
+  (1, 'Remodelaciones', 'remodelaciones', 'Renovación de espacios existentes', 'reforma, modernización, cambio, mejora, interiorismo, diseño, actualización, casa, departamento', 1, NOW(), NOW()),
+  (1, 'Demoliciones menores', 'demoliciones-menores', 'Retiro de estructuras pequeñas', 'derribar, botar muro, picar, escombros, mazo, retiro, despeje, desmantelar', 1, NOW(), NOW()),
+  (1, 'Excavaciones menores', 'excavaciones-menores', 'Zanjas y pozos manuales', 'zanja, pozo, hoyo, tierra, picota, pala, excavar, piscina pequeña, drenaje', 1, NOW(), NOW()),
+  (1, 'Hormigón y cemento', 'hormigon-cemento', 'Trabajos técnicos en concreto', 'concreto, fraguado, mezcla, trompo, enfierradura, moldaje, vibrado, losa', 1, NOW(), NOW()),
+
+  -- ELECTRICIDAD
+  (1, 'Instalación eléctrica domiciliaria', 'instalacion-electrica', 'Circuitos nuevos en el hogar', 'luz, cables, corriente, circuitos, planos, instalación, empalme, normativa, técnico, electricista', 1, NOW(), NOW()),
+  (1, 'Reparaciones eléctricas', 'reparaciones-electricas', 'Solución de fallas y cortes', 'corto circuito, falla, chispas, olor a quemado, no hay luz, revisión, mantención, emergencia', 1, NOW(), NOW()),
+  (1, 'Tableros eléctricos', 'tableros-electricos', 'Configuración de cajas de control', 'automático, diferencial, térmica, caja, breakers, fase, neutro, tierra, protección', 1, NOW(), NOW()),
+  (1, 'Enchufes e interruptores', 'enchufes-interruptores', 'Cambio y puntos nuevos', 'toma de corriente, punto, apagador, interruptor, módulo, doble, triple, usb, empotrado', 1, NOW(), NOW()),
+  (1, 'Luminarias y focos', 'luminarias-focos', 'Instalación de iluminación', 'lámpara, foco, led, dicroico, panel, colgante, apliqué, foco exterior, iluminación, plafón', 1, NOW(), NOW()),
+  (1, 'Citofonía y timbres', 'citofonia-timbres', 'Comunicación de acceso', 'citófono, intercomunicador, timbre, campana, botón, inalámbrico, portero, audio', 1, NOW(), NOW()),
+  (1, 'Generadores y respaldo UPS', 'generadores-ups', 'Sistemas de energía continua', 'batería, respaldo, ups, generador, bencina, diesel, corte de luz, estabilizador, energía', 1, NOW(), NOW()),
+  (1, 'Automatización eléctrica', 'automatizacion-electrica', 'Controles automáticos', 'reloj, timer, sensor de movimiento, fotocelda, encendido automático, control, domótica básica', 1, NOW(), NOW()),
+
+  -- GASFITERÍA / PLOMERÍA
+  (1, 'Reparación de fugas', 'reparacion-fugas', 'Detección y arreglo de filtraciones', 'gotera, fuga, humedad, cañería rota, filtración, sello, llave pasa, pérdida agua, detector', 1, NOW(), NOW()),
+  (1, 'Instalación de cañerías', 'instalacion-canerias', 'Redes de agua fría y caliente', 'tubo, ppr, cobre, pvc, cpvc, red, agua, alimentación, soldadura, unión', 1, NOW(), NOW()),
+  (1, 'Destape de desagües', 'destape-desagues', 'Solución de obstrucciones', 'tapado, obstrucción, desagüe, baño, alcantarillado, cámara, sonda, máquina, sopaipilla, químico', 1, NOW(), NOW()),
+  (1, 'Instalación de grifería', 'instalacion-griferia', 'Montaje de llaves y monomandos', 'grifo, llave, monomando, ducha, mezclador, lavamanos, lavaplatos, bidet, flexible', 1, NOW(), NOW()),
+  (1, 'Instalación de WC', 'instalacion-wc', 'Montaje y reparación de sanitarios', 'baño, inodoro, taza, descarga, estanque, fitting, gomas, sello, pernos, filtración wc', 1, NOW(), NOW()),
+  (1, 'Instalación de lavaplatos y lavamanos', 'instalacion-lavaplatos', 'Montaje de cubetas y muebles', 'lavaplatos, lavamanos, vanitorio, sifón, desagüe, instalación, cocina, baño', 1, NOW(), NOW()),
+  (1, 'Calefont y termos', 'calefont-termos', 'Sistemas de agua caliente', 'calefont, termo, caldera, agua caliente, no calienta, piloto, membrana, chispero, serpentín', 1, NOW(), NOW()),
+  (1, 'Redes de gas', 'redes-gas', 'Instalación y certificación', 'gas, cobre, cañería, cocina, estufa, calefont, sello verde, fuga gas, regulador, cilindro', 1, NOW(), NOW()),
+
+  -- CLIMATIZACIÓN
+  (1, 'Instalación de aire acondicionado', 'instalacion-aire', 'Montaje de equipos split y otros', 'aire, frío, calor, split, unidad, instalación, soporte, conexión, climatización', 1, NOW(), NOW()),
+  (1, 'Mantención de aire acondicionado', 'mantencion-aire', 'Limpieza y carga de gas', 'limpieza, filtro, gas, r410, r22, recarga, revisión, preventivo, hongo, olor', 1, NOW(), NOW()),
+  (1, 'Reparación de aire acondicionado', 'reparacion-aire', 'Solución de fallas técnicas', 'no enfría, no prende, ruido, gotea, falla eléctrica, motor, compresor, placa', 1, NOW(), NOW()),
+  (1, 'Calefacción domiciliaria', 'calefaccion', 'Estufas y sistemas de calor', 'estufa, radiador, caldera, piso radiante, calefacción, central, pellet, leña, gas', 1, NOW(), NOW()),
+  (1, 'Ventilación y extractores', 'ventilacion-extractores', 'Flujo de aire y extracción', 'extractor, baño, cocina, ventilación, ducto, aire, purificador, campana', 1, NOW(), NOW()),
+  (1, 'Refrigeración', 'refrigeracion', 'Cámaras y sistemas comerciales', 'frío, cámara, vitrina, industrial, compresor, gas, mantenimiento, comercial', 1, NOW(), NOW()),
+
+  -- CARPINTERÍA
+  (1, 'Muebles a medida', 'muebles-medida', 'Diseño y fabricación personalizada', 'madera, mueble, diseño, melamina, medida, carpintero, fabricación, plano', 1, NOW(), NOW()),
+  (1, 'Reparación de muebles', 'reparacion-muebles', 'Arreglo de piezas dañadas', 'roto, suelto, restauración, barnizado, encolado, cajón, bisagra, silla, mesa', 1, NOW(), NOW()),
+  (1, 'Closets y muebles empotrados', 'closets-muebles', 'Almacenaje a medida', 'closet, ropero, vestidor, despensa, empotrado, melamina, cajonera, colgador', 1, NOW(), NOW()),
+  (1, 'Instalación de puertas de madera', 'instalacion-puertas', 'Montaje y ajuste de hojas', 'puerta, marco, bisagra, cepillado, chapa, ajuste, madera, acceso, dormitorio', 1, NOW(), NOW()),
+  (1, 'Deck y terrazas de madera', 'deck-terrazas', 'Pisos y estructuras exteriores', 'deck, terraza, madera, pino, impregnado, piso exterior, pérgola, barniz', 1, NOW(), NOW()),
+  (1, 'Cocinas y muebles de cocina', 'muebles-cocina', 'Mobiliario para área de cocina', 'repostería, despensa, encimera, mueble cocina, cajones, bisagras, tiradores', 1, NOW(), NOW()),
+
+  -- PINTURA Y TERMINACIONES
+  (1, 'Pintura interior', 'pintura-interior', 'Acabados en paredes y techos', 'pared, muro, techo, látex, óleo, rodillo, pintura, departamento, casa, color', 1, NOW(), NOW()),
+  (1, 'Pintura exterior', 'pintura-exterior', 'Protección de fachadas', 'fachada, muro exterior, reja, esmalte, intemperie, andamio, impermeabilización', 1, NOW(), NOW()),
+  (1, 'Barniz y lacado', 'barniz-lacado', 'Protección y brillo de maderas', 'barniz, laca, brillo, sello, madera, protección, terminación, tinte', 1, NOW(), NOW()),
+  (1, 'Papel mural', 'papel-mural', 'Instalación de revestimientos', 'papel, mural, pegamento, diseño, decoración, empapelado, pared, revestimiento', 1, NOW(), NOW()),
+  (1, 'Reparación y alisado de muros', 'alisado-muros', 'Preparación de superficies', 'empaste, pasta muro, lijado, yeso, fisura, grieta, alisado, preparación', 1, NOW(), NOW()),
+  (1, 'Impermeabilización de superficies', 'impermeabilizacion', 'Protección contra humedad', 'sello, humedad, agua, filtración, pintura asfáltica, membrana, techo, muro', 1, NOW(), NOW()),
+
+  -- MANTENCIÓN GENERAL / SERVICIOS VARIOS
+  (1, 'Instalación de repisas y soportes', 'repisas-soportes', 'Montaje de accesorios de pared', 'repisa, soporte, cuadro, taladro, perforación, anclaje, tarugo, estante', 1, NOW(), NOW()),
+  (1, 'Instalación de cortinas y rieles', 'cortinas-rieles', 'Montaje de persianas y barras', 'cortina, riel, barra, roller, persiana, visillo, soporte, ventana', 1, NOW(), NOW()),
+  (1, 'Armado de muebles', 'armado-muebles', 'Ensamblaje de muebles de retail', 'armado, kit, mueble, retail, escritorio, cama, closet, armado manual', 1, NOW(), NOW()),
+  (1, 'Sellados y siliconas', 'sellados-siliconas', 'Aplicación de sellantes', 'silicona, sello, tina, baño, cocina, junta, dilatación, hermético', 1, NOW(), NOW()),
+  (1, 'Reparaciones generales del hogar', 'reparaciones-generales', 'Tareas variadas de mantenimiento', 'handyman, maestrochasquilla, arreglo, mantenimiento, hogar, varios, reparaciones', 1, NOW(), NOW()),
+
+  -- JARDINERÍA
+  (1, 'Mantención de jardines', 'mantencion-jardines', 'Cuidado periódico de áreas verdes', 'jardín, patio, plantas, mantención, riego, tierra, abono, desmalezado', 1, NOW(), NOW()),
+  (1, 'Poda de árboles y arbustos', 'poda', 'Corte y limpieza de vegetación', 'poda, rama, corte, árbol, cerco vivo, arbusto, altura, despeje', 1, NOW(), NOW()),
+  (1, 'Corte de césped', 'corte-cesped', 'Corte de pasto y orillado', 'pasto, césped, cortar, orillado, cortacésped, desmalezado', 1, NOW(), NOW()),
+  (1, 'Riego automático', 'riego-automatico', 'Instalación y reparación de riego', 'riego, aspersor, programador, electroválvula, goteo, tubería, jardín', 1, NOW(), NOW()),
+  (1, 'Paisajismo', 'paisajismo', 'Diseño de espacios verdes', 'diseño, jardín, plantas, decoración, piedras, proyecto, exterior', 1, NOW(), NOW()),
+  (1, 'Cercos y cierres exteriores', 'cercos-cierres', 'Instalación de rejas y perímetros', 'reja, madera, malla, cerco, cierre, portón, muro, delimitación', 1, NOW(), NOW()),
+
+  -- LIMPIEZA
+  (1, 'Limpieza domiciliaria', 'limpieza-domiciliaria', 'Aseo periódico de casas', 'aseo, casa, departamento, limpieza, piezas, cocina, baño', 1, NOW(), NOW()),
+  (1, 'Limpieza profunda', 'limpieza-profunda', 'Aseo detallado y desinfección', 'profundo, detallado, cocina, baño, desinfección, suciedad acumulada', 1, NOW(), NOW()),
+  (1, 'Limpieza post construcción', 'limpieza-post-obra', 'Retiro de polvo y restos de obra', 'obra, construcción, polvo, fin de obra, restos, pintura, limpieza final', 1, NOW(), NOW()),
+  (1, 'Sanitización', 'sanitizacion', 'Eliminación de virus y bacterias', 'virus, bacterias, covid, amonio, desinfección, sanitizado, nebulización', 1, NOW(), NOW()),
+  (1, 'Limpieza de alfombras y tapices', 'limpieza-alfombras', 'Lavado de telas y pisos blandos', 'alfombra, sillón, sofá, tapiz, lavado, aspirado, vapor, mancha', 1, NOW(), NOW()),
+  (1, 'Limpieza de vidrios', 'limpieza-vidrios', 'Lavado de ventanas y cristales', 'vidrio, ventana, cristal, altura, limpieza, mancha, ventanal', 1, NOW(), NOW()),
+
+  -- SEGURIDAD
+  (1, 'Instalación de cámaras CCTV', 'instalacion-cctv', 'Sistemas de vigilancia por video', 'cámara, seguridad, cctv, dvr, nvr, ip, vigilancia, monitoreo, grabación', 1, NOW(), NOW()),
+  (1, 'Alarmas domiciliarias', 'alarmas-domiciliarias', 'Sistemas de intrusión', 'alarma, sensor, sirena, pánico, seguridad, intrusión, central, inalámbrica', 1, NOW(), NOW()),
+  (1, 'Video porteros', 'video-porteros', 'Porteros con imagen', 'cámara, portero, pantalla, timbre, video, acceso, seguridad', 1, NOW(), NOW()),
+  (1, 'Control de acceso', 'control-acceso', 'Gestión de entradas y salidas', 'tarjeta, huella, teclado, clave, acceso, cerradura eléctrica, magnética', 1, NOW(), NOW()),
+  (1, 'Cercos eléctricos', 'cercos-electricos', 'Perímetro electrificado', 'cerco, corriente, seguridad, perímetro, choque, electrificado, protección', 1, NOW(), NOW()),
+
+  -- LÍNEA BLANCA / ELECTRODOMÉSTICOS
+  (1, 'Reparación de lavadoras', 'reparacion-lavadoras', 'Servicio técnico de lavado', 'lavadora, secadora, carga frontal, motor, tambor, no bota agua, ruido, bomba', 1, NOW(), NOW()),
+  (1, 'Reparación de refrigeradores', 'reparacion-refrigeradores', 'Servicio técnico de refrigeración', 'refrigerador, nevera, no enfría, gas, motor, compresor, hongo, filtro, placa', 1, NOW(), NOW()),
+  (1, 'Reparación de hornos y cocinas', 'reparacion-hornos', 'Servicio técnico de cocción', 'horno, cocina, encimera, gas, quemador, chispero, resistencia, eléctrico', 1, NOW(), NOW()),
+  (1, 'Reparación de microondas', 'reparacion-microondas', 'Servicio técnico de microondas', 'microondas, plato, magnetrón, no calienta, cortocircuito, reparación', 1, NOW(), NOW()),
+  (1, 'Instalación de electrodomésticos', 'instalacion-electrodomesticos', 'Conexión y puesta en marcha', 'lavadora, lavavajillas, cocina, horno, empotrado, instalación, conexión', 1, NOW(), NOW()),
+
+  -- MUDANZAS Y FLETES
+  (1, 'Mudanzas locales', 'mudanzas-locales', 'Traslado dentro de la ciudad', 'mudanza, camión, casa, flete, transporte, local, traslado', 1, NOW(), NOW()),
+  (1, 'Mudanzas interurbanas', 'mudanzas-interurbanas', 'Traslado entre ciudades', 'mudanza, carretera, largo, país, transporte, interurbano, camión', 1, NOW(), NOW()),
+  (1, 'Fletes', 'fletes', 'Traslados menores de carga', 'flete, camioneta, carga, transporte, bultos, retiro, despacho', 1, NOW(), NOW()),
+  (1, 'Embalaje', 'embalaje', 'Protección de bienes para traslado', 'caja, cartón, burbuja, film, embalado, protección, frágil', 1, NOW(), NOW()),
+  (1, 'Carga y descarga', 'carga-descarga', 'Personal para movimiento de bultos', 'peoneta, carga, bajar, subir, escombros, muebles, fuerza', 1, NOW(), NOW()),
+
+  -- INFORMÁTICA / SOPORTE
+  (1, 'Reparación de computadores', 'reparacion-computadores', 'Soporte técnico de hardware', 'computador, pc, notebook, laptop, mac, reparación, hardware, teclado', 1, NOW(), NOW()),
+  (1, 'Formateo e instalación de sistema operativo', 'formateo-os', 'Instalación de Windows o MacOS', 'formatear, windows, office, sistema, drivers, macos, instalación, linux', 1, NOW(), NOW()),
+  (1, 'Eliminación de virus', 'eliminacion-virus', 'Limpieza de software malicioso', 'virus, malware, troyano, lentitud, antivirus, limpieza, publicidad', 1, NOW(), NOW()),
+  (1, 'Optimización de PC', 'optimizacion-pc', 'Mejora de rendimiento', 'lento, rápido, optimizar, inicio, ram, ssd, disco, mantenimiento', 1, NOW(), NOW()),
+  (1, 'Armado de PC', 'armado-pc', 'Montaje de computadores gaming o oficina', 'armado, pc, piezas, gamer, componentes, montaje, placa madre, cpu', 1, NOW(), NOW()),
+  (1, 'Instalación de software', 'instalacion-software', 'Instalación de programas específicos', 'programas, adobe, autocad, office, instalación, licencias, activación', 1, NOW(), NOW()),
+  (1, 'Recuperación de datos', 'recuperación-datos', 'Rescate de archivos borrados', 'disco duro, perdido, borrado, rescatar, archivos, fotos, datos, usb', 1, NOW(), NOW()),
+  (1, 'Instalación de impresoras', 'instalacion-impresoras', 'Configuración de periféricos', 'impresora, wifi, red, scanner, driver, tóner, tinta, configuración', 1, NOW(), NOW()),
+  (1, 'Soporte remoto', 'soporte-remoto', 'Asistencia por internet', 'remoto, teamviewer, anydesk, ayuda, pantalla, asistencia, distancia', 1, NOW(), NOW()),
+  (1, 'Respaldo y copias de seguridad', 'respaldo-seguridad', 'Gestión de backups', 'backup, copia, nube, drive, respaldo, seguridad, automático', 1, NOW(), NOW()),
+  (1, 'Ciberseguridad básica', 'ciberseguridad-basica', 'Protección de cuentas y privacidad', 'hacker, contraseña, seguridad, protección, privacidad, estafa, phishing', 1, NOW(), NOW()),
+  (1, 'Configuración de router y WiFi', 'configuracion-wifi', 'Optimización de redes inalámbricas', 'wifi, internet, router, señal, clave, lento, mala señal, repetidor', 1, NOW(), NOW()),
+  (1, 'Cableado estructurado', 'cableado-estructurado', 'Instalación de redes LAN', 'red, cable, rj45, canaleta, switch, rack, lan, estructurado', 1, NOW(), NOW()),
+  (1, 'Instalación de puntos de red', 'puntos-red', 'Puntos nuevos de conexión internet', 'punto, red, internet, ethernet, pared, conexión, cable', 1, NOW(), NOW()),
+  (1, 'Extensión de señal WiFi', 'extension-wifi', 'Repetidores y redes mesh', 'repetidor, mesh, malla, ampliar, wifi, señal, patio, segundo piso', 1, NOW(), NOW()),
+  (1, 'Configuración de switches y access points', 'configuracion-ap', 'Administración de red avanzada', 'switch, ap, access point, ubiquiti, cisco, configuración, administración', 1, NOW(), NOW()),
+  (1, 'Instalación de fibra y conectividad', 'instalacion-fibra', 'Soporte en redes de alta velocidad', 'fibra óptica, internet, ont, módem, alta velocidad, conexión', 1, NOW(), NOW()),
+
+  -- ENERGÍAS RENOVABLES / DOMÓTICA
+  (1, 'Instalación de paneles solares', 'instalacion-paneles', 'Sistemas fotovoltaicos', 'solar, panel, placa, sol, energía, renovable, fotovoltaico, ahorro', 1, NOW(), NOW()),
+  (1, 'Mantención de sistemas solares', 'mantencion-solar', 'Limpieza y revisión de paneles', 'limpieza, revisión, mantención, paneles, voltaje, baterías, sol', 1, NOW(), NOW()),
+  (1, 'Inversores y controladores', 'inversores-controladores', 'Gestión de energía solar', 'inversor, controlador, carga, regulador, voltaje, sistema solar', 1, NOW(), NOW()),
+  (1, 'Baterías y almacenamiento', 'baterias-solar', 'Acumulación de energía', 'batería, litio, gel, almacenamiento, respaldo, descarga, ciclo profundo', 1, NOW(), NOW()),
+  (1, 'Automatización de iluminación', 'automatizacion-iluminacion', 'Luces inteligentes', 'luz, inteligente, smart, ampolleta, wifi, bluetooth, dimer, color', 1, NOW(), NOW()),
+  (1, 'Automatización de persianas y cortinas', 'automatizacion-persianas', 'Motores inteligentes para ventanas', 'cortina, persiana, motor, inteligente, remoto, aplicación, subir, bajar', 1, NOW(), NOW()),
+  (1, 'Sensores inteligentes', 'sensores-inteligentes', 'Dispositivos de detección smart', 'sensor, puerta, movimiento, agua, humo, inteligente, smart, alarma', 1, NOW(), NOW()),
+  (1, 'Integración Alexa y Google Home', 'integracion-asistentes', 'Control por voz', 'alexa, google, voz, bocina, parlante, inteligente, configuración, rutina', 1, NOW(), NOW()),
+  (1, 'Cerraduras inteligentes', 'cerraduras-inteligentes', 'Cerraduras electrónicas y WiFi', 'chapa, cerradura, inteligente, huella, código, wifi, digital, electrónica', 1, NOW(), NOW()),
+
+  -- CERRAJERÍA
+  (1, 'Apertura de puertas', 'apertura-puertas', 'Servicio de emergencia por llaves perdidas', 'abrir, puerta, emergencia, llave adentro, pérdida, trabado, cerrajero', 1, NOW(), NOW()),
+  (1, 'Cambio de cerraduras', 'cambio-cerraduras', 'Instalación de nuevos cilindros y chapas', 'cambiar, chapa, cerradura, cilindro, pomo, seguridad, llave nueva', 1, NOW(), NOW()),
+  (1, 'Copia e instalación de llaves', 'copia-llaves', 'Duplicados y montaje de cerraduras', 'copia, llave, duplicado, instalación, cerrajería, taller', 1, NOW(), NOW()),
+  (1, 'Cerraduras de seguridad', 'cerraduras-seguridad', 'Refuerzo de accesos', 'seguridad, blindada, multipunto, cerrojo, protección, reforzada, chapa', 1, NOW(), NOW()),
+
+  -- VIDRIOS Y VENTANAS
+  (1, 'Instalación de vidrios', 'instalacion-vidrios', 'Reposición y montaje de cristales', 'vidrio, roto, ventana, cristal, termo panel, templado, laminado', 1, NOW(), NOW()),
+  (1, 'Espejos a medida', 'espejos-medida', 'Corte e instalación de espejos', 'espejo, baño, muro, decoración, medida, marco, pulido', 1, NOW(), NOW()),
+  (1, 'Ventanas de aluminio', 'ventanas-aluminio', 'Fabricación y reparación de marcos', 'ventana, aluminio, marco, corredera, manilla, cierre, riel', 1, NOW(), NOW()),
+  (1, 'Mamparas y shower door', 'mamparas-shower', 'Cierres de baño y oficina', 'baño, ducha, shower door, mampara, vidrio, oficina, separación', 1, NOW(), NOW()),
+
+  -- PISOS Y REVESTIMIENTOS
+  (1, 'Cerámicos y porcelanatos', 'ceramicos-porcelanatos', 'Instalación de palmetas', 'piso, cerámica, porcelanato, fragüe, muro, baldosa, instalación', 1, NOW(), NOW()),
+  (1, 'Piso flotante', 'piso-flotante', 'Instalación de láminas de madera', 'piso, flotante, laminado, junquillo, guardapolvo, espuma, instalación', 1, NOW(), NOW()),
+  (1, 'Piso vinílico', 'piso-vinilico', 'Instalación de PVC y SPC', 'vinílico, spc, pvc, adhesivo, clic, piso, resistente, agua', 1, NOW(), NOW()),
+  (1, 'Alfombras y cubrepisos', 'alfombras-cubrepisos', 'Instalación de alfombras', 'alfombra, muro a muro, cubrepiso, pegamento, instalación, fleje', 1, NOW(), NOW()),
+  (1, 'Reparación de revestimientos', 'reparacion-revestimientos', 'Arreglo de piezas dañadas', 'suelto, roto, picado, cerámica, piso, reparación, fragüe', 1, NOW(), NOW()),
+
+  -- TECHOS Y CANALETAS
+  (1, 'Reparación de techumbres', 'reparacion-techumbres', 'Solución de goteras y daños', 'techo, teja, zinc, techumbre, filtración, gotera, cumbrera, estructura', 1, NOW(), NOW()),
+  (1, 'Instalación de cubiertas', 'instalacion-cubiertas', 'Montaje de techos nuevos', 'techo, zinc, pizarreño, teja asfáltica, cubierta, policarbonato, instalación', 1, NOW(), NOW()),
+  (1, 'Canaletas y bajadas de agua', 'canaletas-bajadas', 'Evacuación de aguas lluvias', 'canaleta, bajada, agua, lluvia, limpieza, instalación, pvc, zinc', 1, NOW(), NOW()),
+  (1, 'Impermeabilización de techos', 'impermeabilizacion-techos', 'Sellado contra lluvia', 'sello, membrana, pintura asfáltica, techo, filtración, impermeable', 1, NOW(), NOW()),
+
+  -- CONTROL DE PLAGAS
+  (1, 'Fumigación', 'fumigacion', 'Control de insectos voladores y rastreros', 'insectos, bichos, moscas, arañas, fumigado, líquido, químico', 1, NOW(), NOW()),
+  (1, 'Control de roedores', 'control-roedores', 'Desratización y barreras', 'ratón, laucha, rata, veneno, trampa, desratización, control', 1, NOW(), NOW()),
+  (1, 'Control de insectos', 'control-insectos', 'Control de baratas, hormigas y termitas', 'baratas, hormigas, termitas, chinches, pulgas, garrapatas, control', 1, NOW(), NOW()),
+  (1, 'Sanitización ambiental', 'sanitizacion-ambiental', 'Limpieza profunda de aire y superficies', 'sanitizado, ambiente, olores, bacterias, virus, limpieza', 1, NOW(), NOW()),
+
+  -- INSTALACIONES MENORES
+  (1, 'Instalación de televisores', 'instalacion-tv', 'Montaje en pared y racks', 'televisor, tv, soporte, muro, anclaje, led, smart tv, colgar', 1, NOW(), NOW()),
+  (1, 'Instalación de soportes y anclajes', 'instalacion-soportes', 'Fijaciones de alta resistencia', 'soporte, anclaje, perno, muro, taladro, seguridad, fijación', 1, NOW(), NOW()),
+  (1, 'Instalación de accesorios de baño', 'accesorios-bano', 'Barras, toalleros y espejos', 'baño, toallero, jabonera, barra, espejo, accesorio, perforación', 1, NOW(), NOW()),
+  (1, 'Instalación de campanas y extractores', 'instalacion-campanas', 'Montaje en cocina y ventilación', 'campana, extractor, cocina, ventilación, ducto, grasa, montaje', 1, NOW(), NOW()),
+  (1, 'Mantenimiento general del hogar', 'mantenimiento-general', 'Servicio preventivo multihogar', 'maestro, mantenimiento, preventivo, revisión, casa, arreglo, general', 1, NOW(), NOW())
+
+ON DUPLICATE KEY UPDATE 
+  `keywords` = VALUES(`keywords`),
+  `description` = VALUES(`description`),
+  `updated_at` = NOW();
