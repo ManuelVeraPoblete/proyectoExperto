@@ -1,0 +1,118 @@
+import { ExpertoCardData, PortfolioItem, Review } from '@/types/experto';
+
+// ─── Tipos de la respuesta del API ────────────────────────────────────────────
+interface ApiCategory {
+  nombre?: string;
+  name?: string;
+}
+
+interface ApiSubcategory {
+  Category?: ApiCategory;
+  category?: ApiCategory;
+}
+
+export interface ApiExperto {
+  id: string;
+  nombres?: string;
+  nombre?: string;
+  apellidos?: string;
+  apellido?: string;
+  avatar?: string;
+  fotoPerfil?: string;
+  Categories?: ApiCategory[];
+  categories?: ApiCategory[];
+  especialidades?: Array<ApiCategory | string>;
+  specialties?: Array<ApiCategory | string>;
+  Subcategories?: ApiSubcategory[];
+  subcategories?: ApiSubcategory[];
+  categoria?: string;
+  category?: string;
+  rating?: string | number;
+  calificacion?: string | number;
+  reviews?: string | number | Review[];
+  reviews_list?: Review[];
+  reviewCount?: string | number;
+  experience?: string;
+  hourlyRate?: number;
+  isVerified?: boolean;
+  telefono?: string;
+  direccion?: string;
+  comuna?: string;
+  region?: string;
+  completed_jobs?: PortfolioItem[];
+}
+
+// ─── Helpers privados ─────────────────────────────────────────────────────────
+
+const extractCategoryNames = (experto: ApiExperto): string[] => {
+  const names: string[] = [];
+
+  const categorySources = [
+    experto.Categories,
+    experto.categories,
+    experto.especialidades,
+    experto.specialties,
+  ];
+
+  categorySources.forEach(source => {
+    if (!Array.isArray(source)) return;
+    source.forEach(item => {
+      if (typeof item === 'string') {
+        names.push(item);
+      } else if (item && typeof item === 'object') {
+        const name = (item as ApiCategory).nombre ?? (item as ApiCategory).name;
+        if (name) names.push(name);
+      }
+    });
+  });
+
+  const subSources = [experto.Subcategories, experto.subcategories];
+  subSources.forEach(source => {
+    if (!Array.isArray(source)) return;
+    source.forEach(sub => {
+      const parent = sub.Category ?? sub.category;
+      const parentName = parent?.nombre ?? parent?.name;
+      if (parentName) names.push(parentName);
+    });
+  });
+
+  const unique = Array.from(new Set(names)).filter(Boolean);
+
+  if (unique.length === 0) {
+    const fallback = experto.categoria ?? experto.category;
+    if (fallback) unique.push(fallback);
+  }
+
+  return unique;
+};
+
+const extractReviewCount = (experto: ApiExperto): number => {
+  if (typeof experto.reviewCount === 'number') return experto.reviewCount;
+  if (typeof experto.reviews === 'number') return experto.reviews;
+  return 0;
+};
+
+// ─── Mapper público ───────────────────────────────────────────────────────────
+
+/**
+ * Transforma la respuesta cruda del API /experts en ExpertoCardData.
+ * Maneja inconsistencias de campos y extracción de categorías anidadas.
+ */
+export const mapApiExpertoToCardData = (experto: ApiExperto): ExpertoCardData => ({
+  id: experto.id,
+  nombres: experto.nombres ?? experto.nombre ?? '',
+  apellidos: experto.apellidos ?? experto.apellido ?? '',
+  avatar: experto.avatar ?? experto.fotoPerfil,
+  especialidades: extractCategoryNames(experto),
+  calificacion: parseFloat(String(experto.rating ?? experto.calificacion ?? 0)),
+  reviewCount: extractReviewCount(experto),
+  comuna: experto.comuna ?? '',
+  region: experto.region ?? '',
+  experience: experto.experience ?? '5+ años',
+  hourlyRate: experto.hourlyRate ?? 25000,
+  isVerified: experto.isVerified ?? true,
+  telefono: experto.telefono ?? '',
+  direccion: experto.direccion ?? '',
+  reviews: Array.isArray(experto.reviews_list) ? experto.reviews_list : [],
+  completedJobs: experto.completed_jobs ?? [],
+});
