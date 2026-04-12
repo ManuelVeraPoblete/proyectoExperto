@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import ExpertoCard from '@/components/ExpertoCard';
 import { expertos } from '@/lib/mock-data';
 import useProtectedNavigation from '@/hooks/useProtectedNavigation';
-import { ExpertoCardData } from '@/types/experto';
 
 const FeaturedExpertosSection = () => {
   const { handleProtectedLink } = useProtectedNavigation();
@@ -13,10 +12,6 @@ const FeaturedExpertosSection = () => {
 
   const handleContactClick = (expertoId: string, expertoName: string) => {
     console.log(`Contactar experto ${expertoId}: ${expertoName}`);
-  };
-
-  const handleViewProfile = (experto: ExpertoCardData) => {
-    console.log('Ver perfil de experto:', experto.id);
   };
 
   return (
@@ -52,7 +47,6 @@ const FeaturedExpertosSection = () => {
               reviews={[]}
               completedJobs={[]}
               onContactClick={handleContactClick}
-              onViewProfile={handleViewProfile}
             />
           ))}
         </div>

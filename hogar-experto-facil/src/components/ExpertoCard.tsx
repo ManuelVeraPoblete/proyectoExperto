@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -10,7 +11,6 @@ import { ExpertoCardData } from '@/types/experto';
 
 interface ExpertoCardProps extends ExpertoCardData {
   onContactClick: (expertoId: string, expertoName: string) => void;
-  onViewProfile: (experto: ExpertoCardData) => void;
 }
 
 const ExpertoCard: React.FC<ExpertoCardProps> = ({
@@ -26,33 +26,13 @@ const ExpertoCard: React.FC<ExpertoCardProps> = ({
   experience,
   hourlyRate,
   isVerified = false,
-  reviews,
-  completedJobs,
   onContactClick,
   unreadCount = 0,
-  onViewProfile
 }) => {
+  const navigate = useNavigate();
+
   const handleContact = () => {
     onContactClick(id, `${nombres} ${apellidos}`);
-  };
-
-  const expertoData: ExpertoCardData = {
-    id,
-    nombres,
-    apellidos,
-    avatar,
-    especialidades,
-    calificacion,
-    reviewCount,
-    comuna,
-    region,
-    experience,
-    hourlyRate,
-    isVerified,
-    reviews,
-    completedJobs,
-    telefono: '',
-    direccion: ''
   };
 
   return (
@@ -99,10 +79,10 @@ const ExpertoCard: React.FC<ExpertoCardProps> = ({
           </div>
 
           <div className="flex space-x-2 pt-2">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={() => onViewProfile(expertoData)}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate(`/experto/${id}`)}
               className="flex-1"
             >
               Ver Perfil

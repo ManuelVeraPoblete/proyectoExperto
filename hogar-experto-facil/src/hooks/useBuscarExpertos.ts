@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { expertoService } from '@/services/api/expertoService';
@@ -25,8 +25,6 @@ export interface BuscarExpertosState {
   isChatOpen: boolean;
   chatParticipantName: string;
   chatMessages: Message[];
-  isProfileModalOpen: boolean;
-  selectedExperto: ExpertoCardData | null;
   ratings: typeof RATING_FILTERS;
 }
 
@@ -38,9 +36,7 @@ export interface BuscarExpertosActions {
   handlePageChange: (page: number) => void;
   handleContactExperto: (expertoId: string, expertoName: string) => void;
   handleSendMessage: (message: string) => void;
-  handleViewProfile: (experto: ExpertoCardData) => void;
   handleCloseChat: () => void;
-  handleCloseProfile: () => void;
   clearFilters: () => void;
 }
 
@@ -49,6 +45,7 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Filtros
   const [searchTerm, setSearchTerm] = useState(searchParams.get('work') ?? '');
@@ -67,10 +64,6 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatParticipantName, setChatParticipantName] = useState('');
   const [chatMessages, setChatMessages] = useState<Message[]>([]);
-
-  // Modal de perfil
-  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [selectedExperto, setSelectedExperto] = useState<ExpertoCardData | null>(null);
 
   // Cargar categorías al montar
   useEffect(() => {
@@ -161,11 +154,6 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
     });
   };
 
-  const handleViewProfile = (experto: ExpertoCardData): void => {
-    setSelectedExperto(experto);
-    setIsProfileModalOpen(true);
-  };
-
   const clearFilters = (): void => {
     setSearchTerm('');
     setSelectedCategory('all');
@@ -186,8 +174,6 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
     isChatOpen,
     chatParticipantName,
     chatMessages,
-    isProfileModalOpen,
-    selectedExperto,
     ratings: RATING_FILTERS,
     // Actions
     setSearchTerm,
@@ -197,9 +183,7 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
     handlePageChange,
     handleContactExperto,
     handleSendMessage,
-    handleViewProfile,
-    handleCloseChat:    () => setIsChatOpen(false),
-    handleCloseProfile: () => setIsProfileModalOpen(false),
+    handleCloseChat: () => setIsChatOpen(false),
     clearFilters,
   };
 };

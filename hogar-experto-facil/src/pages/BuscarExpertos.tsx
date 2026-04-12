@@ -4,7 +4,6 @@ import ExpertosFilters from '@/components/buscar-expertos/ExpertosFilters';
 import ExpertosGrid from '@/components/buscar-expertos/ExpertosGrid';
 import ExpertosPagination from '@/components/buscar-expertos/ExpertosPagination';
 import { ChatDialog } from '@/components/ChatDialog';
-import ExpertoProfileModal from '@/components/ExpertoProfileModal';
 
 /**
  * Página de búsqueda de expertos.
@@ -39,7 +38,6 @@ const BuscarExpertos: React.FC = () => {
           isLoading={state.isLoading}
           total={state.expertos.length}
           onContactExperto={state.handleContactExperto}
-          onViewProfile={state.handleViewProfile}
           onClearFilters={state.clearFilters}
         />
 
@@ -57,11 +55,6 @@ const BuscarExpertos: React.FC = () => {
           onSendMessage={state.handleSendMessage}
         />
 
-        <ExpertoProfileModal
-          isOpen={state.isProfileModalOpen}
-          onClose={state.handleCloseProfile}
-          experto={state.selectedExperto}
-        />
 
       </main>
     </div>

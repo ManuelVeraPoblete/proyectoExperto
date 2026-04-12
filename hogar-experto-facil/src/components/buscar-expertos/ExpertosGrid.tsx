@@ -31,7 +31,6 @@ interface ExpertosGridProps {
   isLoading: boolean;
   total: number;
   onContactExperto: (id: string, name: string) => void;
-  onViewProfile: (experto: ExpertoCardData) => void;
   onClearFilters: () => void;
 }
 
@@ -41,7 +40,6 @@ const ExpertosGrid: React.FC<ExpertosGridProps> = ({
   isLoading,
   total,
   onContactExperto,
-  onViewProfile,
   onClearFilters,
 }) => {
   if (isLoading) return <LoadingSpinner />;
@@ -66,7 +64,6 @@ const ExpertosGrid: React.FC<ExpertosGridProps> = ({
               key={experto.id}
               {...experto}
               onContactClick={onContactExperto}
-              onViewProfile={onViewProfile}
             />
           ))}
         </div>
