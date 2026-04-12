@@ -1,12 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const jobController = require('../controllers/jobController');
+const jobApplicationRoutes = require('./jobApplicationRoutes');
 const upload = require('../middleware/upload');
+const { authenticate, authorize } = require('../middleware/auth');
 
-// Ruta para crear un trabajo con cualquier campo de archivos (hasta 5 fotos)
-router.post('/', upload.any(), jobController.createJob);
-
-// Ruta para obtener todos los trabajos (para que los expertos puedan verlos)
+/**
+ * @swagger
+ * /api/jobs:
+ *   post:
+ *     summary: Crea un nuevo trabajo (solo clientes)
+ *     tags: [Jobs]
+ *     security:
+ *       - bearerAuth: []
+ *   get:
+ *     summary: Lista trabajos con filtros opcionales
+ *     tags: [Jobs]
+ */
+router.post('/', authenticate, authorize('cliente'), upload.any(), jobController.createJob);
 router.get('/', jobController.getJobs);
+
+// Montar sub-rutas de postulaciones: /api/jobs/:jobId/apply y /api/jobs/:jobId/applications
+router.use('/:jobId', jobApplicationRoutes);
 
 module.exports = router;
