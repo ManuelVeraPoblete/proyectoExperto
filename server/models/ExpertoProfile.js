@@ -11,7 +11,8 @@ const ExpertoProfile = sequelize.define('ExpertoProfile', {
   provincia: DataTypes.STRING,
   comuna: DataTypes.STRING,
   bio: DataTypes.TEXT,
-  avatar_url: DataTypes.STRING
+  avatar_url: DataTypes.STRING,
+  userId: { type: DataTypes.STRING(36), allowNull: true }
 }, {
   tableName: 'experto_profile',
   timestamps: true

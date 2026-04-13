@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3001;
 // En desarrollo se mantiene sync solo para facilitar el setup inicial.
 const syncOptions = process.env.NODE_ENV === 'production'
   ? {} // sin alter en producción
-  : { alter: true };
+  : { alter: { drop: false } }; // agrega columnas nuevas pero no toca FKs/índices existentes
 
 sequelize.sync(syncOptions)
   .then(async () => {
