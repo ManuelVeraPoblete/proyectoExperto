@@ -47,6 +47,7 @@ const ClientModals: React.FC<ClientModalsProps> = ({
       <AssignMaestroModal
         isOpen={isAssignMaestroModalOpen}
         onClose={onCloseAllModals}
+        jobId={String(selectedJob.id)}
         jobTitle={selectedJob.title}
         onAssign={onMaestroAssigned}
       />

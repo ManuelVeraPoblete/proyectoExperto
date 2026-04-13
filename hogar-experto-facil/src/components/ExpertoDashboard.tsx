@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { trabajoService } from '@/services/api/trabajoService';
 import { expertoService } from '@/services/api/expertoService';
@@ -11,95 +11,97 @@ import StatCard from '@/components/shared/StatCard';
 import ActionCard from '@/components/shared/ActionCard';
 import JobOfferItem from '@/components/experto/JobOfferItem';
 import MyJobItem from '@/components/experto/MyJobItem';
-import JobRatingItem from '@/components/experto/JobRatingItem';
 import { getStatusColor, getStatusText } from '@/utils/statusHelpers';
-import { ExpertoJobOffer, ExpertoActiveJob, JobRating } from '@/types/job';
+import { ExpertoJobOffer, ExpertoActiveJob } from '@/types/job';
 import { Trabajo } from '@/types';
+import { useToast } from '@/hooks/use-toast';
 
 const ExpertoDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
 
-  // 1. Cargar trabajos recomendados según especialidades del experto
+  // Trabajos recomendados según especialidades del experto
   const { data: rawJobOffers, isLoading: loadingOffers } = useQuery({
     queryKey: ['job-offers', user?.especialidades, user?.region],
     queryFn: () => trabajoService.search({
       categoryId: user?.especialidades,
-      region: user?.region
+      region: user?.region,
     }),
-    enabled: !!user?.especialidades,
+    enabled: !!user?.id,
   });
 
-  // 2. Cargar mis trabajos activos
-  const { data: rawMyJobs, isLoading: loadingMyJobs } = useQuery({
+  // Trabajos activos del experto
+  const { data: rawMyJobs } = useQuery({
     queryKey: ['my-active-jobs', user?.id],
-    queryFn: () => trabajoService.getMisTrabajos({ 
-      expertoId: user?.id || '',
-      status: 'in-progress' 
+    queryFn: () => trabajoService.getMisTrabajos({
+      expertoId: user?.id,
+      estado: 'en_proceso',
     }),
     enabled: !!user?.id,
   });
 
-  // 3. Cargar mis calificaciones
-  const { data: rawReviews, isLoading: loadingReviews } = useQuery({
-    queryKey: ['my-reviews', user?.id],
-    queryFn: () => expertoService.getReviews(user?.id || ''),
+  // Stats reales
+  const { data: stats } = useQuery({
+    queryKey: ['user-stats', user?.id],
+    queryFn: () => expertoService.getStats(user!.id),
     enabled: !!user?.id,
   });
 
-  // Mapper de Trabajo (BD) a ExpertoJobOffer (UI)
+  const applyMutation = useMutation({
+    mutationFn: (jobId: string) =>
+      trabajoService.applyToJob(jobId, { mensaje: 'Estoy interesado en este trabajo.' }),
+    onSuccess: () => {
+      toast({ title: 'Postulación enviada', description: 'El cliente recibirá tu solicitud.' });
+      queryClient.invalidateQueries({ queryKey: ['job-offers'] });
+    },
+    onError: (err: any) => {
+      const msg = err?.message?.includes('409') ? 'Ya te postulaste a este trabajo.' : 'No se pudo enviar la postulación.';
+      toast({ title: 'Error', description: msg, variant: 'destructive' });
+    },
+  });
+
   const jobOffers: ExpertoJobOffer[] = React.useMemo(() => {
     if (!rawJobOffers) return [];
     return rawJobOffers.map((t: Trabajo) => ({
-      id: Number(t.id) || 0,
+      id: t.id as any,
       title: t.titulo,
-      client: `${t.cliente?.nombres} ${t.cliente?.apellidos}`.trim() || 'Cliente Anónimo',
+      client: t.cliente_nombres
+        ? `${t.cliente_nombres} ${t.cliente_apellidos ?? ''}`.trim()
+        : 'Cliente',
       location: `${t.comuna}, ${t.region}`,
-      budget: new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(t.presupuesto),
-      date: new Date(t.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
-      status: 'new'
+      budget: new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(Number(t.presupuesto) || 0),
+      date: new Date(t.createdAt ?? t.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
+      status: 'new',
     }));
   }, [rawJobOffers]);
 
-  // Mapper para Trabajos Activos
   const myJobs: ExpertoActiveJob[] = React.useMemo(() => {
     if (!rawMyJobs) return [];
     return rawMyJobs.map((t: Trabajo) => ({
-      id: Number(t.id) || 0,
+      id: t.id as any,
       title: t.titulo,
-      client: `${t.cliente?.nombres} ${t.cliente?.apellidos}`.trim() || 'Cliente Anónimo',
+      client: t.cliente_nombres
+        ? `${t.cliente_nombres} ${t.cliente_apellidos ?? ''}`.trim()
+        : 'Cliente',
       status: 'in-progress',
-      date: new Date(t.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
-      payment: new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(t.presupuesto),
-      clientId: t.clientId
+      date: new Date(t.createdAt ?? t.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
+      payment: new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(Number(t.presupuesto) || 0),
+      clientId: t.clientId,
     }));
   }, [rawMyJobs]);
 
-  // Mapper para Calificaciones
-  const jobRatings: JobRating[] = React.useMemo(() => {
-    if (!rawReviews) return [];
-    return rawReviews.map((r: any) => ({
-      id: r.id,
-      jobTitle: r.jobTitle || 'Trabajo Finalizado',
-      client: r.clientName || 'Usuario',
-      rating: r.rating,
-      comment: r.comment,
-      date: new Date(r.createdAt).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' })
-    }));
-  }, [rawReviews]);
-
-  const handleApplyToJob = (jobId: number) => {
-    console.log(`Aplicar a trabajo ${jobId}`);
-    // Aquí iría la lógica de postulación
+  const handleApplyToJob = (jobId: any) => {
+    applyMutation.mutate(String(jobId));
   };
 
-  const handleContactClient = (client: string) => {
-    console.log(`Contactar cliente ${client}`);
+  const handleContactClient = (_client: string) => {
+    navigate('/experto/mensajes');
   };
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground mb-2">Panel de Experto</h1>
         <p className="text-muted-foreground">
@@ -109,27 +111,27 @@ const ExpertoDashboard = () => {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard 
+        <StatCard
           title="Trabajos Activos"
-          value={myJobs.filter(j => j.status === 'in-progress').length.toString()}
+          value={stats ? String(stats.activeJobs) : String(myJobs.length)}
           icon={Briefcase}
           iconColor="text-blue-500"
         />
-        <StatCard 
+        <StatCard
           title="Trabajos Completados"
-          value="47"
+          value={stats ? String(stats.completedJobs) : '—'}
           icon={Star}
           iconColor="text-green-500"
         />
-        <StatCard 
+        <StatCard
           title="Calificación"
-          value={user?.calificacion?.toString() || "4.9"}
+          value={stats?.avgCalificacion != null ? String(stats.avgCalificacion) : (user?.calificacion?.toString() ?? '—')}
           icon={Star}
           iconColor="text-yellow-500"
         />
-        <StatCard 
-          title="Ingresos del Mes"
-          value="$180K"
+        <StatCard
+          title="Total Trabajos"
+          value={stats ? String(stats.totalJobs) : '—'}
           icon={TrendingUp}
           iconColor="text-purple-500"
         />
@@ -145,7 +147,6 @@ const ExpertoDashboard = () => {
           iconColor="text-primary"
           onClick={() => navigate('/experto/buscar-trabajos')}
         />
-
         <ActionCard
           title="Mis Trabajos"
           description="Gestiona tus proyectos activos y completados"
@@ -154,7 +155,6 @@ const ExpertoDashboard = () => {
           iconColor="text-secondary"
           onClick={() => navigate('/experto/mis-trabajos')}
         />
-
         <ActionCard
           title="Mensajes Directos"
           description="Revisa tus conversaciones con clientes"
@@ -180,11 +180,11 @@ const ExpertoDashboard = () => {
               </div>
             ) : jobOffers.length > 0 ? (
               jobOffers.map((offer) => (
-                <JobOfferItem 
-                  key={offer.id} 
-                  offer={offer} 
-                  getStatusColor={getStatusColor} 
-                  getStatusText={getStatusText} 
+                <JobOfferItem
+                  key={offer.id}
+                  offer={offer}
+                  getStatusColor={getStatusColor}
+                  getStatusText={getStatusText}
                   onApply={handleApplyToJob}
                 />
               ))
@@ -201,42 +201,26 @@ const ExpertoDashboard = () => {
       </Card>
 
       {/* My Active Jobs */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Mis Trabajos Activos</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {myJobs.map((job) => (
-              <MyJobItem 
-                key={job.id} 
-                job={job} 
-                getStatusColor={getStatusColor} 
-                getStatusText={getStatusText} 
-                onContact={handleContactClient}
-              />
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Job Ratings */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Calificaciones de Trabajos Realizados</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {jobRatings.length > 0 ? (
-              jobRatings.map((rating) => (
-                <JobRatingItem key={rating.id} rating={rating} />
-              ))
-            ) : (
-              <p className="text-muted-foreground text-sm">Aún no hay calificaciones de trabajos.</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      {myJobs.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Mis Trabajos Activos</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {myJobs.map((job) => (
+                <MyJobItem
+                  key={job.id}
+                  job={job}
+                  getStatusColor={getStatusColor}
+                  getStatusText={getStatusText}
+                  onContact={handleContactClient}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

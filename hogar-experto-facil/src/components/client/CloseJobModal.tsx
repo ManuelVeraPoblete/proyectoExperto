@@ -44,29 +44,16 @@ const CloseJobModal: React.FC<CloseJobModalProps> = ({ isOpen, onClose, job, onJ
     }
 
     setIsSubmitting(true);
-
     try {
-      // Simular llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
       onJobClosed(job.id, rating, review.trim());
-      
       toast({
         title: "Trabajo cerrado exitosamente",
-        description: `Has calificado a ${job.experto} con ${rating} estrella${rating !== 1 ? 's' : ''}.`,
+        description: `Has calificado a ${job.experto ?? 'el experto'} con ${rating} estrella${rating !== 1 ? 's' : ''}.`,
       });
-
-      // Reset form
       setRating(0);
       setHoveredRating(0);
       setReview('');
       onClose();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "No se pudo cerrar el trabajo. Intenta nuevamente.",
-        variant: "destructive"
-      });
     } finally {
       setIsSubmitting(false);
     }

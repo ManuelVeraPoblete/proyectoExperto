@@ -35,7 +35,6 @@ const Register = () => {
     if (formData.userType === 'experto') {
       const fetchCategories = async () => {
         try {
-          console.log("📡 Cargando categorías y subcategorías...");
           const response = await fetch(`${API_BASE_URL}/categories`);
           if (response.ok) {
             const data = await response.json();
@@ -54,11 +53,6 @@ const Register = () => {
   const toggleCategoryExpand = (categoryId: number) => {
     setExpandedCategoryId(prev => prev === categoryId ? null : categoryId);
   };
-
-  // Debugging: monitor formData changes
-  React.useEffect(() => {
-    console.log("📝 Estado del formulario actualizado:", formData);
-  }, [formData]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -112,9 +106,6 @@ const Register = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    console.log("🚀 Iniciando proceso de registro...");
-    console.log("📍 URL de API:", API_BASE_URL);
-
     if (formData.password !== confirmPassword) {
       toast({
         title: "Error de Contraseña",
@@ -168,9 +159,6 @@ const Register = () => {
         payload.experto_specialties = formData.especialidades;
       }
 
-      console.log(`📡 Enviando datos a: ${url}`);
-      console.log("📦 Cuerpo de la petición reestructurado:", JSON.stringify(payload, null, 2));
-
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -179,15 +167,12 @@ const Register = () => {
         body: JSON.stringify(payload),
       });
 
-      console.log("📥 Respuesta recibida, status:", response.status);
-
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.message || 'Error en el registro');
       }
 
-      console.log("✅ Registro exitoso!");
       toast({
         title: "Registro Exitoso",
         description: "Se ha creado tu cuenta correctamente. Ahora puedes iniciar sesión.",

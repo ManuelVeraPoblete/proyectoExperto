@@ -48,4 +48,7 @@ export const trabajoService = {
 
   closeJob: (id: string, data: { calificacion: number; resena?: string }): Promise<{ message: string; job: Trabajo }> =>
     apiClient.patch<{ message: string; job: Trabajo }>(`/jobs/${id}/close`, data),
+
+  applyToJob: (jobId: string, data: { mensaje: string; presupuesto_ofrecido?: number }): Promise<unknown> =>
+    apiClient.post(`/jobs/${jobId}/apply`, data),
 };

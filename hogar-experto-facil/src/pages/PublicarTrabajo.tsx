@@ -118,22 +118,6 @@ const PublicarTrabajo = () => {
         data.append('images', image);
       });
 
-      // LOG DETALLADO PARA DEPURACIÓN
-      const logData = {
-        title: formData.title,
-        description: formData.description,
-        category_id: formData.category,
-        urgency: formData.urgency,
-        clientId: clientId,
-        region: user.region,
-        provincia: user.provincia,
-        comuna: user.comuna,
-        preferred_date: date?.toISOString(),
-        images_count: images.length
-      };
-      console.log("📦 DATOS ENVIADOS A LA API (/api/jobs):", logData);
-
-      console.log("📡 Iniciando petición POST...");
       const response = await fetch(`${API_BASE_URL}/jobs`, {
         method: 'POST',
         headers: {
