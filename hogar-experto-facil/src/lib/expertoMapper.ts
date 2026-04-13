@@ -12,7 +12,9 @@ interface ApiSubcategory {
 }
 
 export interface ApiExperto {
-  id: string;
+  id: string | number;      // ExpertoProfile PK (entero)
+  userId?: string;          // User UUID — es el ID real para navegar
+  User?: { id: string; email?: string }; // relación Sequelize
   nombres?: string;
   nombre?: string;
   apellidos?: string;
@@ -27,6 +29,8 @@ export interface ApiExperto {
   subcategories?: ApiSubcategory[];
   categoria?: string;
   category?: string;
+  avg_portfolio_rating?: string | number | null;  // promedio de reseñas del portafolio
+  portfolio_review_count?: string | number | null;
   rating?: string | number;
   calificacion?: string | number;
   reviews?: string | number | Review[];
@@ -99,13 +103,18 @@ const extractReviewCount = (experto: ApiExperto): number => {
  * Maneja inconsistencias de campos y extracción de categorías anidadas.
  */
 export const mapApiExpertoToCardData = (experto: ApiExperto): ExpertoCardData => ({
-  id: experto.id,
+  // Usar el UUID del User (userId) como id para navegación; el ExpertoProfile.id es un entero interno
+  id: experto.userId ?? experto.User?.id ?? String(experto.id),
   nombres: experto.nombres ?? experto.nombre ?? '',
   apellidos: experto.apellidos ?? experto.apellido ?? '',
   avatar: experto.avatar ?? experto.fotoPerfil,
   especialidades: extractCategoryNames(experto),
-  calificacion: parseFloat(String(experto.rating ?? experto.calificacion ?? 0)),
-  reviewCount: extractReviewCount(experto),
+  calificacion: experto.avg_portfolio_rating != null
+    ? parseFloat(String(experto.avg_portfolio_rating))
+    : parseFloat(String(experto.rating ?? experto.calificacion ?? 0)),
+  reviewCount: experto.portfolio_review_count != null
+    ? Number(experto.portfolio_review_count)
+    : extractReviewCount(experto),
   comuna: experto.comuna ?? '',
   region: experto.region ?? '',
   experience: experto.experience ?? '5+ años',

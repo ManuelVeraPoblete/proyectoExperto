@@ -5,6 +5,9 @@ import { expertoService } from '@/services/api/expertoService';
 import { portfolioService, PortfolioItem } from '@/services/api/portfolioService';
 import { PortfolioEntry } from '@/types/experto';
 import { mapApiExpertoToCardData, ApiExperto } from '@/lib/expertoMapper';
+import { API_BASE_URL } from '@/lib/api-config';
+
+const SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
 
 export interface PerfilPublicoData {
   id: string;
@@ -23,13 +26,23 @@ export interface PerfilPublicoData {
   telefono: string;
 }
 
+const parseImageUrls = (image_url?: string): string[] => {
+  if (!image_url) return [];
+  try {
+    const paths: string[] = JSON.parse(image_url);
+    return paths.map((p) => (p.startsWith('http') ? p : `${SERVER_URL}${p}`));
+  } catch {
+    return [];
+  }
+};
+
 const toPortfolioEntry = (item: PortfolioItem): PortfolioEntry => ({
   id: String(item.id),
   title: item.title,
   description: item.description ?? '',
   category: item.category ?? '',
   date: item.date ?? item.createdAt.split('T')[0],
-  image: item.image_url || undefined,
+  images: parseImageUrls(item.image_url),
   reactions: {
     heart:   item.Reactions?.filter(r => r.reaction === 'heart').length ?? 0,
     like:    item.Reactions?.filter(r => r.reaction === 'like').length ?? 0,

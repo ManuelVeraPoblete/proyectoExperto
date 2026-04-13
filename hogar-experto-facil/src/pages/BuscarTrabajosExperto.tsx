@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Search, Loader2 } from 'lucide-react';
-import ClientProfileModal from '@/components/ClientProfileModal';
-import { ChatDialog } from '@/components/ChatDialog';
-import { Message, Client, Trabajo } from '@/types';
+import { Trabajo } from '@/types';
 import { JobDetailsModal } from '@/components/experto/JobDetailsModal';
 import useJobSearch from '@/hooks/useJobSearch';
 import JobCard from '@/components/experto/JobCard';
 import LocationSelects from '@/components/shared/LocationSelects';
-import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { ROUTES } from '@/constants';
 import {
   Pagination,
   PaginationContent,
@@ -26,7 +25,7 @@ const ITEMS_PER_PAGE = 9;
 
 const BuscarTrabajosExperto = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
+  const navigate = useNavigate();
   
   const { 
     searchTerm,
@@ -50,16 +49,9 @@ const BuscarTrabajosExperto = () => {
     expertSpecialties: user?.especialidades || [],
   });
 
-  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState<Client | null>(null);
   const [selectedJob, setSelectedJob] = useState<Trabajo | null>(null);
   const [isJobDetailsModalOpen, setIsJobDetailsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatParticipantName, setChatParticipantName] = useState('');
-  const [chatMessages, setChatMessages] = useState<Message[]>([]);
-  const [unreadMessages, setUnreadMessages] = useState<{[key: string]: Message[]}>({});
 
   // Resetear página al cambiar filtros
   useEffect(() => {
@@ -90,44 +82,11 @@ const BuscarTrabajosExperto = () => {
     const jobWithClient = filteredJobs.find(j => j.clientId === clientId || j.cliente?.id === clientId);
     const clientData = jobWithClient?.cliente || (jobWithClient as any)?.User || (jobWithClient as any)?.Client;
 
-    if (!clientData && !jobWithClient) return;
+    const name = clientData?.nombres || clientData?.nombre || (jobWithClient as any)?.cliente_nombres || 'Cliente';
+    const lastName = clientData?.apellidos || clientData?.apellido || (jobWithClient as any)?.cliente_apellidos || '';
+    const clientName = `${name} ${lastName}`.trim();
 
-    const name = clientData?.nombres || clientData?.nombre || (jobWithClient as any)?.cliente_nombres || "Cliente";
-    const lastName = clientData?.apellidos || clientData?.apellido || (jobWithClient as any)?.cliente_apellidos || "";
-    const clientName = `${name} ${lastName}`;
-
-    const existingMessages = unreadMessages[clientId] || [];
-    const messagesToDisplay = [
-      ...existingMessages.map((msg): Message => ({...msg, sender: msg.sender as "me" | "other", read: true})),
-      { id: 'initial', sender: "other" as const, text: `Hola, soy ${clientName}. Estoy interesado en tu trabajo.`, timestamp: new Date().toISOString(), read: true },
-    ];
-    setChatMessages(messagesToDisplay);
-    setChatParticipantName(clientName);
-    setIsChatOpen(true);
-    setSelectedClient(clientData);
-
-    setUnreadMessages(prev => {
-      const newState = { ...prev };
-      delete newState[clientId];
-      return newState;
-    });
-  };
-
-  const handleSendMessage = (message: string) => {
-    setChatMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        id: Date.now().toString(),
-        sender: "me" as const,
-        text: message,
-        timestamp: new Date().toISOString(),
-        read: true,
-      },
-    ]);
-    toast({
-      title: "Mensaje Enviado",
-      description: `Tu mensaje a ${chatParticipantName} ha sido enviado.`, 
-    });
+    navigate(`${ROUTES.EXPERTO_MENSAJES}?contactId=${clientId}&contactName=${encodeURIComponent(clientName)}`);
   };
 
   const handleOpenJobDetails = (job: Trabajo) => {
@@ -217,20 +176,15 @@ const BuscarTrabajosExperto = () => {
         ) : (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {paginatedJobs.map((job) => {
-                const clientId = job.clientId || job.cliente?.id || (job as any).User?.id;
-                const unreadCountForClient = unreadMessages[clientId || '']?.length || 0;
-
-                return (
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                    onOpenJobDetails={handleOpenJobDetails}
-                    onContactClient={handleContactClient}
-                    unreadMessagesCount={unreadCountForClient}
-                  />
-                );
-              })}
+              {paginatedJobs.map((job) => (
+                <JobCard
+                  key={job.id}
+                  job={job}
+                  onOpenJobDetails={handleOpenJobDetails}
+                  onContactClient={handleContactClient}
+                  unreadMessagesCount={0}
+                />
+              ))}
             </div>
 
             {filteredJobs.length === 0 ? (
@@ -296,20 +250,6 @@ const BuscarTrabajosExperto = () => {
           </>
         )}
       </main>
-
-      <ClientProfileModal 
-        isOpen={isClientModalOpen} 
-        onClose={() => setIsClientModalOpen(false)} 
-        client={selectedClient}
-      />
-
-      <ChatDialog
-        isOpen={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
-        participantName={chatParticipantName}
-        messages={chatMessages}
-        onSendMessage={handleSendMessage}
-      />
 
       <JobDetailsModal
         isOpen={isJobDetailsModalOpen}

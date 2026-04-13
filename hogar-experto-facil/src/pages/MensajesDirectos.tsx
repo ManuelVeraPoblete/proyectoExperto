@@ -1,113 +1,100 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React, { useState, useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
-import { ChatDialog } from '@/components/ChatDialog';
-import ReportButton from '@/components/common/ReportButton';
+import { useSearchParams } from 'react-router-dom';
 import { useMensajes } from '@/hooks/useMensajes';
-import { Message } from '@/types';
+import ListaConversaciones from '@/components/mensajes/ListaConversaciones';
+import ConversacionChat from '@/components/mensajes/ConversacionChat';
 
 const MensajesDirectos = () => {
-  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatParticipantName, setChatParticipantName] = useState('');
+  const [searchParams] = useSearchParams();
+  const [selectedContactId, setSelectedContactId]   = useState<string | null>(
+    searchParams.get('contactId')
+  );
+  const [selectedContactName, setSelectedContactName] = useState(
+    searchParams.get('contactName') ? decodeURIComponent(searchParams.get('contactName')!) : ''
+  );
 
-  const { conversations, isLoadingConversations, messages, sendMessage, markAsRead } =
+  const { conversations, isLoadingConversations, messages, isLoadingMessages, sendMessage, markAsRead, isSending } =
     useMensajes(selectedContactId ?? undefined);
 
-  const handleOpenChat = (contactId: string, contactName: string) => {
+  // Mark as read when arriving from a direct link
+  useEffect(() => {
+    const contactId = searchParams.get('contactId');
+    if (contactId) markAsRead(contactId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSelect = (contactId: string, contactName: string) => {
     setSelectedContactId(contactId);
-    setChatParticipantName(contactName);
-    setIsChatOpen(true);
+    setSelectedContactName(contactName);
     markAsRead(contactId);
   };
 
-  const handleSendMessage = (text: string) => {
+  const handleSend = (text: string) => {
     if (!selectedContactId) return;
     sendMessage(selectedContactId, text);
   };
 
-  const chatMessages: Message[] = messages.map(m => ({
-    id: String(m.id),
-    sender: m.sender,
-    text: m.text,
-    timestamp: m.timestamp,
-    read: m.is_read,
-  }));
-
-  const unread = conversations.filter(c => c.unreadCount > 0);
-  const read = conversations.filter(c => c.unreadCount === 0);
-
   if (isLoadingConversations) {
-    return <div className="container mx-auto px-4 py-8 text-muted-foreground">Cargando mensajes...</div>;
+    return (
+      <div className="container mx-auto px-4 py-8 text-muted-foreground">
+        Cargando mensajes...
+      </div>
+    );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold text-foreground mb-6">Mensajes Directos</h1>
+    <div className="flex flex-col h-full min-h-0 px-4 py-4 max-w-5xl mx-auto w-full">
+      {/* Título */}
+      <div className="flex items-center gap-2 mb-3 shrink-0">
+        <MessageSquare className="w-5 h-5 text-primary" />
+        <h1 className="text-xl font-bold text-foreground">Mensajes</h1>
+      </div>
 
-      {unread.length > 0 && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center"><MessageSquare className="mr-2" /> Mensajes No Leídos</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {unread.map(conv => (
-                <div key={conv.contact.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
-                  <div className="flex-1">
-                    <p className="font-semibold">{conv.contact.nombres} {conv.contact.apellidos}</p>
-                    <p className="text-sm text-muted-foreground">{conv.lastMessage?.content ?? 'No hay mensajes'}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <ReportButton reportType="user" reportedUserId={conv.contact.id} reportedUserName={`${conv.contact.nombres} ${conv.contact.apellidos}`} variant="ghost" size="sm" />
-                    <Button onClick={() => handleOpenChat(conv.contact.id, `${conv.contact.nombres} ${conv.contact.apellidos}`)}>
-                      Ver ({conv.unreadCount})
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+      {/* Layout split — ocupa todo el espacio restante */}
+      <div className="flex-1 min-h-0 border border-border rounded-xl overflow-hidden bg-card shadow-sm flex">
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center"><MessageSquare className="mr-2" /> Todas las Conversaciones</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            {read.length > 0 ? (
-              read.map(conv => (
-                <div key={conv.contact.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
-                  <div className="flex-1">
-                    <p className="font-semibold">{conv.contact.nombres} {conv.contact.apellidos}</p>
-                    <p className="text-sm text-muted-foreground">{conv.lastMessage?.content ?? 'No hay mensajes'}</p>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <ReportButton reportType="user" reportedUserId={conv.contact.id} reportedUserName={`${conv.contact.nombres} ${conv.contact.apellidos}`} variant="ghost" size="sm" />
-                    <Button variant="outline" onClick={() => handleOpenChat(conv.contact.id, `${conv.contact.nombres} ${conv.contact.apellidos}`)}>
-                      Abrir Chat
-                    </Button>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p className="text-muted-foreground">No hay conversaciones.</p>
-            )}
+        {/* Panel izquierdo — conversaciones */}
+        <div className="w-72 shrink-0 border-r border-border flex flex-col">
+          <div className="px-4 py-3 border-b border-border bg-muted/30 shrink-0">
+            <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+              Conversaciones
+            </p>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex-1 overflow-hidden">
+            <ListaConversaciones
+              conversations={conversations}
+              selectedId={selectedContactId}
+              onSelect={handleSelect}
+            />
+          </div>
+        </div>
 
-      <ChatDialog
-        isOpen={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
-        participantName={chatParticipantName}
-        participantId={selectedContactId ?? undefined}
-        messages={chatMessages}
-        onSendMessage={handleSendMessage}
-      />
+        {/* Panel derecho — chat */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {selectedContactId ? (
+            isLoadingMessages ? (
+              <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
+                Cargando conversación...
+              </div>
+            ) : (
+              <ConversacionChat
+                contactName={selectedContactName}
+                contactId={selectedContactId}
+                messages={messages}
+                isSending={isSending}
+                onSend={handleSend}
+              />
+            )
+          ) : (
+            <div className="flex-1 flex flex-col items-center justify-center gap-3 text-muted-foreground">
+              <MessageSquare className="w-12 h-12 opacity-20" />
+              <p className="text-sm">Selecciona una conversación para comenzar</p>
+            </div>
+          )}
+        </div>
+
+      </div>
     </div>
   );
 };

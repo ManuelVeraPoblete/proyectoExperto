@@ -20,8 +20,8 @@ import { useExpertoPerfil } from '@/hooks/useExpertoPerfil';
 import PortfolioItemCard from '@/components/experto/PortfolioItemCard';
 import AddPortfolioModal from '@/components/experto/AddPortfolioModal';
 import EditPerfilModal from '@/components/experto/EditPerfilModal';
-import { PortfolioEntry } from '@/types/experto';
 import { useAuth } from '@/contexts/AuthContext';
+import { CreatePortfolioData } from '@/services/api/portfolioService';
 
 const PerfilExperto = () => {
   const { user } = useAuth();
@@ -46,20 +46,23 @@ const PerfilExperto = () => {
     );
   }
 
-  const handleAdd = (data: Omit<PortfolioEntry, 'id' | 'reactions' | 'reviews'>) => {
+  const handleAdd = (data: CreatePortfolioData) => {
     addPortfolioItem(data);
     setIsAddPortfolioOpen(false);
   };
 
-  const totalReactions = portfolio.reduce(
-    (acc, item) =>
-      acc +
-      item.reactions.heart +
-      item.reactions.like +
-      item.reactions.clap +
-      item.reactions.dislike,
-    0,
-  );
+  const totalReactions = {
+    heart:   portfolio.reduce((s, i) => s + i.reactions.heart,   0),
+    like:    portfolio.reduce((s, i) => s + i.reactions.like,    0),
+    clap:    portfolio.reduce((s, i) => s + i.reactions.clap,    0),
+    dislike: portfolio.reduce((s, i) => s + i.reactions.dislike, 0),
+  };
+
+  const allReviews = portfolio.flatMap((item) => item.reviews);
+  const totalReviews = allReviews.length;
+  const ratingsSum = allReviews.reduce((sum, r) => sum + parseFloat(String(r.rating)), 0);
+  const avgRating = totalReviews > 0 ? ratingsSum / totalReviews : null;
+  const avgRatingDisplay = avgRating !== null ? avgRating.toFixed(1) : '—';
 
   return (
     <main className="container mx-auto px-4 py-8 max-w-5xl">
@@ -101,8 +104,8 @@ const PerfilExperto = () => {
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
                 <span className="flex items-center gap-1">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  <span className="font-semibold text-foreground">{expertoPerfil.calificacion}</span>
-                  <span>({expertoPerfil.reviewCount} reseñas)</span>
+                  <span className="font-semibold text-foreground">{avgRatingDisplay}</span>
+                  <span>({totalReviews} reseña{totalReviews !== 1 ? 's' : ''})</span>
                 </span>
                 <span className="flex items-center gap-1">
                   <MapPin className="w-4 h-4" />
@@ -144,22 +147,58 @@ const PerfilExperto = () => {
 
       {/* ── Stats rápidas ───────────────────────────────────────────── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'Trabajos', value: portfolio.length, icon: <Briefcase className="w-5 h-5 text-primary" /> },
-          { label: 'Reacciones', value: totalReactions, icon: <span className="text-lg">❤️</span> },
-          { label: 'Reseñas', value: portfolio.reduce((a, p) => a + p.reviews.length, 0), icon: <Star className="w-5 h-5 text-yellow-400" /> },
-          { label: 'Calificación', value: expertoPerfil.calificacion, icon: <BadgeCheck className="w-5 h-5 text-green-600" /> },
-        ].map(({ label, value, icon }) => (
-          <Card key={label}>
-            <CardContent className="p-4 flex items-center gap-3">
-              {icon}
-              <div>
-                <p className="text-xl font-bold">{value}</p>
-                <p className="text-xs text-muted-foreground">{label}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {/* Trabajos */}
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <Briefcase className="w-5 h-5 text-primary shrink-0" />
+            <div>
+              <p className="text-xl font-bold">{portfolio.length}</p>
+              <p className="text-xs text-muted-foreground">Trabajos</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Reacciones desglosadas */}
+        <Card>
+          <CardContent className="p-4">
+            <p className="text-xs text-muted-foreground mb-2">Reacciones</p>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-1">
+              {([
+                { emoji: '❤️', count: totalReactions.heart   },
+                { emoji: '👍', count: totalReactions.like    },
+                { emoji: '👏', count: totalReactions.clap    },
+                { emoji: '👎', count: totalReactions.dislike },
+              ] as const).map(({ emoji, count }) => (
+                <span key={emoji} className="flex items-center gap-1 text-sm font-semibold">
+                  <span>{emoji}</span>
+                  <span>{count}</span>
+                </span>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Reseñas */}
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <Star className="w-5 h-5 text-yellow-400 shrink-0" />
+            <div>
+              <p className="text-xl font-bold">{totalReviews}</p>
+              <p className="text-xs text-muted-foreground">Reseñas</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Calificación */}
+        <Card>
+          <CardContent className="p-4 flex items-center gap-3">
+            <BadgeCheck className="w-5 h-5 text-green-600 shrink-0" />
+            <div>
+              <p className="text-xl font-bold">{avgRatingDisplay}</p>
+              <p className="text-xs text-muted-foreground">Calificación</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* ── Portafolio ──────────────────────────────────────────────── */}

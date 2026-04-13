@@ -4,9 +4,18 @@ const portfolioController = require('../controllers/portfolioController');
 const { authenticate, authorize } = require('../middleware/auth');
 const validate = require('../middleware/validate');
 const { portfolioItemSchema, reactSchema, reviewSchema } = require('../schemas/portfolioSchemas');
+const { uploadPortfolio } = require('../middleware/upload');
+
+// Wrapper para manejar errores de multer antes de continuar
+const handleUpload = (req, res, next) => {
+  uploadPortfolio(req, res, (err) => {
+    if (err) return res.status(400).json({ error: err.message });
+    next();
+  });
+};
 
 router.get('/:expertUserId', portfolioController.getPortfolio);
-router.post('/', authenticate, authorize('experto'), validate(portfolioItemSchema), portfolioController.createItem);
+router.post('/', authenticate, authorize('experto'), handleUpload, validate(portfolioItemSchema), portfolioController.createItem);
 router.delete('/:itemId', authenticate, authorize('experto'), portfolioController.deleteItem);
 router.post('/:itemId/react', authenticate, validate(reactSchema), portfolioController.reactToItem);
 router.post('/:itemId/reviews', authenticate, authorize('cliente'), validate(reviewSchema), portfolioController.addReview);

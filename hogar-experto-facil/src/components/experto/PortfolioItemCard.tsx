@@ -85,13 +85,16 @@ const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({
 
   return (
     <Card className="overflow-hidden">
-      {item.image && (
-        <div className="relative h-48 overflow-hidden">
-          <img
-            src={item.image}
-            alt={item.title}
-            className="w-full h-full object-cover"
-          />
+      {item.images && item.images.length > 0 && (
+        <div className="relative overflow-hidden">
+          {/* Imagen principal */}
+          <div className="h-48 overflow-hidden">
+            <img
+              src={item.images[0]}
+              alt={item.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
           <Badge className="absolute top-3 left-3 bg-primary/90 text-white">
             {item.category}
           </Badge>
@@ -104,6 +107,16 @@ const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({
               <Trash2 className="w-3.5 h-3.5" />
             </button>
           )}
+          {/* Miniaturas adicionales */}
+          {item.images.length > 1 && (
+            <div className="flex gap-1 p-1 bg-black/10">
+              {item.images.slice(1).map((src, i) => (
+                <div key={i} className="w-14 h-14 rounded overflow-hidden border border-white/40 flex-shrink-0">
+                  <img src={src} alt={`${item.title} foto ${i + 2}`} className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -111,7 +124,7 @@ const PortfolioItemCard: React.FC<PortfolioItemCardProps> = ({
         {/* Cabecera */}
         <div className="flex items-start justify-between mb-1">
           <h3 className="font-semibold text-foreground leading-tight">{item.title}</h3>
-          {!item.image && isOwner && onDelete && (
+          {(!item.images || item.images.length === 0) && isOwner && onDelete && (
             <button
               onClick={() => onDelete(item.id)}
               className="text-muted-foreground hover:text-red-500 transition-colors p-1"

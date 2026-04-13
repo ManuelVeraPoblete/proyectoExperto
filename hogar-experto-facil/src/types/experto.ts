@@ -28,7 +28,7 @@ export interface Review {
 export interface PortfolioItem {
   title: string;
   description: string;
-  image?: string;
+  images?: string[];
 }
 
 // ─── Portafolio enriquecido (UI) ─────────────────────────────────────────────
@@ -58,7 +58,8 @@ export interface PortfolioEntry {
   description: string;
   category: string;
   date: string;
-  image?: string;
+  /** URLs absolutas de las fotos del trabajo (hasta 3) */
+  images?: string[];
   reactions: PortfolioReactions;
   reviews: PortfolioReview[];
 }

@@ -47,7 +47,7 @@ const STOPWORDS = new Set(['para', 'con', 'por', 'del', 'las', 'los', 'una', 'un
  */
 exports.getExperts = async (req, res, next) => {
   try {
-    const { work, category_id, subcategory_id, region, provincia, comuna } = req.query;
+    const { work, category_id, subcategory_id, region, provincia, comuna, rating } = req.query;
 
     let searchTerms = [];
     if (work && work.trim() !== '') {
@@ -65,6 +65,16 @@ exports.getExperts = async (req, res, next) => {
     if (region && region !== 'Todas') andConditions.push({ region });
     if (provincia && provincia !== 'Todas') andConditions.push({ provincia });
     if (comuna && comuna !== 'Todas') andConditions.push({ comuna });
+
+    const minRating = parseFloat(rating);
+    if (!isNaN(minRating) && minRating > 0) {
+      andConditions.push(literal(`(
+        SELECT AVG(pr.rating)
+        FROM portfolio_reviews pr
+        INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+        WHERE pi.expertoId = ExpertoProfile.userId
+      ) >= ${minRating}`));
+    }
 
     if (filterBySubcategory) {
       andConditions.push({ '$Subcategories.id$': subcategory_id });
@@ -97,6 +107,29 @@ exports.getExperts = async (req, res, next) => {
         },
         { model: User, attributes: ['id', 'email'] },
       ],
+      attributes: {
+        include: [
+          [
+            literal(`(
+              SELECT AVG(pr.rating)
+              FROM portfolio_reviews pr
+              INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+              WHERE pi.expertoId = ExpertoProfile.userId
+            )`),
+            'avg_portfolio_rating',
+          ],
+          [
+            literal(`(
+              SELECT COUNT(*)
+              FROM portfolio_reviews pr
+              INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+              WHERE pi.expertoId = ExpertoProfile.userId
+            )`),
+            'portfolio_review_count',
+          ],
+        ],
+      },
+      order: [[literal('avg_portfolio_rating'), 'DESC']],
       subQuery: false,
       distinct: true,
     });
@@ -123,25 +156,25 @@ exports.getFeaturedExperts = async (req, res, next) => {
         include: [
           [
             literal(`(
-              SELECT AVG(j.calificacion)
-              FROM jobs j
-              WHERE j.expertId = ExpertoProfile.userId
-                AND j.calificacion IS NOT NULL
+              SELECT AVG(pr.rating)
+              FROM portfolio_reviews pr
+              INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+              WHERE pi.expertoId = ExpertoProfile.userId
             )`),
-            'avg_calificacion',
+            'avg_portfolio_rating',
           ],
           [
             literal(`(
               SELECT COUNT(*)
-              FROM jobs j
-              WHERE j.expertId = ExpertoProfile.userId
-                AND j.estado = 'completado'
+              FROM portfolio_reviews pr
+              INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+              WHERE pi.expertoId = ExpertoProfile.userId
             )`),
-            'completed_jobs',
+            'portfolio_review_count',
           ],
         ],
       },
-      order: [[literal('avg_calificacion'), 'DESC']],
+      order: [[literal('avg_portfolio_rating'), 'DESC']],
       limit: 3,
     });
 
@@ -170,21 +203,21 @@ exports.getExpertById = async (req, res, next) => {
         include: [
           [
             literal(`(
-              SELECT AVG(j.calificacion)
-              FROM jobs j
-              WHERE j.expertId = ExpertoProfile.userId
-                AND j.calificacion IS NOT NULL
+              SELECT AVG(pr.rating)
+              FROM portfolio_reviews pr
+              INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+              WHERE pi.expertoId = ExpertoProfile.userId
             )`),
-            'avg_calificacion',
+            'avg_portfolio_rating',
           ],
           [
             literal(`(
               SELECT COUNT(*)
-              FROM jobs j
-              WHERE j.expertId = ExpertoProfile.userId
-                AND j.estado = 'completado'
+              FROM portfolio_reviews pr
+              INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
+              WHERE pi.expertoId = ExpertoProfile.userId
             )`),
-            'completed_jobs',
+            'portfolio_review_count',
           ],
         ],
       },
@@ -209,9 +242,9 @@ exports.updateExpertProfile = async (req, res, next) => {
     const userUpdates = {};
     if (nombres !== undefined) userUpdates.nombres = nombres;
     if (apellidos !== undefined) userUpdates.apellidos = apellidos;
-    if (telefono !== undefined) userUpdates.telefono = telefono;
 
     const profileUpdates = {};
+    if (telefono !== undefined) profileUpdates.telefono = telefono;
     if (bio !== undefined) profileUpdates.bio = bio;
     if (region !== undefined) profileUpdates.region = region;
     if (provincia !== undefined) profileUpdates.provincia = provincia;
@@ -226,7 +259,7 @@ exports.updateExpertProfile = async (req, res, next) => {
 
     const updated = await ExpertoProfile.findOne({
       where: { userId },
-      include: [{ model: User, attributes: ['id', 'email', 'nombres', 'apellidos', 'telefono'] }],
+      include: [{ model: User, attributes: ['id', 'email', 'nombres', 'apellidos'] }],
     });
 
     res.json(updated);

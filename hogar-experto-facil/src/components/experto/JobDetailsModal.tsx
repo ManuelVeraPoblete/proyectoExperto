@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -84,6 +85,9 @@ export function JobDetailsModal({
             <DialogTitle className="text-2xl font-bold text-foreground">
               {trabajo.titulo}
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Detalles del trabajo publicado por el cliente
+            </DialogDescription>
           </DialogHeader>
 
           <div className="px-6 pb-6 flex flex-col gap-6">
@@ -226,6 +230,7 @@ export function JobDetailsModal({
       {/* Visor de Imagen Pro con Navegación y Tamaño Contenido */}
       <Dialog open={selectedImageIndex !== null} onOpenChange={() => setSelectedImageIndex(null)}>
         <DialogContent className="max-w-[60vw] p-0 bg-transparent border-none shadow-none flex items-center justify-center overflow-visible">
+          <DialogDescription className="sr-only">Vista ampliada de la foto</DialogDescription>
           <div className="relative group flex flex-col items-center">
             {/* Imagen Ampliada (Máximo 50-60% del ancho) */}
             <div className="relative overflow-hidden rounded-2xl shadow-2xl bg-black/10 backdrop-blur-sm border border-white/20">

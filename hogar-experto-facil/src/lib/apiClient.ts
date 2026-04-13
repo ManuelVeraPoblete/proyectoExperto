@@ -53,11 +53,33 @@ const request = async <T>(
   return response.json() as Promise<T>;
 };
 
+// ─── Upload con FormData (sin Content-Type para que el browser lo ponga) ─────
+const uploadForm = async <T>(endpoint: string, formData: FormData): Promise<T> => {
+  const url = `${API_BASE_URL}${endpoint}`;
+  const token = storageService.getUser()?.token;
+  const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: authHeaders,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const message = await response.text().catch(() => response.statusText);
+    logger.error(`[API] POST ${url} → ${response.status}`, message);
+    throw new ApiError(response.status, message);
+  }
+
+  return response.json() as Promise<T>;
+};
+
 // ─── Cliente HTTP público ─────────────────────────────────────────────────────
 export const apiClient = {
-  get:    <T>(endpoint: string, opts?: RequestOptions)               => request<T>('GET',    endpoint, undefined, opts),
-  post:   <T>(endpoint: string, body: unknown, opts?: RequestOptions) => request<T>('POST',   endpoint, body,      opts),
-  put:    <T>(endpoint: string, body: unknown, opts?: RequestOptions) => request<T>('PUT',    endpoint, body,      opts),
-  patch:  <T>(endpoint: string, body: unknown, opts?: RequestOptions) => request<T>('PATCH',  endpoint, body,      opts),
-  delete: <T>(endpoint: string, opts?: RequestOptions)               => request<T>('DELETE', endpoint, undefined, opts),
+  get:        <T>(endpoint: string, opts?: RequestOptions)               => request<T>('GET',    endpoint, undefined, opts),
+  post:       <T>(endpoint: string, body: unknown, opts?: RequestOptions) => request<T>('POST',   endpoint, body,      opts),
+  put:        <T>(endpoint: string, body: unknown, opts?: RequestOptions) => request<T>('PUT',    endpoint, body,      opts),
+  patch:      <T>(endpoint: string, body: unknown, opts?: RequestOptions) => request<T>('PATCH',  endpoint, body,      opts),
+  delete:     <T>(endpoint: string, opts?: RequestOptions)               => request<T>('DELETE', endpoint, undefined, opts),
+  postForm:   <T>(endpoint: string, formData: FormData)                  => uploadForm<T>(endpoint, formData),
 };

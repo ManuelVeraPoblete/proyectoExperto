@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const PortfolioItem = require('../models/PortfolioItem');
 const PortfolioReaction = require('../models/PortfolioReaction');
 const PortfolioReview = require('../models/PortfolioReview');
@@ -34,14 +36,20 @@ exports.getPortfolio = async (req, res, next) => {
 exports.createItem = async (req, res, next) => {
   try {
     const expertoId = req.user.id;
-    const { title, description, category, image_url, date } = req.body;
+    const { title, description, category, date } = req.body;
+
+    // Construir array de rutas de las fotos subidas
+    const imagePaths = (req.files || []).map(
+      (f) => `/uploads/experto/${f.filename}`
+    );
+    const image_url = imagePaths.length > 0 ? JSON.stringify(imagePaths) : null;
 
     const item = await PortfolioItem.create({
       expertoId,
       title,
       description: description || null,
       category: category || null,
-      image_url: image_url || null,
+      image_url,
       date: date || null,
     });
 
@@ -59,6 +67,19 @@ exports.deleteItem = async (req, res, next) => {
     const item = await PortfolioItem.findByPk(itemId);
     if (!item) return next(new AppError('Item no encontrado', 404));
     if (item.expertoId !== userId) return next(new AppError('No tienes permiso para eliminar este item', 403));
+
+    // Eliminar archivos físicos del disco
+    if (item.image_url) {
+      try {
+        const paths = JSON.parse(item.image_url);
+        paths.forEach((relPath) => {
+          const absPath = path.join(__dirname, '..', relPath);
+          if (fs.existsSync(absPath)) fs.unlinkSync(absPath);
+        });
+      } catch (_) {
+        // Si no es JSON válido, ignorar
+      }
+    }
 
     await item.destroy();
     res.json({ message: 'Item eliminado' });

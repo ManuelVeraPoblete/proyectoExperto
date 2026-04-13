@@ -145,6 +145,9 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/experts', expertRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/portfolio', portfolioRoutes);
+app.use('/api/messages', messageRoutes);
+app.use('/api/reports', reportRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));

@@ -30,7 +30,9 @@ const RatingDisplay: React.FC<RatingDisplayProps> = ({
   return (
     <div className="flex items-center space-x-1">
       <Star className={`${sizeClasses[size]} fill-yellow-400 text-yellow-400`} />
-      <span className={`font-medium ${textSizes[size]}`}>{rating}</span>
+      <span className={`font-medium ${textSizes[size]}`}>
+        {rating > 0 ? rating.toFixed(1) : '—'}
+      </span>
       {showCount && reviewCount && (
         <span className={`${textSizes[size]} text-muted-foreground`}>
           ({reviewCount})

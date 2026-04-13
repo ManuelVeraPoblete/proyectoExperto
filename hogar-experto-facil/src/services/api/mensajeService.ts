@@ -1,5 +1,11 @@
 import { apiClient } from '@/lib/apiClient';
 
+export interface ApiMessageUser {
+  id: string;
+  nombres: string;
+  apellidos: string;
+}
+
 export interface ApiMessage {
   id: number;
   senderId: string;
@@ -7,6 +13,8 @@ export interface ApiMessage {
   content: string;
   is_read: boolean;
   createdAt: string;
+  Sender?: ApiMessageUser;
+  Receiver?: ApiMessageUser;
 }
 
 export interface ApiContact {

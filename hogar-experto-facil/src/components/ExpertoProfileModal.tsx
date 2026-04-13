@@ -183,8 +183,8 @@ const ExpertoProfileModal: React.FC<ExpertoProfileModalProps> = ({
                           size="sm"
                         />
                       </div>
-                      {job.image && (
-                        <img src={job.image} alt={job.title} className="w-full h-32 object-cover rounded-md mb-3" />
+                      {job.images?.[0] && (
+                        <img src={job.images[0]} alt={job.title} className="w-full h-32 object-cover rounded-md mb-3" />
                       )}
                       <h4 className="font-medium mb-1">{job.title}</h4>
                       <p className="text-sm text-muted-foreground">{job.description}</p>

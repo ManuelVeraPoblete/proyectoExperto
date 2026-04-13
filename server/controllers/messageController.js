@@ -80,6 +80,10 @@ exports.getMessages = async (req, res, next) => {
           { senderId: otherUserId, receiverId: userId },
         ],
       },
+      include: [
+        { model: User, as: 'Sender',   attributes: ['id', 'nombres', 'apellidos'] },
+        { model: User, as: 'Receiver', attributes: ['id', 'nombres', 'apellidos'] },
+      ],
       order: [['createdAt', 'ASC']],
     });
 

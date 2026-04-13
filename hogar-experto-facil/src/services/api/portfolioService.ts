@@ -24,6 +24,7 @@ export interface PortfolioItem {
   title: string;
   description?: string;
   category?: string;
+  /** JSON array de rutas, ej: '["/uploads/experto/foto.jpg"]' */
   image_url?: string;
   date?: string;
   Reactions?: PortfolioReaction[];
@@ -31,12 +32,27 @@ export interface PortfolioItem {
   createdAt: string;
 }
 
+export interface CreatePortfolioData {
+  title: string;
+  description?: string;
+  category?: string;
+  date?: string;
+  files?: File[];
+}
+
 export const portfolioService = {
   getByExpert: (expertUserId: string): Promise<PortfolioItem[]> =>
     apiClient.get<PortfolioItem[]>(`/portfolio/${expertUserId}`),
 
-  create: (data: { title: string; description?: string; category?: string; image_url?: string; date?: string }): Promise<PortfolioItem> =>
-    apiClient.post<PortfolioItem>('/portfolio', data),
+  create: (data: CreatePortfolioData): Promise<PortfolioItem> => {
+    const formData = new FormData();
+    formData.append('title', data.title);
+    if (data.description) formData.append('description', data.description);
+    if (data.category)    formData.append('category', data.category);
+    if (data.date)        formData.append('date', data.date);
+    (data.files ?? []).forEach((file) => formData.append('photos', file));
+    return apiClient.postForm<PortfolioItem>('/portfolio', formData);
+  },
 
   remove: (itemId: number): Promise<{ message: string }> =>
     apiClient.delete<{ message: string }>(`/portfolio/${itemId}`),

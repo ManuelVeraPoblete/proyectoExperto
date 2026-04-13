@@ -1,9 +1,23 @@
 import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
-import { portfolioService, PortfolioItem } from '@/services/api/portfolioService';
+import { portfolioService, PortfolioItem, CreatePortfolioData } from '@/services/api/portfolioService';
 import { expertoService } from '@/services/api/expertoService';
 import { PortfolioEntry } from '@/types/experto';
+import { API_BASE_URL } from '@/lib/api-config';
+
+// Base para archivos estáticos (sin /api)
+const SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
+
+const parseImageUrls = (image_url?: string): string[] => {
+  if (!image_url) return [];
+  try {
+    const paths: string[] = JSON.parse(image_url);
+    return paths.map((p) => (p.startsWith('http') ? p : `${SERVER_URL}${p}`));
+  } catch {
+    return [];
+  }
+};
 
 const toPortfolioEntry = (item: PortfolioItem): PortfolioEntry => ({
   id: String(item.id),
@@ -11,7 +25,7 @@ const toPortfolioEntry = (item: PortfolioItem): PortfolioEntry => ({
   description: item.description ?? '',
   category: item.category ?? '',
   date: item.date ?? item.createdAt.split('T')[0],
-  image: item.image_url || undefined,
+  images: parseImageUrls(item.image_url),
   reactions: {
     heart:   item.Reactions?.filter(r => r.reaction === 'heart').length ?? 0,
     like:    item.Reactions?.filter(r => r.reaction === 'like').length ?? 0,
@@ -60,8 +74,7 @@ export const useExpertoPerfil = () => {
   const portfolio: PortfolioEntry[] = rawPortfolio.map(toPortfolioEntry);
 
   const addItemMutation = useMutation({
-    mutationFn: (data: { title: string; description?: string; category?: string; image_url?: string; date?: string }) =>
-      portfolioService.create(data),
+    mutationFn: (data: CreatePortfolioData) => portfolioService.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['portfolio', user?.id] });
     },
@@ -126,8 +139,8 @@ export const useExpertoPerfil = () => {
   );
 
   const addPortfolioItem = useCallback(
-    (data: { title: string; description?: string; category?: string; image?: string; image_url?: string; date?: string }) => {
-      addItemMutation.mutate({ ...data, image_url: data.image_url ?? data.image });
+    (data: CreatePortfolioData) => {
+      addItemMutation.mutate(data);
     },
     [addItemMutation],
   );
