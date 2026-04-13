@@ -1,140 +1,68 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
 import { ChatDialog } from '@/components/ChatDialog';
 import ReportButton from '@/components/common/ReportButton';
+import { useMensajes } from '@/hooks/useMensajes';
 import { Message } from '@/types';
-import { expertos } from '@/lib/mock-data';
-
-interface ExpertoMessageInfo {
-  id: string;
-  nombres: string;
-  apellidos: string;
-  unreadCount: number;
-  lastMessageSnippet: string;
-}
 
 const MensajesDirectos = () => {
+  const [selectedContactId, setSelectedContactId] = useState<string | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatParticipantName, setChatParticipantName] = useState('');
-  const [chatMessages, setChatMessages] = useState<Message[]>([]);
-  const [selectedExpertoId, setSelectedExpertoId] = useState<string | null>(null);
 
-  // Simulación de mensajes no leídos y leídos
-  const [allExpertosMessages, setAllExpertosMessages] = useState<{[key: string]: Message[]}>({});
+  const { conversations, isLoadingConversations, messages, sendMessage, markAsRead } =
+    useMensajes(selectedContactId ?? undefined);
 
-  useEffect(() => {
-    const mockMessages = {
-      'experto1': [
-        { id: 'm1_1', sender: "other" as const, text: 'Hola, ¿cómo estás? Tengo una pregunta sobre el trabajo.', timestamp: new Date(Date.now() - 3600000).toISOString(), read: false },
-        { id: 'm1_2', sender: "me" as const, text: 'Estoy bien, dime.', timestamp: new Date(Date.now() - 1800000).toISOString(), read: true },
-        { id: 'm1_3', sender: "other" as const, text: 'Necesito un presupuesto para la instalación de un termo.', timestamp: new Date(Date.now() - 60000).toISOString(), read: false },
-      ],
-      'experto2': [
-        { id: 'm2_1', sender: "other" as const, text: 'Confirmado para el martes.', timestamp: new Date(Date.now() - 86400000).toISOString(), read: true },
-        { id: 'm2_2', sender: "me" as const, text: 'Perfecto, nos vemos.', timestamp: new Date(Date.now() - 86300000).toISOString(), read: true },
-      ],
-      'experto3': [
-        { id: 'm3_1', sender: "other" as const, text: '¿Podrías enviarme las fotos del trabajo terminado?', timestamp: new Date(Date.now() - 120000).toISOString(), read: false },
-      ],
-      'experto4': [
-        { id: 'm4_1', sender: "me" as const, text: 'Gracias por tu ayuda.', timestamp: new Date(Date.now() - 259200000).toISOString(), read: true },
-      ],
-    };
-    setAllExpertosMessages(mockMessages);
-  }, []);
-
-  const getExpertoMessageInfo = (): ExpertoMessageInfo[] => {
-    return expertos.map(experto => {
-      const messages = allExpertosMessages[experto.id] || [];
-      const unreadMessages = messages.filter(msg => !msg.read && msg.sender === 'other');
-      const lastMessage = messages[messages.length - 1];
-
-      return {
-        id: experto.id,
-        nombres: experto.nombres,
-        apellidos: experto.apellidos,
-        unreadCount: unreadMessages.length,
-        lastMessageSnippet: lastMessage ? lastMessage.text : 'No hay mensajes',
-      };
-    });
-  };
-
-  const handleOpenChat = (expertoId: string, expertoName: string) => {
-    const messages = allExpertosMessages[expertoId] || [];
-    setChatMessages(messages.map(msg => ({ ...msg, read: true })));
-    setChatParticipantName(expertoName);
-    setSelectedExpertoId(expertoId);
+  const handleOpenChat = (contactId: string, contactName: string) => {
+    setSelectedContactId(contactId);
+    setChatParticipantName(contactName);
     setIsChatOpen(true);
-
-    setAllExpertosMessages(prev => ({
-      ...prev,
-      [expertoId]: messages.map(msg => ({ ...msg, read: true }))
-    }));
+    markAsRead(contactId);
   };
 
-  const handleSendMessage = (message: string) => {
-    console.log(`Enviando mensaje a ${chatParticipantName}: ${message}`);
-    if (selectedExpertoId) {
-      setAllExpertosMessages(prev => {
-        const newMessages = [
-          ...(prev[selectedExpertoId] || []),
-          {
-            id: Date.now().toString(),
-            sender: "me" as const,
-            text: message,
-            timestamp: new Date().toISOString(),
-            read: true,
-          },
-        ];
-        return { ...prev, [selectedExpertoId]: newMessages };
-      });
-      setChatMessages(prev => [
-        ...prev,
-        {
-          id: Date.now().toString(),
-          sender: "me" as const,
-          text: message,
-          timestamp: new Date().toISOString(),
-          read: true,
-        },
-      ]);
-    }
+  const handleSendMessage = (text: string) => {
+    if (!selectedContactId) return;
+    sendMessage(selectedContactId, text);
   };
 
-  const expertosInfo = getExpertoMessageInfo();
-  const expertosWithUnread = expertosInfo.filter(m => m.unreadCount > 0);
-  const expertosWithRead = expertosInfo.filter(m => m.unreadCount === 0);
+  const chatMessages: Message[] = messages.map(m => ({
+    id: String(m.id),
+    sender: m.sender,
+    text: m.text,
+    timestamp: m.timestamp,
+    read: m.is_read,
+  }));
+
+  const unread = conversations.filter(c => c.unreadCount > 0);
+  const read = conversations.filter(c => c.unreadCount === 0);
+
+  if (isLoadingConversations) {
+    return <div className="container mx-auto px-4 py-8 text-muted-foreground">Cargando mensajes...</div>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-foreground mb-6">Mensajes Directos</h1>
 
-      {expertosWithUnread.length > 0 && (
+      {unread.length > 0 && (
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="flex items-center"><MessageSquare className="mr-2" /> Mensajes No Leídos</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {expertosWithUnread.map(experto => (
-                <div key={experto.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
+              {unread.map(conv => (
+                <div key={conv.contact.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
                   <div className="flex-1">
-                    <p className="font-semibold">{experto.nombres} {experto.apellidos}</p>
-                    <p className="text-sm text-muted-foreground">{experto.lastMessageSnippet}</p>
+                    <p className="font-semibold">{conv.contact.nombres} {conv.contact.apellidos}</p>
+                    <p className="text-sm text-muted-foreground">{conv.lastMessage?.content ?? 'No hay mensajes'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <ReportButton
-                      reportType="user"
-                      reportedUserId={experto.id}
-                      reportedUserName={`${experto.nombres} ${experto.apellidos}`}
-                      variant="ghost"
-                      size="sm"
-                    />
-                    <Button onClick={() => handleOpenChat(experto.id, `${experto.nombres} ${experto.apellidos}`)}>
-                      Ver ({experto.unreadCount})
+                    <ReportButton reportType="user" reportedUserId={conv.contact.id} reportedUserName={`${conv.contact.nombres} ${conv.contact.apellidos}`} variant="ghost" size="sm" />
+                    <Button onClick={() => handleOpenChat(conv.contact.id, `${conv.contact.nombres} ${conv.contact.apellidos}`)}>
+                      Ver ({conv.unreadCount})
                     </Button>
                   </div>
                 </div>
@@ -150,29 +78,23 @@ const MensajesDirectos = () => {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {expertosWithRead.length > 0 ? (
-              expertosWithRead.map(experto => (
-                <div key={experto.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
+            {read.length > 0 ? (
+              read.map(conv => (
+                <div key={conv.contact.id} className="flex items-center justify-between p-3 border rounded-lg shadow-sm">
                   <div className="flex-1">
-                    <p className="font-semibold">{experto.nombres} {experto.apellidos}</p>
-                    <p className="text-sm text-muted-foreground">{experto.lastMessageSnippet}</p>
+                    <p className="font-semibold">{conv.contact.nombres} {conv.contact.apellidos}</p>
+                    <p className="text-sm text-muted-foreground">{conv.lastMessage?.content ?? 'No hay mensajes'}</p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <ReportButton
-                      reportType="user"
-                      reportedUserId={experto.id}
-                      reportedUserName={`${experto.nombres} ${experto.apellidos}`}
-                      variant="ghost"
-                      size="sm"
-                    />
-                    <Button variant="outline" onClick={() => handleOpenChat(experto.id, `${experto.nombres} ${experto.apellidos}`)}>
+                    <ReportButton reportType="user" reportedUserId={conv.contact.id} reportedUserName={`${conv.contact.nombres} ${conv.contact.apellidos}`} variant="ghost" size="sm" />
+                    <Button variant="outline" onClick={() => handleOpenChat(conv.contact.id, `${conv.contact.nombres} ${conv.contact.apellidos}`)}>
                       Abrir Chat
                     </Button>
                   </div>
                 </div>
               ))
             ) : (
-              <p className="text-muted-foreground">No hay conversaciones antiguas.</p>
+              <p className="text-muted-foreground">No hay conversaciones.</p>
             )}
           </div>
         </CardContent>
@@ -182,7 +104,7 @@ const MensajesDirectos = () => {
         isOpen={isChatOpen}
         onClose={() => setIsChatOpen(false)}
         participantName={chatParticipantName}
-        participantId={selectedExpertoId || undefined}
+        participantId={selectedContactId ?? undefined}
         messages={chatMessages}
         onSendMessage={handleSendMessage}
       />

@@ -1,8 +1,11 @@
-const { Op } = require('sequelize');
+const { Op, fn, col, literal } = require('sequelize');
+const sequelize = require('../config/database');
 const ExpertoProfile = require('../models/ExpertoProfile');
 const Subcategory = require('../models/Subcategory');
 const Category = require('../models/Category');
 const User = require('../models/User');
+const Job = require('../models/Job');
+const { AppError } = require('../middleware/errorHandler');
 
 const STOPWORDS = new Set(['para', 'con', 'por', 'del', 'las', 'los', 'una', 'uno', 'unos', 'unas', 'que']);
 
@@ -99,6 +102,134 @@ exports.getExperts = async (req, res, next) => {
     });
 
     res.json(experts);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getFeaturedExperts = async (req, res, next) => {
+  try {
+    const experts = await ExpertoProfile.findAll({
+      include: [
+        { model: User, attributes: ['id', 'email'] },
+        {
+          model: Subcategory,
+          as: 'Subcategories',
+          required: false,
+          include: { model: Category, as: 'Category' },
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            literal(`(
+              SELECT AVG(j.calificacion)
+              FROM jobs j
+              WHERE j.expertId = ExpertoProfile.userId
+                AND j.calificacion IS NOT NULL
+            )`),
+            'avg_calificacion',
+          ],
+          [
+            literal(`(
+              SELECT COUNT(*)
+              FROM jobs j
+              WHERE j.expertId = ExpertoProfile.userId
+                AND j.estado = 'completado'
+            )`),
+            'completed_jobs',
+          ],
+        ],
+      },
+      order: [[literal('avg_calificacion'), 'DESC']],
+      limit: 3,
+    });
+
+    res.json(experts);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getExpertById = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const expert = await ExpertoProfile.findOne({
+      where: { userId },
+      include: [
+        { model: User, attributes: ['id', 'email'] },
+        {
+          model: Subcategory,
+          as: 'Subcategories',
+          required: false,
+          include: { model: Category, as: 'Category' },
+        },
+      ],
+      attributes: {
+        include: [
+          [
+            literal(`(
+              SELECT AVG(j.calificacion)
+              FROM jobs j
+              WHERE j.expertId = ExpertoProfile.userId
+                AND j.calificacion IS NOT NULL
+            )`),
+            'avg_calificacion',
+          ],
+          [
+            literal(`(
+              SELECT COUNT(*)
+              FROM jobs j
+              WHERE j.expertId = ExpertoProfile.userId
+                AND j.estado = 'completado'
+            )`),
+            'completed_jobs',
+          ],
+        ],
+      },
+    });
+
+    if (!expert) return next(new AppError('Experto no encontrado', 404));
+
+    res.json(expert);
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateExpertProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { nombres, apellidos, telefono, bio, region, provincia, comuna } = req.body;
+
+    const profile = await ExpertoProfile.findOne({ where: { userId } });
+    if (!profile) return next(new AppError('Perfil de experto no encontrado', 404));
+
+    const userUpdates = {};
+    if (nombres !== undefined) userUpdates.nombres = nombres;
+    if (apellidos !== undefined) userUpdates.apellidos = apellidos;
+    if (telefono !== undefined) userUpdates.telefono = telefono;
+
+    const profileUpdates = {};
+    if (bio !== undefined) profileUpdates.bio = bio;
+    if (region !== undefined) profileUpdates.region = region;
+    if (provincia !== undefined) profileUpdates.provincia = provincia;
+    if (comuna !== undefined) profileUpdates.comuna = comuna;
+
+    if (Object.keys(userUpdates).length > 0) {
+      await User.update(userUpdates, { where: { id: userId } });
+    }
+    if (Object.keys(profileUpdates).length > 0) {
+      await profile.update(profileUpdates);
+    }
+
+    const updated = await ExpertoProfile.findOne({
+      where: { userId },
+      include: [{ model: User, attributes: ['id', 'email', 'nombres', 'apellidos', 'telefono'] }],
+    });
+
+    res.json(updated);
   } catch (err) {
     next(err);
   }

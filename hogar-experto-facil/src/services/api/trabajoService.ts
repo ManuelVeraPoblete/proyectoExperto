@@ -38,11 +38,14 @@ export const trabajoService = {
   getById: (id: string): Promise<Trabajo> =>
     apiClient.get<Trabajo>(`/jobs/${id}`),
 
-  getMisTrabajos: (params: { expertoId?: string; clientId?: string; status?: string }): Promise<Trabajo[]> => {
+  getMisTrabajos: (params: { expertoId?: string; clientId?: string; estado?: string }): Promise<Trabajo[]> => {
     const searchParams = new URLSearchParams();
-    if (params.expertoId) searchParams.append('expertoId', params.expertoId);
+    if (params.expertoId) searchParams.append('expertId',  params.expertoId);
     if (params.clientId)  searchParams.append('clientId',  params.clientId);
-    if (params.status)    searchParams.append('status',    params.status);
+    if (params.estado)    searchParams.append('estado',    params.estado);
     return apiClient.get<Trabajo[]>(`/jobs?${searchParams.toString()}`);
   },
+
+  closeJob: (id: string, data: { calificacion: number; resena?: string }): Promise<{ message: string; job: Trabajo }> =>
+    apiClient.patch<{ message: string; job: Trabajo }>(`/jobs/${id}/close`, data),
 };

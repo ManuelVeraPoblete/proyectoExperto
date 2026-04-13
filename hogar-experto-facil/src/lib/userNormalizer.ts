@@ -26,6 +26,8 @@ export interface NormalizedUser {
   // Campos exclusivos de admin
   adminLevel?: string;
   lastAccess?: string;
+  // JWT token (set at login, used by apiClient)
+  token?: string;
 }
 
 type RawData = Record<string, unknown>;
@@ -75,6 +77,10 @@ export const normalizeUser = (data: unknown): NormalizedUser | null => {
   const rawRole = rawUser.userType ?? rawUser.user_type ?? rawUser.role ?? rawUser.role_id;
   const userType = mapRole(rawRole);
 
+  // Token can live at top-level of raw data (login response) or inside the user object
+  const rawData = data as RawData;
+  const token = coerceString(rawData.token ?? rawUser.token) || undefined;
+
   return {
     ...(rawUser as Omit<NormalizedUser, 'nombres' | 'apellidos' | 'userType'>),
     id: coerceString(rawUser.id),
@@ -88,5 +94,6 @@ export const normalizeUser = (data: unknown): NormalizedUser | null => {
     provincia: coerceString(profile.provincia ?? rawUser.provincia) || undefined,
     comuna:    coerceString(profile.comuna    ?? rawUser.comuna)    || undefined,
     avatar:    coerceString(profile.avatar_url ?? profile.avatar ?? rawUser.avatar) || undefined,
+    token,
   };
 };

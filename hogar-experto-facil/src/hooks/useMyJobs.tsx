@@ -1,73 +1,68 @@
+import { useMemo } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@/contexts/AuthContext';
+import { trabajoService } from '@/services/api/trabajoService';
+import { Trabajo } from '@/types';
 
-import { useState } from 'react';
-import { clients } from '@/lib/mock-data';
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'en_proceso': return 'text-purple-600 bg-purple-50';
+    case 'completado': return 'text-green-600 bg-green-50';
+    case 'activo': return 'text-blue-600 bg-blue-50';
+    default: return 'text-gray-600 bg-gray-50';
+  }
+};
+
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'en_proceso': return 'En Progreso';
+    case 'completado': return 'Completado';
+    case 'activo': return 'Activo';
+    default: return status;
+  }
+};
 
 const useMyJobs = () => {
-  const activeJobs = [
-    {
-      id: 1,
-      title: 'Reparación grifo cocina',
-      client: 'María González',
+  const { user } = useAuth();
+
+  const { data: rawJobs = [], isLoading } = useQuery({
+    queryKey: ['my-jobs', user?.id],
+    queryFn: () => trabajoService.getMisTrabajos({ expertoId: user?.id }),
+    enabled: !!user?.id && user?.userType === 'experto',
+  });
+
+  const activeJobs = useMemo(
+    () => rawJobs.filter((j: Trabajo) => j.estado === 'en_proceso').map((j: Trabajo) => ({
+      id: j.id,
+      title: j.titulo,
+      client: j.cliente_nombres ? `${j.cliente_nombres} ${j.cliente_apellidos ?? ''}`.trim() : 'Cliente',
       status: 'in-progress',
-      date: '20 Jun 2024',
-      payment: '$45.000',
-      clientId: 'c1'
-    },
-    {
-      id: 2,
-      title: 'Instalación calefont',
-      client: 'Carlos Ramírez',
-      status: 'in-progress',
-      date: '18 Jun 2024',
-      payment: '$120.000',
-      clientId: 'c2'
-    }
-  ];
+      date: new Date(j.createdAt ?? j.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
+      payment: j.presupuesto ? `$${Number(j.presupuesto).toLocaleString('es-CL')}` : 'A convenir',
+      clientId: j.clientId,
+    })),
+    [rawJobs],
+  );
 
-  const completedJobs = [
-    {
-      id: 3,
-      title: 'Cambio de enchufe',
-      client: 'Laura Fernández',
+  const completedJobs = useMemo(
+    () => rawJobs.filter((j: Trabajo) => j.estado === 'completado').map((j: Trabajo) => ({
+      id: j.id,
+      title: j.titulo,
+      client: j.cliente_nombres ? `${j.cliente_nombres} ${j.cliente_apellidos ?? ''}`.trim() : 'Cliente',
       status: 'completed',
-      date: '15 Jun 2024',
-      payment: '$25.000',
-      rating: 5,
-      comment: 'Muy profesional y rápido. Excelente trabajo.',
-      clientId: 'c1'
-    },
-    {
-      id: 4,
-      title: 'Pintura de habitación',
-      client: 'Pedro Soto',
-      status: 'completed',
-      date: '10 Jun 2024',
-      payment: '$90.000',
-      rating: 4,
-      comment: 'Buen trabajo, aunque tardó un poco más de lo esperado.',
-      clientId: 'c2'
-    }
-  ];
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'in-progress': return 'text-purple-600 bg-purple-50';
-      case 'completed': return 'text-green-600 bg-green-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'in-progress': return 'En Progreso';
-      case 'completed': return 'Completado';
-      default: return 'Desconocido';
-    }
-  };
+      date: new Date(j.createdAt ?? j.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
+      payment: j.presupuesto ? `$${Number(j.presupuesto).toLocaleString('es-CL')}` : 'A convenir',
+      rating: j.calificacion ?? null,
+      comment: j.resena ?? '',
+      clientId: j.clientId,
+    })),
+    [rawJobs],
+  );
 
   return {
     activeJobs,
     completedJobs,
+    isLoading,
     getStatusColor,
     getStatusText,
   };

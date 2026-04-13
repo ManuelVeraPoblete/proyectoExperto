@@ -17,6 +17,11 @@ const Subcategory = require('./models/Subcategory');
 const Job = require('./models/Job');
 const JobApplication = require('./models/JobApplication');
 const JobPhoto = require('./models/JobPhoto');
+const PortfolioItem = require('./models/PortfolioItem');
+const PortfolioReaction = require('./models/PortfolioReaction');
+const PortfolioReview = require('./models/PortfolioReview');
+const Message = require('./models/Message');
+const Report = require('./models/Report');
 
 // Rutas
 const authRoutes = require('./routes/authRoutes');
@@ -25,6 +30,9 @@ const categoryRoutes = require('./routes/categoryRoutes');
 const expertRoutes = require('./routes/expertRoutes');
 const userRoutes = require('./routes/userRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
+const portfolioRoutes = require('./routes/portfolioRoutes');
+const messageRoutes = require('./routes/messageRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 const app = express();
 
@@ -105,6 +113,30 @@ Subcategory.belongsToMany(ExpertoProfile, {
 
 Category.hasMany(Subcategory, { foreignKey: 'category_id', as: 'Subcategories' });
 Subcategory.belongsTo(Category, { foreignKey: 'category_id', as: 'Category' });
+
+// Job ↔ Experto ejecutor
+User.hasMany(Job, { foreignKey: 'expertId', as: 'JobsEjecutados' });
+Job.belongsTo(User, { foreignKey: 'expertId', as: 'Experto' });
+
+// Portfolio
+User.hasMany(PortfolioItem, { foreignKey: 'expertoId', as: 'Portfolio', onDelete: 'CASCADE' });
+PortfolioItem.belongsTo(User, { foreignKey: 'expertoId', as: 'ExpertoUser' });
+PortfolioItem.hasMany(PortfolioReaction, { foreignKey: 'portfolioItemId', as: 'Reactions', onDelete: 'CASCADE' });
+PortfolioReaction.belongsTo(PortfolioItem, { foreignKey: 'portfolioItemId' });
+PortfolioReaction.belongsTo(User, { foreignKey: 'userId', as: 'Reactor' });
+PortfolioItem.hasMany(PortfolioReview, { foreignKey: 'portfolioItemId', as: 'Reviews', onDelete: 'CASCADE' });
+PortfolioReview.belongsTo(PortfolioItem, { foreignKey: 'portfolioItemId' });
+PortfolioReview.belongsTo(User, { foreignKey: 'userId', as: 'Reviewer' });
+
+// Messages
+User.hasMany(Message, { foreignKey: 'senderId', as: 'MensajesEnviados', onDelete: 'CASCADE' });
+User.hasMany(Message, { foreignKey: 'receiverId', as: 'MensajesRecibidos', onDelete: 'CASCADE' });
+Message.belongsTo(User, { foreignKey: 'senderId', as: 'Sender' });
+Message.belongsTo(User, { foreignKey: 'receiverId', as: 'Receiver' });
+
+// Reports
+Report.belongsTo(User, { foreignKey: 'reporterId', as: 'Reporter' });
+Report.belongsTo(User, { foreignKey: 'reportedUserId', as: 'ReportedUser' });
 
 // --- RUTAS ---
 app.use('/api/auth', authRoutes);

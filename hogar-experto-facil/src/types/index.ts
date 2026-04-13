@@ -41,7 +41,16 @@ export interface Trabajo {
   comuna: string;
   presupuesto: number;
   fechaCreacion: string;
+  createdAt?: string;
   estado: string;
   cliente: Client;
   images?: string[];
+  // Campos de cierre
+  expertId?: string;
+  calificacion?: number;
+  resena?: string;
+  Experto?: { id: string; nombres: string; apellidos: string } | null;
+  // Campos aplanados por el backend
+  cliente_nombres?: string;
+  cliente_apellidos?: string;
 }

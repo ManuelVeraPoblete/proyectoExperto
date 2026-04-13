@@ -1,10 +1,13 @@
 
 import React, { useState } from 'react';
+import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Flag } from 'lucide-react';
 import ReportModal from './ReportModal';
 import { ReportFormData } from '@/types/report';
 import { useAuth } from '@/contexts/AuthContext';
+import { reporteService } from '@/services/api/reporteService';
+import { useToast } from '@/hooks/use-toast';
 
 interface ReportButtonProps {
   reportType: 'review' | 'user' | 'post' | 'language';
@@ -28,19 +31,29 @@ const ReportButton: React.FC<ReportButtonProps> = ({
   showText = false
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { toast } = useToast();
+
+  const reportMutation = useMutation({
+    mutationFn: (data: ReportFormData) =>
+      reporteService.create({
+        type: data.type,
+        reason: data.reason,
+        description: data.description,
+        reportedUserId: data.reportedUserId,
+        reportedContent: data.reportedContent,
+      }),
+    onSuccess: () => {
+      toast({ title: 'Reporte enviado', description: 'Tu reporte fue recibido y será revisado.' });
+      setIsModalOpen(false);
+    },
+    onError: () => {
+      toast({ title: 'Error', description: 'No se pudo enviar el reporte.', variant: 'destructive' });
+    },
+  });
 
   const handleReport = (data: ReportFormData) => {
-    // Aquí normalmente enviarías los datos al backend
-    console.log('Reporte enviado:', {
-      ...data,
-      reporterId: user?.id,
-      reporter: `${user?.nombres} ${user?.apellidos}`,
-      timestamp: new Date().toISOString()
-    });
-    
-    // Simular envío al sistema de administración
-    // En una implementación real, esto se enviaría a una API
+    reportMutation.mutate(data);
   };
 
   if (!isAuthenticated) {

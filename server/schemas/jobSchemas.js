@@ -40,4 +40,9 @@ const updateApplicationSchema = z.object({
   }),
 });
 
-module.exports = { createJobSchema, applyJobSchema, updateApplicationSchema };
+const closeJobSchema = z.object({
+  calificacion: z.number().min(1).max(5),
+  resena: z.string().max(1000).optional(),
+});
+
+module.exports = { createJobSchema, applyJobSchema, updateApplicationSchema, closeJobSchema };

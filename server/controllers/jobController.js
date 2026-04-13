@@ -91,7 +91,7 @@ exports.createJob = async (req, res, next) => {
  */
 exports.getJobs = async (req, res, next) => {
   try {
-    const { descripcion, categoryId, region, provincia, comuna } = req.query;
+    const { descripcion, categoryId, region, provincia, comuna, clientId, expertId, estado } = req.query;
 
     const whereClause = {};
 
@@ -104,6 +104,9 @@ exports.getJobs = async (req, res, next) => {
     if (region && region !== 'Todas') whereClause.region = region;
     if (provincia && provincia !== 'Todas') whereClause.provincia = provincia;
     if (comuna && comuna !== 'Todas') whereClause.comuna = comuna;
+    if (clientId) whereClause.clientId = clientId;
+    if (expertId) whereClause.expertId = expertId;
+    if (estado) whereClause.estado = estado;
 
     const jobs = await Job.findAll({
       where: whereClause,
@@ -112,6 +115,7 @@ exports.getJobs = async (req, res, next) => {
         { model: Subcategory, as: 'Subcategory' },
         { model: Category, as: 'Category' },
         { model: User, as: 'Cliente', attributes: ['id', 'nombres', 'apellidos'] },
+        { model: User, as: 'Experto', attributes: ['id', 'nombres', 'apellidos'] },
       ],
       order: [['createdAt', 'DESC']],
     });
@@ -126,6 +130,26 @@ exports.getJobs = async (req, res, next) => {
     });
 
     res.json(flattenedJobs);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.closeJob = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const clientId = req.user.id;
+    const { calificacion, resena } = req.body;
+
+    const job = await Job.findByPk(id);
+    if (!job) return next(new AppError('Trabajo no encontrado', 404));
+    if (job.clientId !== clientId) return next(new AppError('No tienes permiso para cerrar este trabajo', 403));
+    if (job.estado !== 'en_proceso') return next(new AppError('Solo se pueden cerrar trabajos en proceso', 400));
+
+    await job.update({ estado: 'completado', calificacion, resena: resena || null });
+
+    logger.info(`Trabajo cerrado: ${id} por cliente ${clientId}, calificacion ${calificacion}`);
+    res.json({ message: 'Trabajo marcado como completado', job });
   } catch (error) {
     next(error);
   }

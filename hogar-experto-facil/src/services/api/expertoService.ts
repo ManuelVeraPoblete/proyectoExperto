@@ -20,6 +20,14 @@ const buildSearchParams = (params: ExpertoBusquedaParams): URLSearchParams => {
   return urlParams;
 };
 
+export interface ExpertoStats {
+  totalJobs: number;
+  completedJobs: number;
+  activeJobs: number;
+  avgCalificacion: number | null;
+  pendingJobs?: number;
+}
+
 // ─── Servicio ─────────────────────────────────────────────────────────────────
 export const expertoService = {
   search: (params: ExpertoBusquedaParams): Promise<ApiExperto[]> => {
@@ -27,7 +35,15 @@ export const expertoService = {
     return apiClient.get<ApiExperto[]>(`/experts?${searchParams.toString()}`);
   },
 
-  getReviews: (expertoId: string): Promise<any[]> => {
-    return apiClient.get<any[]>(`/experts/${expertoId}/reviews`);
-  },
+  getFeatured: (): Promise<ApiExperto[]> =>
+    apiClient.get<ApiExperto[]>('/experts/featured'),
+
+  getById: (userId: string): Promise<ApiExperto> =>
+    apiClient.get<ApiExperto>(`/experts/${userId}`),
+
+  updateProfile: (data: Record<string, unknown>): Promise<ApiExperto> =>
+    apiClient.patch<ApiExperto>('/experts/profile', data),
+
+  getStats: (userId: string): Promise<ExpertoStats> =>
+    apiClient.get<ExpertoStats>(`/users/${userId}/stats`),
 };

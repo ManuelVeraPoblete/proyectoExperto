@@ -8,6 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Mail, Lock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
 import { API_BASE_URL } from '@/lib/api-config';
 
 interface AuthDialogProps {
@@ -16,59 +17,6 @@ interface AuthDialogProps {
   mode: 'login' | 'register';
   onModeChange: (mode: 'login' | 'register') => void;
 }
-
-// Usuarios de prueba para desarrollo local rápido
-const testUsers = {
-  client: {
-    id: '1',
-    nombres: 'Ana',
-    apellidos: 'García',
-    email: 'cliente@test.com',
-    telefono: '+56 9 1234 5678',
-    userType: 'client' as const,
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-    direccion: 'Calle Falsa 123',
-    region: 'Metropolitana de Santiago',
-    provincia: 'Santiago',
-    comuna: 'Las Condes',
-    jobCount: 12,
-    averageRating: 4.8,
-  },
-  experto: {
-    id: '2',
-    nombres: 'Carlos',
-    apellidos: 'Rodríguez',
-    email: 'experto@test.com',
-    telefono: '+56 9 8765 4321',
-    userType: 'experto' as const,
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop',
-    direccion: 'Av. Principal 456',
-    region: 'Metropolitana de Santiago',
-    provincia: 'Santiago',
-    comuna: 'Providencia',
-    calificacion: 4.9,
-    reviewCount: 45,
-    especialidades: ['Plomería', 'Electricidad'],
-    experience: '15 años de experiencia',
-    hourlyRate: 25000,
-    isVerified: true,
-  },
-  admin: {
-    id: '3',
-    nombres: 'María',
-    apellidos: 'Administradora',
-    email: 'admin@test.com',
-    telefono: '+56 9 1111 1111',
-    userType: 'admin' as const,
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop',
-    direccion: 'Oficina Central 789',
-    region: 'Metropolitana de Santiago',
-    provincia: 'Santiago',
-    comuna: 'Santiago',
-    adminLevel: 'Super Administrador',
-    lastAccess: 'Hoy a las 10:30 AM',
-  },
-};
 
 const AuthDialog = ({ isOpen, onClose, mode, onModeChange }: AuthDialogProps) => {
   const { login } = useAuth();
@@ -124,16 +72,16 @@ const AuthDialog = ({ isOpen, onClose, mode, onModeChange }: AuthDialogProps) =>
         throw new Error(data.message || 'Credenciales incorrectas');
       }
 
-      // Asegurarnos de que el usuario tenga un userType válido (mapeando user_type de la BD)
+      // Pass full response so normalizeUser can extract both user fields and the JWT token
       const rawData = data.user || data;
       const userData = {
         ...rawData,
-        userType: rawData.userType || rawData.user_type || 'client' // Fallback seguro a client
+        userType: rawData.userType || rawData.user_type || 'client',
+        token: data.token,
       };
-      
-      console.log("👤 Datos crudos de API:", rawData);
-      console.log("🎯 userType normalizado:", userData.userType);
-      
+
+      logger.debug('Login exitoso, userType:', userData.userType);
+
       handleSuccessfulLogin(userData);
       
     } catch (error: any) {
@@ -146,11 +94,6 @@ const AuthDialog = ({ isOpen, onClose, mode, onModeChange }: AuthDialogProps) =>
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleTestLogin = (userType: 'client' | 'experto' | 'admin') => {
-    const user = testUsers[userType];
-    handleSuccessfulLogin(user);
   };
 
   const resetForm = () => {

@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Star, MessageSquare, User } from 'lucide-react';
-import { clients } from '@/lib/mock-data';
 import useMyJobs from '@/hooks/useMyJobs';
 import MyJobItem from '@/components/experto/MyJobItem';
 import CompletedJobItem from '@/components/experto/CompletedJobItem';
@@ -22,11 +21,8 @@ const MisTrabajosExperto = () => {
   const [selectedChatClientId, setSelectedChatClientId] = useState<string | null>(null);
 
   const handleContactClient = (clientId: string) => {
-    const client = clients.find(c => c.id === clientId);
-    if (client) {
-      setSelectedClient(client);
-      setIsClientModalOpen(true);
-    }
+    setSelectedClient({ id: clientId } as any);
+    setIsClientModalOpen(true);
   };
 
   const handleSendMessage = (message: string) => {
@@ -45,11 +41,8 @@ const MisTrabajosExperto = () => {
   };
 
   const handleViewClientProfile = (clientId: string) => {
-    const client = clients.find(c => c.id === clientId);
-    if (client) {
-      setSelectedClient(client);
-      setIsClientModalOpen(true);
-    }
+    setSelectedClient({ id: clientId } as any);
+    setIsClientModalOpen(true);
   };
 
   const handleCloseClientModal = () => {

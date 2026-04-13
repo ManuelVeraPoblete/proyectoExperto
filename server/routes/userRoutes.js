@@ -32,5 +32,6 @@ const { authenticate } = require('../middleware/auth');
  *         description: Avatar actualizado
  */
 router.post('/:userId/avatar', authenticate, upload.single('avatar'), userController.uploadAvatar);
+router.get('/:id/stats', authenticate, userController.getUserStats);
 
 module.exports = router;

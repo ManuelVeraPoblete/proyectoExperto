@@ -1,0 +1,17 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const PortfolioItem = sequelize.define('PortfolioItem', {
+  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+  expertoId: { type: DataTypes.CHAR(36), allowNull: false },
+  title: { type: DataTypes.STRING(200), allowNull: false },
+  description: { type: DataTypes.TEXT, allowNull: true },
+  category: { type: DataTypes.STRING(100), allowNull: true },
+  image_url: { type: DataTypes.STRING(500), allowNull: true },
+  date: { type: DataTypes.DATEONLY, allowNull: true },
+}, {
+  tableName: 'portfolio_items',
+  timestamps: true,
+});
+
+module.exports = PortfolioItem;

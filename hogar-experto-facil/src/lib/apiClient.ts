@@ -1,5 +1,6 @@
 import { API_BASE_URL } from './api-config';
 import { logger } from './logger';
+import { storageService } from '@/services/storageService';
 
 // ─── Error tipado ────────────────────────────────────────────────────────────
 export class ApiError extends Error {
@@ -29,10 +30,14 @@ const request = async <T>(
 ): Promise<T> => {
   const url = `${API_BASE_URL}${endpoint}`;
 
+  const token = storageService.getUser()?.token;
+  const authHeaders: Record<string, string> = token ? { Authorization: `Bearer ${token}` } : {};
+
   const response = await fetch(url, {
     method,
     headers: {
       'Content-Type': 'application/json',
+      ...authHeaders,
       ...options.headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,

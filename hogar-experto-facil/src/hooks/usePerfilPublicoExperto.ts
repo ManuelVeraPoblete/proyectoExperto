@@ -1,9 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
-import { expertos, portfolioItems } from '@/lib/mock-data';
-import { PortfolioEntry, PortfolioReactions, PortfolioReview } from '@/types/experto';
-
-type ReactionKey = keyof PortfolioReactions;
+import { expertoService } from '@/services/api/expertoService';
+import { portfolioService, PortfolioItem } from '@/services/api/portfolioService';
+import { PortfolioEntry } from '@/types/experto';
+import { mapApiExpertoToCardData, ApiExperto } from '@/lib/expertoMapper';
 
 export interface PerfilPublicoData {
   id: string;
@@ -22,85 +23,107 @@ export interface PerfilPublicoData {
   telefono: string;
 }
 
-const buildPerfilFromMock = (id: string): PerfilPublicoData | null => {
-  const raw = expertos.find((e) => e.id === id);
-  if (!raw) return null;
-  return {
-    id: raw.id,
-    nombres: raw.nombres,
-    apellidos: raw.apellidos,
-    avatar: raw.avatar,
-    especialidades: raw.especialidades,
-    calificacion: raw.rating,
-    reviewCount: raw.reviews,
-    comuna: raw.comuna,
-    region: raw.region,
-    descripcion: raw.descripcion,
-    isVerified: true,
-    experience: '10 años',
-    hourlyRate: 15000,
-    telefono: '+56 9 1234 5678',
-  };
-};
+const toPortfolioEntry = (item: PortfolioItem): PortfolioEntry => ({
+  id: String(item.id),
+  title: item.title,
+  description: item.description ?? '',
+  category: item.category ?? '',
+  date: item.date ?? item.createdAt.split('T')[0],
+  image: item.image_url || undefined,
+  reactions: {
+    heart:   item.Reactions?.filter(r => r.reaction === 'heart').length ?? 0,
+    like:    item.Reactions?.filter(r => r.reaction === 'like').length ?? 0,
+    clap:    item.Reactions?.filter(r => r.reaction === 'clap').length ?? 0,
+    dislike: item.Reactions?.filter(r => r.reaction === 'dislike').length ?? 0,
+  },
+  reviews: (item.Reviews ?? []).map(r => ({
+    id: String(r.id),
+    user: r.Reviewer ? `${r.Reviewer.nombres} ${r.Reviewer.apellidos}` : 'Usuario',
+    userId: r.userId,
+    comment: r.comment,
+    rating: Number(r.rating),
+    date: r.createdAt.split('T')[0],
+  })),
+});
 
 export const usePerfilPublicoExperto = (expertoId: string) => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const experto = buildPerfilFromMock(expertoId);
+  const { data: rawExperto, isLoading: isLoadingExperto } = useQuery({
+    queryKey: ['experto-publico', expertoId],
+    queryFn: () => expertoService.getById(expertoId),
+    enabled: !!expertoId,
+  });
 
-  const [portfolio, setPortfolio] = useState<PortfolioEntry[]>(() =>
-    portfolioItems.filter((p) => p.expertoId === expertoId) as PortfolioEntry[],
-  );
+  const expertoData: PerfilPublicoData | null = rawExperto
+    ? (() => {
+        const card = mapApiExpertoToCardData(rawExperto as ApiExperto);
+        return {
+          id: card.id,
+          nombres: card.nombres,
+          apellidos: card.apellidos,
+          avatar: card.avatar,
+          especialidades: card.especialidades,
+          calificacion: card.calificacion,
+          reviewCount: card.reviewCount,
+          comuna: card.comuna,
+          region: card.region,
+          descripcion: card.descripcion ?? '',
+          isVerified: card.isVerified,
+          experience: card.experience,
+          hourlyRate: card.hourlyRate,
+          telefono: card.telefono,
+        };
+      })()
+    : null;
 
-  const [myReactions, setMyReactions] = useState<Record<string, ReactionKey | null>>({});
+  const { data: rawPortfolio = [], isLoading: isLoadingPortfolio } = useQuery({
+    queryKey: ['portfolio-publico', expertoId],
+    queryFn: () => portfolioService.getByExpert(expertoId),
+    enabled: !!expertoId,
+  });
+
+  const portfolio: PortfolioEntry[] = rawPortfolio.map(toPortfolioEntry);
+
+  const reactMutation = useMutation({
+    mutationFn: ({ itemId, reaction }: { itemId: number; reaction: string }) =>
+      portfolioService.react(itemId, reaction),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio-publico', expertoId] });
+    },
+  });
+
+  const reviewMutation = useMutation({
+    mutationFn: ({ itemId, comment, rating }: { itemId: number; comment: string; rating: number }) =>
+      portfolioService.addReview(itemId, { comment, rating }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio-publico', expertoId] });
+    },
+  });
 
   const toggleReaction = useCallback(
-    (itemId: string, reaction: ReactionKey) => {
-      setMyReactions((prev) => {
-        const current = prev[itemId] ?? null;
-        return { ...prev, [itemId]: current === reaction ? null : reaction };
-      });
-
-      setPortfolio((prev) =>
-        prev.map((item) => {
-          if (item.id !== itemId) return item;
-          const current = myReactions[itemId] ?? null;
-          const updated = { ...item.reactions };
-          if (current) updated[current] = Math.max(0, updated[current] - 1);
-          if (current !== reaction) updated[reaction] = updated[reaction] + 1;
-          return { ...item, reactions: updated };
-        }),
-      );
+    (itemId: string, reaction: string) => {
+      if (!user) return;
+      reactMutation.mutate({ itemId: Number(itemId), reaction });
     },
-    [myReactions],
+    [user, reactMutation],
   );
 
   const addReview = useCallback(
     (itemId: string, comment: string, rating: number) => {
       if (!user) return;
-      const newReview: PortfolioReview = {
-        id: `rev_${Date.now()}`,
-        user: `${user.nombres} ${user.apellidos}`,
-        userId: user.id,
-        comment,
-        rating,
-        date: new Date().toISOString().split('T')[0],
-      };
-      setPortfolio((prev) =>
-        prev.map((item) =>
-          item.id === itemId
-            ? { ...item, reviews: [...item.reviews, newReview] }
-            : item,
-        ),
-      );
+      reviewMutation.mutate({ itemId: Number(itemId), comment, rating });
     },
-    [user],
+    [user, reviewMutation],
   );
 
   return {
-    experto,
+    experto: expertoData,
+    isLoadingExperto,
     portfolio,
-    myReactions,
+    isLoadingPortfolio,
+    myReactions: {} as Record<string, string | null>,
     toggleReaction,
     addReview,
     currentUserId: user?.id ?? null,

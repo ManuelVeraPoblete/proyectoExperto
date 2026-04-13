@@ -1,9 +1,32 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
-import { portfolioItems as mockPortfolioItems } from '@/lib/mock-data';
-import { PortfolioEntry, PortfolioReactions } from '@/types/experto';
+import { portfolioService, PortfolioItem } from '@/services/api/portfolioService';
+import { expertoService } from '@/services/api/expertoService';
+import { PortfolioEntry } from '@/types/experto';
 
-type ReactionKey = keyof PortfolioReactions;
+const toPortfolioEntry = (item: PortfolioItem): PortfolioEntry => ({
+  id: String(item.id),
+  title: item.title,
+  description: item.description ?? '',
+  category: item.category ?? '',
+  date: item.date ?? item.createdAt.split('T')[0],
+  image: item.image_url || undefined,
+  reactions: {
+    heart:   item.Reactions?.filter(r => r.reaction === 'heart').length ?? 0,
+    like:    item.Reactions?.filter(r => r.reaction === 'like').length ?? 0,
+    clap:    item.Reactions?.filter(r => r.reaction === 'clap').length ?? 0,
+    dislike: item.Reactions?.filter(r => r.reaction === 'dislike').length ?? 0,
+  },
+  reviews: (item.Reviews ?? []).map(r => ({
+    id: String(r.id),
+    user: r.Reviewer ? `${r.Reviewer.nombres} ${r.Reviewer.apellidos}` : 'Usuario',
+    userId: r.userId,
+    comment: r.comment,
+    rating: Number(r.rating),
+    date: r.createdAt.split('T')[0],
+  })),
+});
 
 export interface ExpertoPerfilData {
   id: string;
@@ -23,107 +46,122 @@ export interface ExpertoPerfilData {
   descripcion: string;
 }
 
-// Simula el perfil completo del experto logueado con datos mock
-const buildMockExpertoPerfil = (userId: string): ExpertoPerfilData => ({
-  id: userId,
-  nombres: 'Juan',
-  apellidos: 'Pérez',
-  avatar: 'https://randomuser.me/api/portraits/men/1.jpg',
-  especialidades: ['Plomería', 'Gas'],
-  calificacion: 4.9,
-  reviewCount: 120,
-  comuna: 'Santiago',
-  region: 'Región Metropolitana',
-  experience: '10 años',
-  hourlyRate: 15000,
-  isVerified: true,
-  telefono: '+56 9 1234 5678',
-  direccion: 'Av. Libertador 450, Santiago',
-  descripcion:
-    'Plomero certificado con más de 10 años de experiencia en instalaciones residenciales y comerciales. Especializado en reparación de fugas, instalación de calefont y remodelaciones de baño.',
-});
-
 export const useExpertoPerfil = () => {
   const { user, updateUser } = useAuth();
+  const queryClient = useQueryClient();
 
-  const [portfolio, setPortfolio] = useState<PortfolioEntry[]>(() =>
-    mockPortfolioItems.filter((p) => p.expertoId === 'm1') as PortfolioEntry[],
-  );
+  // ─── Portfolio ────────────────────────────────────────────────────────────────
+  const { data: rawPortfolio = [], isLoading: isLoadingPortfolio } = useQuery({
+    queryKey: ['portfolio', user?.id],
+    queryFn: () => portfolioService.getByExpert(user!.id),
+    enabled: !!user?.id,
+  });
 
-  // Reacciones seleccionadas por el usuario actual (por ítem)
-  const [myReactions, setMyReactions] = useState<Record<string, ReactionKey | null>>({});
+  const portfolio: PortfolioEntry[] = rawPortfolio.map(toPortfolioEntry);
 
+  const addItemMutation = useMutation({
+    mutationFn: (data: { title: string; description?: string; category?: string; image_url?: string; date?: string }) =>
+      portfolioService.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio', user?.id] });
+    },
+  });
+
+  const removeItemMutation = useMutation({
+    mutationFn: (itemId: number) => portfolioService.remove(itemId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio', user?.id] });
+    },
+  });
+
+  const reactMutation = useMutation({
+    mutationFn: ({ itemId, reaction }: { itemId: number; reaction: string }) =>
+      portfolioService.react(itemId, reaction),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['portfolio', user?.id] });
+    },
+  });
+
+  // ─── Profile ──────────────────────────────────────────────────────────────────
+  const saveProfileMutation = useMutation({
+    mutationFn: (data: Record<string, unknown>) => expertoService.updateProfile(data),
+    onSuccess: (updated) => {
+      updateUser({
+        nombres: (updated as any).User?.nombres,
+        apellidos: (updated as any).User?.apellidos,
+        telefono: (updated as any).User?.telefono,
+        region: (updated as any).region,
+        provincia: (updated as any).provincia,
+        comuna: (updated as any).comuna,
+      });
+    },
+  });
+
+  // Build perfil from auth user
   const expertoPerfil: ExpertoPerfilData | null = user
     ? {
-        ...buildMockExpertoPerfil(user.id),
+        id: user.id,
         nombres: user.nombres,
         apellidos: user.apellidos,
         avatar: user.avatar,
+        especialidades: user.especialidades ?? [],
+        calificacion: user.calificacion ?? 0,
+        reviewCount: user.reviewCount ?? 0,
+        comuna: user.comuna ?? '',
+        region: user.region ?? '',
+        experience: '',
+        hourlyRate: user.hourlyRate,
+        isVerified: user.isVerified ?? false,
+        telefono: user.telefono ?? '',
+        direccion: user.direccion ?? '',
+        descripcion: '',
       }
     : null;
 
-  // ─── Reacciones ───────────────────────────────────────────────────────────────
   const toggleReaction = useCallback(
-    (itemId: string, reaction: ReactionKey) => {
-      setMyReactions((prev) => {
-        const current = prev[itemId] ?? null;
-        return { ...prev, [itemId]: current === reaction ? null : reaction };
-      });
-
-      setPortfolio((prev) =>
-        prev.map((item) => {
-          if (item.id !== itemId) return item;
-          const current = myReactions[itemId] ?? null;
-          const updated = { ...item.reactions };
-          if (current) updated[current] = Math.max(0, updated[current] - 1);
-          if (current !== reaction) updated[reaction] = updated[reaction] + 1;
-          return { ...item, reactions: updated };
-        }),
-      );
+    (itemId: string, reaction: string) => {
+      reactMutation.mutate({ itemId: Number(itemId), reaction });
     },
-    [myReactions],
+    [reactMutation],
   );
 
-  // ─── Portafolio ───────────────────────────────────────────────────────────────
   const addPortfolioItem = useCallback(
-    (data: Omit<PortfolioEntry, 'id' | 'reactions' | 'reviews'>) => {
-      const newItem: PortfolioEntry = {
-        ...data,
-        id: `pi_${Date.now()}`,
-        reactions: { heart: 0, like: 0, clap: 0, dislike: 0 },
-        reviews: [],
-      };
-      setPortfolio((prev) => [newItem, ...prev]);
+    (data: { title: string; description?: string; category?: string; image?: string; image_url?: string; date?: string }) => {
+      addItemMutation.mutate({ ...data, image_url: data.image_url ?? data.image });
     },
-    [],
+    [addItemMutation],
   );
 
-  const removePortfolioItem = useCallback((itemId: string) => {
-    setPortfolio((prev) => prev.filter((p) => p.id !== itemId));
-  }, []);
+  const removePortfolioItem = useCallback(
+    (itemId: string) => {
+      removeItemMutation.mutate(Number(itemId));
+    },
+    [removeItemMutation],
+  );
 
-  // ─── Edición de perfil ────────────────────────────────────────────────────────
   const savePerfilChanges = useCallback(
     (changes: Partial<ExpertoPerfilData>) => {
-      updateUser({
-        nombres: changes.nombres,
-        apellidos: changes.apellidos,
-        telefono: changes.telefono,
-        direccion: changes.direccion,
-        region: changes.region,
-        comuna: changes.comuna,
-      });
+      const payload: Record<string, unknown> = {};
+      if (changes.nombres)   payload.nombres   = changes.nombres;
+      if (changes.apellidos) payload.apellidos = changes.apellidos;
+      if (changes.telefono)  payload.telefono  = changes.telefono;
+      if (changes.descripcion) payload.bio     = changes.descripcion;
+      if (changes.region)    payload.region    = changes.region;
+      if (changes.comuna)    payload.comuna    = changes.comuna;
+      saveProfileMutation.mutate(payload);
     },
-    [updateUser],
+    [saveProfileMutation],
   );
 
   return {
     expertoPerfil,
     portfolio,
-    myReactions,
+    isLoadingPortfolio,
+    myReactions: {} as Record<string, string | null>,
     toggleReaction,
     addPortfolioItem,
     removePortfolioItem,
     savePerfilChanges,
+    isSavingProfile: saveProfileMutation.isPending,
   };
 };

@@ -62,10 +62,20 @@ const Job = sequelize.define('Job', {
   subcategoryId: {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: true,
-    references: {
-      model: 'subcategories',
-      key: 'id'
-    }
+    references: { model: 'subcategories', key: 'id' }
+  },
+  expertId: {
+    type: DataTypes.CHAR(36),
+    allowNull: true,
+    references: { model: 'user', key: 'id' }
+  },
+  calificacion: {
+    type: DataTypes.DECIMAL(2, 1),
+    allowNull: true
+  },
+  resena: {
+    type: DataTypes.TEXT,
+    allowNull: true
   }
 }, {
   tableName: 'jobs',

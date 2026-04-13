@@ -130,7 +130,7 @@ exports.updateApplication = async (req, res, next) => {
     // Si se acepta: cambiar estado del trabajo y rechazar las demás
     if (estado === 'aceptado') {
       await Job.update(
-        { estado: 'en_proceso' },
+        { estado: 'en_proceso', expertId: application.expertId },
         { where: { id: application.jobId } }
       );
       await JobApplication.update(
