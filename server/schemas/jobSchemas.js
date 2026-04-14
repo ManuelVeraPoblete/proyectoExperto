@@ -41,7 +41,7 @@ const updateApplicationSchema = z.object({
 });
 
 const closeJobSchema = z.object({
-  calificacion: z.number().min(1).max(5),
+  calificacion: z.coerce.number().min(1).max(5),
   resena: z.string().max(1000).optional(),
 });
 
