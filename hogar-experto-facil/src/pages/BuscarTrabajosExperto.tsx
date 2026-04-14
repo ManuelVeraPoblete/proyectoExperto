@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -10,7 +9,7 @@ import useJobSearch from '@/hooks/useJobSearch';
 import JobCard from '@/components/experto/JobCard';
 import LocationSelects from '@/components/shared/LocationSelects';
 import { useAuth } from '@/contexts/AuthContext';
-import { ROUTES } from '@/constants';
+import { useMyApplications } from '@/hooks/useMyApplications';
 import {
   Pagination,
   PaginationContent,
@@ -25,8 +24,7 @@ const ITEMS_PER_PAGE = 9;
 
 const BuscarTrabajosExperto = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
-  
+
   const { 
     searchTerm,
     setSearchTerm,
@@ -48,6 +46,8 @@ const BuscarTrabajosExperto = () => {
     initialComuna: user?.comuna || '',
     expertSpecialties: user?.especialidades || [],
   });
+
+  const { appliedJobIds, getApplicationForJob } = useMyApplications();
 
   const [selectedJob, setSelectedJob] = useState<Trabajo | null>(null);
   const [isJobDetailsModalOpen, setIsJobDetailsModalOpen] = useState(false);
@@ -77,17 +77,6 @@ const BuscarTrabajosExperto = () => {
       }
     }
   }, [user?.id]); 
-
-  const handleContactClient = (clientId: string) => {
-    const jobWithClient = filteredJobs.find(j => j.clientId === clientId || j.cliente?.id === clientId);
-    const clientData = jobWithClient?.cliente || (jobWithClient as any)?.User || (jobWithClient as any)?.Client;
-
-    const name = clientData?.nombres || clientData?.nombre || (jobWithClient as any)?.cliente_nombres || 'Cliente';
-    const lastName = clientData?.apellidos || clientData?.apellido || (jobWithClient as any)?.cliente_apellidos || '';
-    const clientName = `${name} ${lastName}`.trim();
-
-    navigate(`${ROUTES.EXPERTO_MENSAJES}?contactId=${clientId}&contactName=${encodeURIComponent(clientName)}`);
-  };
 
   const handleOpenJobDetails = (job: Trabajo) => {
     setSelectedJob(job);
@@ -181,8 +170,7 @@ const BuscarTrabajosExperto = () => {
                   key={job.id}
                   job={job}
                   onOpenJobDetails={handleOpenJobDetails}
-                  onContactClient={handleContactClient}
-                  unreadMessagesCount={0}
+                  isApplied={appliedJobIds.has(job.id)}
                 />
               ))}
             </div>
@@ -255,7 +243,7 @@ const BuscarTrabajosExperto = () => {
         isOpen={isJobDetailsModalOpen}
         onClose={handleCloseJobDetails}
         trabajo={selectedJob}
-        onContact={handleContactClient}
+        existingApplication={selectedJob ? getApplicationForJob(selectedJob.id) : null}
       />
     </>
   );

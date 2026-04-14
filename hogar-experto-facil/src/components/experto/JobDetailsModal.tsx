@@ -17,7 +17,8 @@ import {
   Tag,
   Briefcase,
   CircleDollarSign,
-  MessageSquare,
+  Send,
+  CheckCircle2,
   Image as ImageIcon,
   Search,
   X,
@@ -25,21 +26,25 @@ import {
   ChevronRight
 } from "lucide-react";
 import { API_BASE_URL } from "@/lib/api-config";
+import ApplyJobModal from "./ApplyJobModal";
+import { ApiApplication } from "@/services/api/applicationService";
 
 interface JobDetailsModalProps {
   trabajo: any | null;
   isOpen: boolean;
   onClose: () => void;
-  onContact: (clientId: string) => void;
+  onContact?: (clientId: string) => void;
+  existingApplication?: ApiApplication | null;
 }
 
 export function JobDetailsModal({
   trabajo,
   isOpen,
   onClose,
-  onContact,
+  existingApplication,
 }: JobDetailsModalProps) {
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [isApplyOpen, setIsApplyOpen] = useState(false);
 
   if (!trabajo) {
     return null;
@@ -56,12 +61,7 @@ export function JobDetailsModal({
     foto.photo_url.startsWith('http') ? foto.photo_url : `${serverUrl}${foto.photo_url}`
   ) || [];
 
-  const handleContactClick = () => {
-    if (clientId) {
-      onContact(clientId);
-      onClose();
-    }
-  };
+  const isAlreadyApplied = !!existingApplication;
 
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -219,13 +219,31 @@ export function JobDetailsModal({
 
           <DialogFooter className="bg-gray-50 p-4 flex justify-end gap-2 rounded-b-lg border-t">
             <Button variant="ghost" onClick={onClose}>Cerrar</Button>
-            <Button onClick={handleContactClick} className="btn-primary px-8">
-              <MessageSquare className="w-4 h-4 mr-2" />
-              Enviar Propuesta
-            </Button>
+            {isAlreadyApplied ? (
+              <Button
+                variant="outline"
+                onClick={() => setIsApplyOpen(true)}
+                className="gap-2 border-green-300 text-green-700 bg-green-50 hover:bg-green-100"
+              >
+                <CheckCircle2 className="w-4 h-4" />
+                Ver mi postulación
+              </Button>
+            ) : (
+              <Button onClick={() => setIsApplyOpen(true)} className="btn-primary px-8 gap-2">
+                <Send className="w-4 h-4" />
+                Enviar Propuesta
+              </Button>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <ApplyJobModal
+        isOpen={isApplyOpen}
+        onClose={() => setIsApplyOpen(false)}
+        job={trabajo}
+        existingApplication={existingApplication}
+      />
 
       {/* Visor de Imagen Pro con Navegación y Tamaño Contenido */}
       <Dialog open={selectedImageIndex !== null} onOpenChange={() => setSelectedImageIndex(null)}>

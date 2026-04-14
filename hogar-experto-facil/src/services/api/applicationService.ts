@@ -20,12 +20,23 @@ export interface ApiApplication {
       avg_calificacion?: number;
     };
   };
+  Trabajo?: {
+    id: string;
+    titulo: string;
+    descripcion: string;
+    estado: string;
+    region: string;
+    comuna: string;
+  };
   createdAt: string;
 }
 
 export const applicationService = {
   getForJob: (jobId: string): Promise<ApiApplication[]> =>
     apiClient.get<ApiApplication[]>(`/jobs/${jobId}/applications`),
+
+  getMyApplications: (): Promise<ApiApplication[]> =>
+    apiClient.get<ApiApplication[]>('/applications/mine'),
 
   accept: (applicationId: number): Promise<unknown> =>
     apiClient.patch(`/applications/${applicationId}`, { estado: 'aceptado' }),

@@ -1,13 +1,39 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { portfolioService, PortfolioItem, CreatePortfolioData } from '@/services/api/portfolioService';
 import { expertoService } from '@/services/api/expertoService';
+import { trabajoService } from '@/services/api/trabajoService';
 import { PortfolioEntry } from '@/types/experto';
+import { Trabajo } from '@/types';
 import { API_BASE_URL } from '@/lib/api-config';
 
 // Base para archivos estáticos (sin /api)
 const SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
+
+const trabajoToPortfolioEntry = (job: Trabajo): PortfolioEntry => ({
+  id: `job-${job.id}`,
+  title: job.titulo,
+  description: job.descripcion ?? '',
+  category: typeof job.categoria === 'string' ? job.categoria : '',
+  date: (job.createdAt ?? job.fechaCreacion).split('T')[0],
+  images: (job.Fotos ?? []).map(f =>
+    f.photo_url.startsWith('http') ? f.photo_url : `${SERVER_URL}${f.photo_url}`
+  ),
+  reactions: { heart: 0, like: 0, clap: 0, dislike: 0 },
+  reviews: job.calificacion
+    ? [{
+        id: `job-review-${job.id}`,
+        user: job.cliente_nombres
+          ? `${job.cliente_nombres} ${job.cliente_apellidos ?? ''}`.trim()
+          : 'Cliente',
+        userId: job.clientId ?? '',
+        comment: job.resena ?? '',
+        rating: Number(job.calificacion),
+        date: (job.createdAt ?? job.fechaCreacion).split('T')[0],
+      }]
+    : [],
+});
 
 const parseImageUrls = (image_url?: string): string[] => {
   if (!image_url) return [];
@@ -71,7 +97,24 @@ export const useExpertoPerfil = () => {
     enabled: !!user?.id,
   });
 
-  const portfolio: PortfolioEntry[] = rawPortfolio.map(toPortfolioEntry);
+  const { data: rawCompletedJobs = [] } = useQuery({
+    queryKey: ['completed-jobs-experto', user?.id],
+    queryFn: () => trabajoService.getMisTrabajos({ expertoId: user!.id, estado: 'completado' }),
+    enabled: !!user?.id,
+  });
+
+  const portfolioTitles = new Set(
+    (rawPortfolio as PortfolioItem[]).map((p) => p.title.toLowerCase().trim())
+  );
+
+  const completedJobEntries: PortfolioEntry[] = (rawCompletedJobs as Trabajo[])
+    .filter((j) => !portfolioTitles.has(j.titulo.toLowerCase().trim()))
+    .map(trabajoToPortfolioEntry);
+
+  const portfolio: PortfolioEntry[] = [
+    ...(rawPortfolio as PortfolioItem[]).map(toPortfolioEntry),
+    ...completedJobEntries,
+  ].sort((a, b) => b.date.localeCompare(a.date));
 
   const addItemMutation = useMutation({
     mutationFn: (data: CreatePortfolioData) => portfolioService.create(data),
@@ -133,6 +176,7 @@ export const useExpertoPerfil = () => {
 
   const toggleReaction = useCallback(
     (itemId: string, reaction: string) => {
+      if (itemId.startsWith('job-')) return;  // sin PortfolioItem real aún
       reactMutation.mutate({ itemId: Number(itemId), reaction });
     },
     [reactMutation],
@@ -166,11 +210,21 @@ export const useExpertoPerfil = () => {
     [saveProfileMutation],
   );
 
+  const myReactions = useMemo(() => {
+    if (!user?.id) return {} as Record<string, string | null>;
+    const map: Record<string, string | null> = {};
+    (rawPortfolio as PortfolioItem[]).forEach((item) => {
+      const mine = item.Reactions?.find((r) => r.userId === user.id);
+      map[String(item.id)] = mine?.reaction ?? null;
+    });
+    return map;
+  }, [rawPortfolio, user?.id]);
+
   return {
     expertoPerfil,
     portfolio,
     isLoadingPortfolio,
-    myReactions: {} as Record<string, string | null>,
+    myReactions,
     toggleReaction,
     addPortfolioItem,
     removePortfolioItem,

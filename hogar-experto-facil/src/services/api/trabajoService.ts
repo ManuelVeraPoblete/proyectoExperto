@@ -46,8 +46,19 @@ export const trabajoService = {
     return apiClient.get<Trabajo[]>(`/jobs?${searchParams.toString()}`);
   },
 
-  closeJob: (id: string, data: { calificacion: number; resena?: string }): Promise<{ message: string; job: Trabajo }> =>
-    apiClient.patch<{ message: string; job: Trabajo }>(`/jobs/${id}/close`, data),
+  closeJob: (id: string, data: { calificacion: number; resena?: string; files?: File[] }): Promise<{ message: string; job: Trabajo }> => {
+    if (data.files && data.files.length > 0) {
+      const formData = new FormData();
+      formData.append('calificacion', String(data.calificacion));
+      if (data.resena) formData.append('resena', data.resena);
+      data.files.forEach(f => formData.append('photos', f));
+      return apiClient.patchForm<{ message: string; job: Trabajo }>(`/jobs/${id}/close`, formData);
+    }
+    return apiClient.patch<{ message: string; job: Trabajo }>(`/jobs/${id}/close`, {
+      calificacion: data.calificacion,
+      resena: data.resena,
+    });
+  },
 
   applyToJob: (jobId: string, data: { mensaje: string; presupuesto_ofrecido?: number }): Promise<unknown> =>
     apiClient.post(`/jobs/${jobId}/apply`, data),

@@ -67,16 +67,26 @@ const SearchHero = () => {
   };
 
   return (
-    <div className="gradient-bg py-20">
-      <div className="container mx-auto px-4 text-center">
-        <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
-          Encuentra el <span className="text-primary">experto perfecto</span><br />
-          para tu hogar
-        </h1>
-        <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto">
-          Conectamos a personas como tú con expertos calificados en reparaciones, 
-          construcción y mejoras para el hogar. Rápido, confiable y profesional.
-        </p>
+    <div
+      className="gradient-bg py-44 relative"
+      style={{
+        backgroundImage: 'url("/background.png")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center bottom',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="inline-block bg-white/60 backdrop-blur-sm rounded-2xl px-10 py-8 mb-8">
+          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
+            Encuentra el <span className="text-primary">experto perfecto</span><br />
+            para tu hogar
+          </h1>
+          <p className="text-xl text-black max-w-2xl mx-auto">
+            Conectamos a personas como tú con expertos calificados en reparaciones,
+            construcción y mejoras para el hogar. Rápido, confiable y profesional.
+          </p>
+        </div>
 
         {/* Search Bar */}
         <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 mb-8">

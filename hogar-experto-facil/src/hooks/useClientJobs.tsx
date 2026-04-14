@@ -48,10 +48,13 @@ const useClientJobs = () => {
   }, [rawJobs]);
 
   const closeJobMutation = useMutation({
-    mutationFn: ({ jobId, calificacion, resena }: { jobId: string; calificacion: number; resena?: string }) =>
-      trabajoService.closeJob(jobId, { calificacion, resena }),
+    mutationFn: ({ jobId, calificacion, resena, files }: { jobId: string; calificacion: number; resena?: string; files?: File[] }) =>
+      trabajoService.closeJob(jobId, { calificacion, resena, files }),
     onSuccess: () => {
+      // Actualizar dashboard del cliente y trabajos del experto
       queryClient.invalidateQueries({ queryKey: ['client-jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['my-jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['my-active-jobs'] });
     },
   });
 
@@ -59,9 +62,13 @@ const useClientJobs = () => {
     queryClient.invalidateQueries({ queryKey: ['client-jobs'] });
   };
 
-  const handleJobClosed = (jobId: string, rating: number, review: string): void => {
-    closeJobMutation.mutate({ jobId, calificacion: rating, resena: review });
-  };
+  const handleJobClosed = (jobId: string, rating: number, review: string, files: File[] = []): Promise<void> =>
+    new Promise((resolve, reject) => {
+      closeJobMutation.mutate(
+        { jobId, calificacion: rating, resena: review, files },
+        { onSuccess: () => resolve(), onError: (err) => reject(err) },
+      );
+    });
 
   const handleNewReview = (_jobId: string, _review: string): void => {
     queryClient.invalidateQueries({ queryKey: ['client-jobs'] });

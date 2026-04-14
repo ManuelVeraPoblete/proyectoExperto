@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Clock, MapPin, User, DollarSign } from 'lucide-react';
+import { Clock, MapPin, User, DollarSign, CheckCircle2 } from 'lucide-react';
 import ReportButton from '@/components/common/ReportButton';
 
 interface JobCardProps {
@@ -30,9 +30,10 @@ interface JobCardProps {
   onContactClient?: (clientId: string) => void;
   onOpenJobDetails?: (job: any) => void;
   unreadMessagesCount?: number;
+  isApplied?: boolean;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onContact, onContactClient, onOpenJobDetails, unreadMessagesCount }) => {
+const JobCard: React.FC<JobCardProps> = ({ job, onContact, onContactClient, onOpenJobDetails, unreadMessagesCount, isApplied }) => {
   const handleContact = onContactClient || onContact;
   
   // Extraer los datos del cliente de la estructura aplanada de la API
@@ -41,7 +42,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onContact, onContactClient, onOp
   const clientId = job.clientId || job.cliente?.id;
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card className={`hover:shadow-md transition-shadow ${isApplied ? 'border-green-200 bg-green-50/30' : ''}`}>
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
@@ -89,27 +90,23 @@ const JobCard: React.FC<JobCardProps> = ({ job, onContact, onContactClient, onOp
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Badge variant="secondary">{job.categoria}</Badge>
-            <Badge variant="outline">{job.estado || 'activo'}</Badge>
-          </div>
-          
-          <div className="flex gap-2">
-            {handleContact && job.cliente?.id && (
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleContact(job.cliente!.id)}
-              >
-                Contactar {unreadMessagesCount ? `(${unreadMessagesCount})` : ''}
-              </Button>
+            {isApplied && (
+              <Badge className="bg-green-100 text-green-800 border-green-200 border gap-1 flex items-center">
+                <CheckCircle2 className="w-3 h-3" /> Postulado
+              </Badge>
             )}
+          </div>
+
+          <div className="flex gap-2">
             {onOpenJobDetails && (
               <Button
                 size="sm"
+                variant={isApplied ? 'outline' : 'default'}
                 onClick={() => onOpenJobDetails(job)}
               >
-                Ver Detalles
+                {isApplied ? 'Ver postulación' : 'Ver Detalles'}
               </Button>
             )}
           </div>

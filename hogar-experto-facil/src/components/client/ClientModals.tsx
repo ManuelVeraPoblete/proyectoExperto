@@ -11,8 +11,8 @@ interface ClientModalsProps {
   isJobDetailsModalOpen: boolean;
   isAssignMaestroModalOpen: boolean;
   onCloseAllModals: () => void;
-  onJobClosed: (jobId: number, rating: number, review: string) => void;
-  onNewReview: (jobId: number, review: string) => void;
+  onJobClosed: (jobId: string, rating: number, review: string, files: File[]) => Promise<void>;
+  onNewReview: (jobId: string, review: string) => void;
   onMaestroAssigned: (maestroId: string) => void;
 }
 

@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertCircle, Timer, CheckCircle, Loader2 } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import SearchExpertos from './SearchExpertos';
 import ClientQuickActions from './client/ClientQuickActions';
 import ClientStats from './client/ClientStats';
@@ -13,6 +14,8 @@ const ClientDashboard = () => {
   const [isJobDetailsModalOpen, setIsJobDetailsModalOpen] = useState(false);
   const [isAssignMaestroModalOpen, setIsAssignMaestroModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<any>(null);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const {
     recentJobs,
@@ -27,6 +30,19 @@ const ClientDashboard = () => {
     handleNewReview
   } = useClientJobs();
 
+  // Reabrir modal de asignación al volver del perfil del experto
+  useEffect(() => {
+    const jobId = location.state?.returnAssignJobId;
+    if (!jobId || isLoading || recentJobs.length === 0) return;
+    const job = recentJobs.find(j => String(j.id) === String(jobId));
+    if (job) {
+      setSelectedJob(job);
+      setIsAssignMaestroModalOpen(true);
+      // Limpiar el state para que no se vuelva a abrir en renders futuros
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location.state, isLoading, recentJobs]);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-muted-foreground">
@@ -36,24 +52,24 @@ const ClientDashboard = () => {
     );
   }
 
-  const handleViewDetails = (jobId: number) => {
-    const job = recentJobs.find(j => j.id === jobId);
+  const handleViewDetails = (jobId: number | string) => {
+    const job = recentJobs.find(j => String(j.id) === String(jobId));
     if (job) {
       setSelectedJob(job);
       setIsJobDetailsModalOpen(true);
     }
   };
 
-  const handleCloseJob = (jobId: number) => {
-    const job = recentJobs.find(j => j.id === jobId);
+  const handleCloseJob = (jobId: number | string) => {
+    const job = recentJobs.find(j => String(j.id) === String(jobId));
     if (job) {
       setSelectedJob(job);
       setIsCloseJobModalOpen(true);
     }
   };
 
-  const handleAssignMaestro = (jobId: number) => {
-    const job = recentJobs.find(j => j.id === jobId);
+  const handleAssignMaestro = (jobId: number | string) => {
+    const job = recentJobs.find(j => String(j.id) === String(jobId));
     if (job) {
       setSelectedJob(job);
       setIsAssignMaestroModalOpen(true);
@@ -61,9 +77,7 @@ const ClientDashboard = () => {
   };
 
   const handleMaestroAssignedWrapper = (maestroId: string) => {
-    if (selectedJob) {
-      handleMaestroAssigned(selectedJob.id, maestroId);
-    }
+    if (selectedJob) handleMaestroAssigned(String(selectedJob.id), maestroId);
   };
 
   const handleCloseAllModals = () => {

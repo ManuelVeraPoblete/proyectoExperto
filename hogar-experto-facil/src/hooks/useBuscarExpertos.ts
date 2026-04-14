@@ -7,7 +7,6 @@ import { categoriaService, CategoriaOption } from '@/services/api/categoriaServi
 import { mapApiExpertoToCardData } from '@/lib/expertoMapper';
 import { logger } from '@/lib/logger';
 import { ITEMS_PER_PAGE, RATING_FILTERS, RatingFilter } from '@/constants';
-import { Message } from '@/types';
 import { ExpertoCardData } from '@/types/experto';
 import type { ExpertoBusquedaParams } from '@/services/api/expertoService';
 
@@ -22,9 +21,6 @@ export interface BuscarExpertosState {
   currentPage: number;
   totalPages: number;
   paginatedExpertos: ExpertoCardData[];
-  isChatOpen: boolean;
-  chatParticipantName: string;
-  chatMessages: Message[];
   ratings: typeof RATING_FILTERS;
 }
 
@@ -35,8 +31,6 @@ export interface BuscarExpertosActions {
   handleSearch: () => void;
   handlePageChange: (page: number) => void;
   handleContactExperto: (expertoId: string, expertoName: string) => void;
-  handleSendMessage: (message: string) => void;
-  handleCloseChat: () => void;
   clearFilters: () => void;
 }
 
@@ -60,10 +54,6 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
   // Paginación
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Chat
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatParticipantName, setChatParticipantName] = useState('');
-  const [chatMessages, setChatMessages] = useState<Message[]>([]);
 
   // Cargar categorías al montar
   useEffect(() => {
@@ -128,30 +118,7 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
   };
 
   const handleContactExperto = (expertoId: string, expertoName: string): void => {
-    logger.debug('Iniciando chat con:', expertoId);
-    setChatMessages([{
-      id: 'initial',
-      sender: 'other',
-      text: `Hola, soy ${expertoName}. ¿En qué puedo ayudarte?`,
-      timestamp: new Date().toISOString(),
-      read: true,
-    }]);
-    setChatParticipantName(expertoName);
-    setIsChatOpen(true);
-  };
-
-  const handleSendMessage = (message: string): void => {
-    setChatMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      sender: 'me',
-      text: message,
-      timestamp: new Date().toISOString(),
-      read: true,
-    }]);
-    toast({
-      title: 'Mensaje Enviado',
-      description: `Tu mensaje a ${chatParticipantName} ha sido enviado.`,
-    });
+    navigate(`/mensajes?contactId=${expertoId}&contactName=${encodeURIComponent(expertoName)}`);
   };
 
   const clearFilters = (): void => {
@@ -171,9 +138,6 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
     currentPage,
     totalPages,
     paginatedExpertos,
-    isChatOpen,
-    chatParticipantName,
-    chatMessages,
     ratings: RATING_FILTERS,
     // Actions
     setSearchTerm,
@@ -182,8 +146,6 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
     handleSearch,
     handlePageChange,
     handleContactExperto,
-    handleSendMessage,
-    handleCloseChat: () => setIsChatOpen(false),
     clearFilters,
   };
 };

@@ -3,7 +3,6 @@ import { useBuscarExpertos } from '@/hooks/useBuscarExpertos';
 import ExpertosFilters from '@/components/buscar-expertos/ExpertosFilters';
 import ExpertosGrid from '@/components/buscar-expertos/ExpertosGrid';
 import ExpertosPagination from '@/components/buscar-expertos/ExpertosPagination';
-import { ChatDialog } from '@/components/ChatDialog';
 
 /**
  * Página de búsqueda de expertos.
@@ -47,13 +46,6 @@ const BuscarExpertos: React.FC = () => {
           onPageChange={state.handlePageChange}
         />
 
-        <ChatDialog
-          isOpen={state.isChatOpen}
-          onClose={state.handleCloseChat}
-          participantName={state.chatParticipantName}
-          messages={state.chatMessages}
-          onSendMessage={state.handleSendMessage}
-        />
 
 
       </main>

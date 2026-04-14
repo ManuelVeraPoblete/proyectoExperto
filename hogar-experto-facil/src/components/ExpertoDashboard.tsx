@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { trabajoService } from '@/services/api/trabajoService';
 import { expertoService } from '@/services/api/expertoService';
@@ -11,16 +11,18 @@ import StatCard from '@/components/shared/StatCard';
 import ActionCard from '@/components/shared/ActionCard';
 import JobOfferItem from '@/components/experto/JobOfferItem';
 import MyJobItem from '@/components/experto/MyJobItem';
+import ApplyJobModal from '@/components/experto/ApplyJobModal';
 import { getStatusColor, getStatusText } from '@/utils/statusHelpers';
 import { ExpertoJobOffer, ExpertoActiveJob } from '@/types/job';
 import { Trabajo } from '@/types';
-import { useToast } from '@/hooks/use-toast';
+import { useMyApplications } from '@/hooks/useMyApplications';
 
 const ExpertoDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
+  const { appliedJobIds } = useMyApplications();
+  const [applyTarget, setApplyTarget] = useState<Trabajo | null>(null);
 
   // Trabajos recomendados según especialidades del experto
   const { data: rawJobOffers, isLoading: loadingOffers } = useQuery({
@@ -49,33 +51,28 @@ const ExpertoDashboard = () => {
     enabled: !!user?.id,
   });
 
-  const applyMutation = useMutation({
-    mutationFn: (jobId: string) =>
-      trabajoService.applyToJob(jobId, { mensaje: 'Estoy interesado en este trabajo.' }),
-    onSuccess: () => {
-      toast({ title: 'Postulación enviada', description: 'El cliente recibirá tu solicitud.' });
-      queryClient.invalidateQueries({ queryKey: ['job-offers'] });
-    },
-    onError: (err: any) => {
-      const msg = err?.message?.includes('409') ? 'Ya te postulaste a este trabajo.' : 'No se pudo enviar la postulación.';
-      toast({ title: 'Error', description: msg, variant: 'destructive' });
-    },
-  });
+
+  const myJobIds = React.useMemo(
+    () => new Set((rawMyJobs ?? []).map((t: Trabajo) => String(t.id))),
+    [rawMyJobs],
+  );
 
   const jobOffers: ExpertoJobOffer[] = React.useMemo(() => {
     if (!rawJobOffers) return [];
-    return rawJobOffers.map((t: Trabajo) => ({
-      id: t.id as any,
-      title: t.titulo,
-      client: t.cliente_nombres
-        ? `${t.cliente_nombres} ${t.cliente_apellidos ?? ''}`.trim()
-        : 'Cliente',
-      location: `${t.comuna}, ${t.region}`,
-      budget: new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(Number(t.presupuesto) || 0),
-      date: new Date(t.createdAt ?? t.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
-      status: 'new',
-    }));
-  }, [rawJobOffers]);
+    return rawJobOffers
+      .filter((t: Trabajo) => t.estado === 'activo' && !myJobIds.has(String(t.id)))
+      .map((t: Trabajo) => ({
+        id: t.id as any,
+        title: t.titulo,
+        client: t.cliente_nombres
+          ? `${t.cliente_nombres} ${t.cliente_apellidos ?? ''}`.trim()
+          : 'Cliente',
+        location: `${t.comuna}, ${t.region}`,
+        budget: new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP' }).format(Number(t.presupuesto) || 0),
+        date: new Date(t.createdAt ?? t.fechaCreacion).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' }),
+        status: 'new',
+      }));
+  }, [rawJobOffers, myJobIds]);
 
   const myJobs: ExpertoActiveJob[] = React.useMemo(() => {
     if (!rawMyJobs) return [];
@@ -93,7 +90,8 @@ const ExpertoDashboard = () => {
   }, [rawMyJobs]);
 
   const handleApplyToJob = (jobId: any) => {
-    applyMutation.mutate(String(jobId));
+    const raw = (rawJobOffers ?? []).find((t: Trabajo) => String(t.id) === String(jobId));
+    if (raw) setApplyTarget(raw);
   };
 
   const handleContactClient = (_client: string) => {
@@ -101,6 +99,7 @@ const ExpertoDashboard = () => {
   };
 
   return (
+    <>
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground mb-2">Panel de Experto</h1>
@@ -186,6 +185,7 @@ const ExpertoDashboard = () => {
                   getStatusColor={getStatusColor}
                   getStatusText={getStatusText}
                   onApply={handleApplyToJob}
+                  isApplied={appliedJobIds.has(String(offer.id))}
                 />
               ))
             ) : (
@@ -222,6 +222,13 @@ const ExpertoDashboard = () => {
         </Card>
       )}
     </div>
+
+    <ApplyJobModal
+      isOpen={!!applyTarget}
+      onClose={() => setApplyTarget(null)}
+      job={applyTarget}
+    />
+    </>
   );
 };
 

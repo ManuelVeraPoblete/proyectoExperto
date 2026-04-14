@@ -1,59 +1,137 @@
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Star, MessageSquare, User } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { MapPin, Clock, CheckCircle2, XCircle, Send } from 'lucide-react';
 import useMyJobs from '@/hooks/useMyJobs';
+import { useMyApplications } from '@/hooks/useMyApplications';
 import MyJobItem from '@/components/experto/MyJobItem';
 import CompletedJobItem from '@/components/experto/CompletedJobItem';
-import ClientProfileModal from '@/components/ClientProfileModal';
-import { ChatDialog } from '@/components/ChatDialog';
-import { Message } from '@/types';
+import AddPortfolioModal from '@/components/experto/AddPortfolioModal';
+import { portfolioService, CreatePortfolioData } from '@/services/api/portfolioService';
+import { useQueryClient } from '@tanstack/react-query';
+import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
+import { ROUTES } from '@/constants';
+
+const APPLICATION_STATUS = {
+  pendiente: { label: 'En revisión', icon: Clock, className: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+  aceptado:  { label: 'Aceptado',    icon: CheckCircle2, className: 'bg-green-100 text-green-800 border-green-200' },
+  rechazado: { label: 'No seleccionado', icon: XCircle, className: 'bg-red-100 text-red-800 border-red-200' },
+} as const;
 
 const MisTrabajosExperto = () => {
-  const [isClientModalOpen, setIsClientModalOpen] = useState(false);
-  const [selectedClient, setSelectedClient] = useState(null);
-  const { activeJobs, completedJobs, getStatusColor, getStatusText } = useMyJobs();
+  const navigate   = useNavigate();
+  const { user }   = useAuth();
+  const queryClient = useQueryClient();
+  const { toast }  = useToast();
 
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatParticipantName, setChatParticipantName] = useState('');
-  const [chatMessages, setChatMessages] = useState<Message[]>([]);
-  const [selectedChatClientId, setSelectedChatClientId] = useState<string | null>(null);
+  const { activeJobs, completedJobs, getStatusColor, getStatusText } = useMyJobs();
+  const { applications, pendingCount } = useMyApplications();
+
+  const [isAddPhotosOpen, setIsAddPhotosOpen]   = useState(false);
+  const [portfolioJobData, setPortfolioJobData] = useState<{ title: string } | null>(null);
 
   const handleContactClient = (clientId: string) => {
-    setSelectedClient({ id: clientId } as any);
-    setIsClientModalOpen(true);
+    navigate(`${ROUTES.EXPERTO_MENSAJES}?contactId=${clientId}`);
   };
 
-  const handleSendMessage = (message: string) => {
-    console.log(`Enviando mensaje a ${chatParticipantName}: ${message}`);
-    setChatMessages((prevMessages) => [
-      ...prevMessages,
-      {
-        id: Date.now().toString(),
-        sender: "me" as const,
-        text: message,
-        timestamp: new Date().toISOString(),
-        read: true,
-      },
-    ]);
-    // Aquí se enviaría el mensaje a la API
+  const handleAddPhotos = (_jobId: string, jobTitle: string) => {
+    setPortfolioJobData({ title: jobTitle });
+    setIsAddPhotosOpen(true);
   };
 
-  const handleViewClientProfile = (clientId: string) => {
-    setSelectedClient({ id: clientId } as any);
-    setIsClientModalOpen(true);
-  };
-
-  const handleCloseClientModal = () => {
-    setIsClientModalOpen(false);
-    setSelectedClient(null);
+  const handlePortfolioAdd = async (data: CreatePortfolioData) => {
+    try {
+      await portfolioService.create(data);
+      queryClient.invalidateQueries({ queryKey: ['portfolio-publico', user?.id] });
+      toast({
+        title: 'Fotos agregadas al portafolio',
+        description: 'Las fotos ya son visibles en tu perfil público.',
+      });
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'No se pudieron subir las fotos.',
+        variant: 'destructive',
+      });
+    }
+    setIsAddPhotosOpen(false);
+    setPortfolioJobData(null);
   };
 
   return (
     <main className="container mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold text-foreground mb-4">Mis Trabajos</h1>
-      
+
+      {/* ── Mis Postulaciones ── */}
+      <Card className="mb-6">
+        <CardHeader className="flex flex-row items-center gap-3 pb-3">
+          <CardTitle className="flex items-center gap-2">
+            <Send className="w-5 h-5 text-primary" />
+            Mis Postulaciones
+          </CardTitle>
+          {pendingCount > 0 && (
+            <Badge className="bg-yellow-100 text-yellow-800 border border-yellow-200">
+              {pendingCount} en revisión
+            </Badge>
+          )}
+        </CardHeader>
+        <CardContent>
+          {applications.length === 0 ? (
+            <p className="text-muted-foreground text-sm">Aún no te has postulado a ningún trabajo.</p>
+          ) : (
+            <div className="space-y-3">
+              {applications.map((app) => {
+                const cfg = APPLICATION_STATUS[app.estado];
+                const Icon = cfg.icon;
+                return (
+                  <div key={app.id} className="flex items-start gap-4 p-4 rounded-xl border border-border bg-muted/20 hover:bg-muted/40 transition-colors">
+                    {/* Estado icono */}
+                    <div className={`p-2 rounded-full border ${cfg.className} shrink-0`}>
+                      <Icon className="w-4 h-4" />
+                    </div>
+
+                    {/* Info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-start justify-between gap-2 flex-wrap">
+                        <p className="font-semibold text-foreground leading-tight">
+                          {app.Trabajo?.titulo ?? 'Trabajo'}
+                        </p>
+                        <Badge className={`border text-xs shrink-0 ${cfg.className}`}>
+                          {cfg.label}
+                        </Badge>
+                      </div>
+                      {app.Trabajo && (
+                        <p className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
+                          <MapPin className="w-3 h-3" />
+                          {app.Trabajo.comuna}, {app.Trabajo.region}
+                        </p>
+                      )}
+                      <p className="text-sm text-muted-foreground mt-1.5 line-clamp-2 italic">
+                        "{app.mensaje}"
+                      </p>
+                      <div className="flex items-center gap-4 mt-1.5 text-xs text-muted-foreground">
+                        {app.presupuesto_ofrecido && (
+                          <span className="font-medium text-primary">
+                            Ofrecí: ${Number(app.presupuesto_ofrecido).toLocaleString('es-CL')}
+                          </span>
+                        )}
+                        <span>
+                          {new Date(app.createdAt).toLocaleDateString('es-CL', {
+                            day: '2-digit', month: 'short', year: 'numeric',
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Trabajos Activos */}
       <Card className="mt-6">
@@ -64,11 +142,11 @@ const MisTrabajosExperto = () => {
           {activeJobs.length > 0 ? (
             <div className="space-y-4">
               {activeJobs.map((job) => (
-                <MyJobItem 
-                  key={job.id} 
-                  job={job} 
-                  getStatusColor={getStatusColor} 
-                  getStatusText={getStatusText} 
+                <MyJobItem
+                  key={job.id}
+                  job={job}
+                  getStatusColor={getStatusColor}
+                  getStatusText={getStatusText}
                   onContact={handleContactClient}
                 />
               ))}
@@ -88,10 +166,13 @@ const MisTrabajosExperto = () => {
           {completedJobs.length > 0 ? (
             <div className="space-y-4">
               {completedJobs.map((job) => (
-                <CompletedJobItem 
-                  key={job.id} 
-                  job={job} 
-                  onViewClientProfile={handleViewClientProfile}
+                <CompletedJobItem
+                  key={job.id}
+                  job={job}
+                  onViewClientProfile={(clientId) =>
+                    navigate(`${ROUTES.EXPERTO_MENSAJES}?contactId=${clientId}`)
+                  }
+                  onAddPhotos={handleAddPhotos}
                 />
               ))}
             </div>
@@ -101,19 +182,15 @@ const MisTrabajosExperto = () => {
         </CardContent>
       </Card>
 
-      <ClientProfileModal
-        isOpen={isClientModalOpen}
-        onClose={handleCloseClientModal}
-        client={selectedClient}
-      />
-
-      <ChatDialog
-        isOpen={isChatOpen}
-        onClose={() => setIsChatOpen(false)}
-        participantName={chatParticipantName}
-        messages={chatMessages}
-        onSendMessage={handleSendMessage}
-      />
+      {/* Modal para agregar fotos al portafolio */}
+      {portfolioJobData && (
+        <AddPortfolioModal
+          isOpen={isAddPhotosOpen}
+          onClose={() => { setIsAddPhotosOpen(false); setPortfolioJobData(null); }}
+          onAdd={handlePortfolioAdd}
+          initialTitle={portfolioJobData.title}
+        />
+      )}
     </main>
   );
 };

@@ -230,7 +230,7 @@ const PerfilExperto = () => {
                   item={item}
                   myReaction={myReactions[item.id] ?? null}
                   onToggleReaction={toggleReaction}
-                  onDelete={removePortfolioItem}
+                  onDelete={item.id.startsWith('job-') ? undefined : removePortfolioItem}
                   isOwner
                   currentUserId={user?.id}
                 />

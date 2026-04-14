@@ -9,12 +9,13 @@ interface RatingDisplayProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const RatingDisplay: React.FC<RatingDisplayProps> = ({ 
-  rating, 
-  reviewCount, 
+const RatingDisplay: React.FC<RatingDisplayProps> = ({
+  rating: ratingProp,
+  reviewCount,
   showCount = true,
   size = 'md'
 }) => {
+  const rating = Number(ratingProp);
   const sizeClasses = {
     sm: 'w-3 h-3',
     md: 'w-4 h-4',

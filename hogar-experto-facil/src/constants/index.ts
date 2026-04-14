@@ -40,7 +40,8 @@ export interface StatusConfig {
   colorClass: string;
 }
 
-export const JOB_STATUS_CONFIG: Record<JobStatus, StatusConfig> = {
+export const JOB_STATUS_CONFIG: Record<string, StatusConfig> = {
+  // Valores del frontend
   [JOB_STATUS.NEW]:         { label: 'Nuevo',       colorClass: 'text-blue-600 bg-blue-50'    },
   [JOB_STATUS.APPLIED]:     { label: 'Aplicado',    colorClass: 'text-orange-600 bg-orange-50' },
   [JOB_STATUS.ACCEPTED]:    { label: 'Aceptado',    colorClass: 'text-green-600 bg-green-50'   },
@@ -48,6 +49,11 @@ export const JOB_STATUS_CONFIG: Record<JobStatus, StatusConfig> = {
   [JOB_STATUS.COMPLETED]:   { label: 'Completado',  colorClass: 'text-green-600 bg-green-50'   },
   [JOB_STATUS.PENDING]:     { label: 'Pendiente',   colorClass: 'text-yellow-600 bg-yellow-50' },
   [JOB_STATUS.CANCELLED]:   { label: 'Cancelado',   colorClass: 'text-red-600 bg-red-50'       },
+  // Valores del backend (español)
+  activo:      { label: 'Activo',       colorClass: 'text-blue-600 bg-blue-50'    },
+  en_proceso:  { label: 'En Progreso',  colorClass: 'text-purple-600 bg-purple-50' },
+  completado:  { label: 'Completado',   colorClass: 'text-green-600 bg-green-50'   },
+  cancelado:   { label: 'Cancelado',    colorClass: 'text-red-600 bg-red-50'       },
 };
 
 // ─── Claves de localStorage ──────────────────────────────────────────────────

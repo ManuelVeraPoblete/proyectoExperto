@@ -7,11 +7,12 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { MapPin, User, Loader2 } from 'lucide-react';
+import { MapPin, Loader2, CheckCircle, XCircle, UserSearch } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { applicationService, ApiApplication } from '@/services/api/applicationService';
 import RatingDisplay from '@/components/common/RatingDisplay';
-import SpecialtyBadges from '@/components/common/SpecialtyBadges';
+import UserAvatar from '@/components/common/UserAvatar';
 import { useToast } from '@/hooks/use-toast';
 
 interface AssignMaestroModalProps {
@@ -30,8 +31,10 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
   onAssign,
 }) => {
   const [selectedApplicationId, setSelectedApplicationId] = useState<number | null>(null);
+  const [rejectedIds, setRejectedIds] = useState<Set<number>>(new Set());
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const { data: applications = [], isLoading } = useQuery({
     queryKey: ['applications', jobId],
@@ -47,10 +50,23 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
       queryClient.invalidateQueries({ queryKey: ['client-jobs'] });
       toast({ title: 'Experto asignado', description: 'El trabajo pasó a estado "En Proceso".' });
       setSelectedApplicationId(null);
+      setRejectedIds(new Set());
       onClose();
     },
     onError: () => {
       toast({ title: 'Error', description: 'No se pudo asignar el experto.', variant: 'destructive' });
+    },
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: (applicationId: number) => applicationService.reject(applicationId),
+    onSuccess: (_, applicationId) => {
+      setRejectedIds(prev => new Set(prev).add(applicationId));
+      if (selectedApplicationId === applicationId) setSelectedApplicationId(null);
+      toast({ title: 'Postulante rechazado', description: 'Se notificó al experto.' });
+    },
+    onError: () => {
+      toast({ title: 'Error', description: 'No se pudo rechazar al postulante.', variant: 'destructive' });
     },
   });
 
@@ -59,6 +75,14 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
       acceptMutation.mutate(selectedApplicationId);
     }
   };
+
+  const handleReject = (e: React.MouseEvent, applicationId: number) => {
+    e.stopPropagation();
+    rejectMutation.mutate(applicationId);
+  };
+
+  const visibleApps = applications.filter(a => !rejectedIds.has(a.id));
+  const isBusy = acceptMutation.isPending || rejectMutation.isPending;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -74,26 +98,30 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
               <Loader2 className="h-6 w-6 animate-spin mr-2" />
               Cargando postulantes...
             </div>
-          ) : applications.length === 0 ? (
+          ) : visibleApps.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-8">
-              No hay postulantes para este trabajo aún.
+              {applications.length === 0
+                ? 'No hay postulantes para este trabajo aún.'
+                : 'Todos los postulantes han sido rechazados.'}
             </p>
           ) : (
             <>
               <p className="text-sm text-muted-foreground">
-                Selecciona un experto de los {applications.length} postulante{applications.length !== 1 ? 's' : ''}:
+                Selecciona un experto de los {visibleApps.length} postulante{visibleApps.length !== 1 ? 's' : ''}:
               </p>
-              {applications.map((app: ApiApplication) => {
+
+              {visibleApps.map((app: ApiApplication) => {
                 const experto = app.Experto;
                 const profile = experto?.ExpertoProfile;
                 const nombre = experto ? `${experto.nombres} ${experto.apellidos}` : 'Experto';
                 const rating = profile?.avg_calificacion ?? 0;
+                const isSelected = selectedApplicationId === app.id;
 
                 return (
                   <Card
                     key={app.id}
                     className={`cursor-pointer transition-colors ${
-                      selectedApplicationId === app.id
+                      isSelected
                         ? 'border-primary bg-primary/5'
                         : 'hover:bg-accent/50'
                     }`}
@@ -101,19 +129,47 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center shrink-0">
-                          <User className="w-6 h-6 text-gray-600" />
-                        </div>
+                        <UserAvatar
+                          src={profile?.avatar_url}
+                          name={nombre}
+                          size="md"
+                        />
 
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between mb-1">
                             <h3 className="font-semibold text-foreground">{nombre}</h3>
-                            {profile?.comuna && (
-                              <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                                <MapPin className="w-4 h-4" />
-                                {profile.comuna}
-                              </div>
-                            )}
+                            <div className="flex items-center gap-2 shrink-0">
+                              {profile?.comuna && (
+                                <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                                  <MapPin className="w-3 h-3" />
+                                  {profile.comuna}
+                                </span>
+                              )}
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 px-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate(`/experto/${app.expertId}`, {
+                                    state: { returnAssignJobId: jobId },
+                                  });
+                                }}
+                              >
+                                <UserSearch className="w-4 h-4 mr-1" />
+                                Ver Perfil
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 px-2 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                disabled={isBusy}
+                                onClick={(e) => handleReject(e, app.id)}
+                              >
+                                <XCircle className="w-4 h-4 mr-1" />
+                                Rechazar
+                              </Button>
+                            </div>
                           </div>
 
                           {rating > 0 && (
@@ -127,7 +183,7 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
                           )}
 
                           {app.presupuesto_ofrecido && (
-                            <p className="text-sm font-medium text-foreground mt-1">
+                            <p className="text-sm font-medium text-primary mt-1">
                               Presupuesto: ${Number(app.presupuesto_ofrecido).toLocaleString('es-CL')}
                             </p>
                           )}
@@ -141,18 +197,18 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
           )}
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button variant="outline" onClick={onClose} disabled={acceptMutation.isPending}>
+        <div className="flex justify-end gap-2 pt-4 border-t">
+          <Button variant="outline" onClick={onClose} disabled={isBusy}>
             Cancelar
           </Button>
           <Button
             onClick={handleAssign}
-            disabled={selectedApplicationId == null || acceptMutation.isPending}
+            disabled={selectedApplicationId == null || isBusy}
           >
             {acceptMutation.isPending ? (
               <><Loader2 className="w-4 h-4 animate-spin mr-2" />Asignando...</>
             ) : (
-              'Asignar Experto'
+              <><CheckCircle className="w-4 h-4 mr-2" />Asignar Experto</>
             )}
           </Button>
         </div>

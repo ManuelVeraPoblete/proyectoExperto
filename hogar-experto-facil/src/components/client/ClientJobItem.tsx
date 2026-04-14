@@ -10,9 +10,9 @@ interface ClientJobItemProps {
   job: ClientJob;
   getStatusColor: (status: string) => string;
   getStatusText: (status: string) => string;
-  onViewDetails: (jobId: number) => void;
-  onCloseJob?: (jobId: number) => void;
-  onAssignMaestro?: (jobId: number) => void;
+  onViewDetails: (jobId: number | string) => void;
+  onCloseJob?: (jobId: number | string) => void;
+  onAssignMaestro?: (jobId: number | string) => void;
 }
 
 const ClientJobItem: React.FC<ClientJobItemProps> = ({ 
@@ -56,7 +56,7 @@ const ClientJobItem: React.FC<ClientJobItemProps> = ({
             variant="outline"
           />
           
-          {job.status === 'pending' && onAssignMaestro && (
+          {job.status === 'activo' && onAssignMaestro && (
             <ActionButton
               icon={UserPlus}
               text="Asignar"
@@ -65,7 +65,7 @@ const ClientJobItem: React.FC<ClientJobItemProps> = ({
             />
           )}
           
-          {job.status === 'in-progress' && onCloseJob && (
+          {job.status === 'en_proceso' && onCloseJob && (
             <ActionButton
               icon={CheckCircle}
               text="Cerrar"

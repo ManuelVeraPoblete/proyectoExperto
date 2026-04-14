@@ -13,9 +13,9 @@ interface ClientJobSectionProps {
   emptyMessage: string;
   getStatusColor: (status: string) => string;
   getStatusText: (status: string) => string;
-  onViewDetails: (jobId: number) => void;
-  onCloseJob?: (jobId: number) => void;
-  onAssignMaestro?: (jobId: number) => void;
+  onViewDetails: (jobId: number | string) => void;
+  onCloseJob?: (jobId: number | string) => void;
+  onAssignMaestro?: (jobId: number | string) => void;
 }
 
 const ClientJobSection: React.FC<ClientJobSectionProps> = ({

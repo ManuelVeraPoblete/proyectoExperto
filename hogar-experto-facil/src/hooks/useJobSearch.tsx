@@ -75,7 +75,7 @@ const useJobSearch = ({
       const params = buildParams();
       logger.debug('Buscando trabajos:', params);
       const data = await trabajoService.search(params);
-      setFilteredJobs(data);
+      setFilteredJobs(data.filter((j: Trabajo) => j.estado === 'activo'));
     } catch (err) {
       logger.error('Error buscando trabajos:', err);
     } finally {

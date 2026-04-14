@@ -17,6 +17,7 @@ interface AddPortfolioModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (data: CreatePortfolioData) => void;
+  initialTitle?: string;
 }
 
 const CATEGORIES = [
@@ -28,9 +29,9 @@ const MAX_PHOTOS = 3;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE_MB = 10;
 
-const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({ isOpen, onClose, onAdd }) => {
+const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({ isOpen, onClose, onAdd, initialTitle = '' }) => {
   const [form, setForm] = useState({
-    title: '',
+    title: initialTitle,
     description: '',
     category: CATEGORIES[0],
     date: new Date().toISOString().split('T')[0],
@@ -98,7 +99,7 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({ isOpen, onClose, 
 
   const handleClose = () => {
     previews.forEach((url) => URL.revokeObjectURL(url));
-    setForm({ title: '', description: '', category: CATEGORIES[0], date: new Date().toISOString().split('T')[0] });
+    setForm({ title: initialTitle, description: '', category: CATEGORIES[0], date: new Date().toISOString().split('T')[0] });
     setFiles([]);
     setPreviews([]);
     setErrors({});

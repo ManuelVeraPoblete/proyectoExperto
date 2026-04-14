@@ -50,6 +50,8 @@ export interface Trabajo {
   calificacion?: number;
   resena?: string;
   Experto?: { id: string; nombres: string; apellidos: string } | null;
+  // Fotos adjuntas al trabajo (subidas por el cliente al cerrar)
+  Fotos?: { id: number; photo_url: string }[];
   // Campos aplanados por el backend
   cliente_nombres?: string;
   cliente_apellidos?: string;

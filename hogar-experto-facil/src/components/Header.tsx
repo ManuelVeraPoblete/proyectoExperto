@@ -76,9 +76,7 @@ const Header = () => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <Home className="w-6 h-6 text-white" />
-              </div>
+              <img src="/logo.png" alt="Logo" className="w-10 h-10 object-contain" />
               <div>
                 <h1 className="text-xl font-bold text-white">Expertos</h1>
                 <p className="text-xs text-gray-300 -mt-1">a Domicilio</p>
