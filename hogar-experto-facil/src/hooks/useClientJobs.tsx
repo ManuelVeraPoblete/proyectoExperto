@@ -16,6 +16,7 @@ export interface ClientJob {
   rating: number | null;
   description?: string;
   originalReview?: string;
+  proposalCount?: number;
 }
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -44,6 +45,7 @@ const useClientJobs = () => {
       rating: t.calificacion ?? null,
       description: t.descripcion,
       originalReview: t.resena,
+      proposalCount: t.proposalCount ?? 0,
     }));
   }, [rawJobs]);
 

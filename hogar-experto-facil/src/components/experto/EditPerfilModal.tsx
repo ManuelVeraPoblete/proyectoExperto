@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Camera, User as UserIcon } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { apiClient } from '@/lib/apiClient';
+import { toAbsoluteUrl } from '@/lib/api-config';
+import { useToast } from '@/hooks/use-toast';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface ExpertoPerfil {
   nombres: string;
@@ -34,8 +39,12 @@ interface EditPerfilModalProps {
 }
 
 const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perfil, onSave }) => {
+  const { user, updateUser } = useAuth();
+  const { toast } = useToast();
   const [form, setForm] = useState<ExpertoPerfil>({ ...perfil });
   const [newEspecialidad, setNewEspecialidad] = useState('');
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isOpen) setForm({ ...perfil });
@@ -60,6 +69,25 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
   const removeEspecialidad = (esp: string) =>
     set('especialidades', form.especialidades.filter((e) => e !== esp));
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const result = await apiClient.postForm<{ avatarUrl: string }>(`/users/${user.id}/avatar`, formData);
+      const absoluteUrl = toAbsoluteUrl(result.avatarUrl)!;
+      updateUser({ avatar: absoluteUrl });
+      toast({ title: 'Avatar actualizado', description: 'Tu foto de perfil se actualizó correctamente.' });
+    } catch {
+      toast({ title: 'Error', description: 'No se pudo actualizar el avatar.', variant: 'destructive' });
+    } finally {
+      setIsUploadingAvatar(false);
+      e.target.value = '';
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
@@ -67,6 +95,34 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
           <DialogTitle>Editar perfil</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 py-2">
+          {/* Avatar */}
+          <div className="flex justify-center">
+            <div className="relative">
+              <Avatar className="w-20 h-20 ring-2 ring-primary/10">
+                <AvatarImage src={user?.avatar} />
+                <AvatarFallback className="bg-primary text-white text-2xl">
+                  <UserIcon className="w-8 h-8" />
+                </AvatarFallback>
+              </Avatar>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={isUploadingAvatar}
+                className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1.5 hover:bg-primary/90 transition-colors disabled:opacity-50"
+                title="Cambiar foto"
+              >
+                <Camera className="w-3 h-3" />
+              </button>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+            </div>
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="ep-nombres">Nombres</Label>

@@ -3,6 +3,7 @@ const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const validate = require('../middleware/validate');
+const { authenticate, authorize } = require('../middleware/auth');
 const { registerClientSchema, registerExpertSchema, loginSchema } = require('../schemas/authSchemas');
 
 // Límite estricto para autenticación: 10 intentos cada 15 minutos
@@ -68,7 +69,7 @@ router.post('/register/expert', registerLimiter, validate(registerExpertSchema),
  *     summary: Registra un administrador (solo uso interno)
  *     tags: [Auth]
  */
-router.post('/register/admin', authController.registerAdmin);
+router.post('/register/admin', authenticate, authorize('admin'), authLimiter, authController.registerAdmin);
 
 /**
  * @swagger

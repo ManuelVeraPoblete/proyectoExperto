@@ -14,6 +14,7 @@ import { applicationService, ApiApplication } from '@/services/api/applicationSe
 import RatingDisplay from '@/components/common/RatingDisplay';
 import UserAvatar from '@/components/common/UserAvatar';
 import { useToast } from '@/hooks/use-toast';
+import { toAbsoluteUrl } from '@/lib/api-config';
 
 interface AssignMaestroModalProps {
   isOpen: boolean;
@@ -130,7 +131,7 @@ const AssignMaestroModal: React.FC<AssignMaestroModalProps> = ({
                     <CardContent className="p-4">
                       <div className="flex items-start gap-4">
                         <UserAvatar
-                          src={profile?.avatar_url}
+                          src={toAbsoluteUrl(profile?.avatar_url)}
                           name={nombre}
                           size="md"
                         />

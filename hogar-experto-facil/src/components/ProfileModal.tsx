@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -13,7 +13,10 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { User as UserIcon, Briefcase, Star, Clock, DollarSign, ShieldCheck, MapPin, Phone, Mail, Key } from 'lucide-react';
+import { User as UserIcon, Briefcase, Star, Clock, DollarSign, ShieldCheck, MapPin, Phone, Mail, Key, Camera } from 'lucide-react';
+import { apiClient } from '@/lib/apiClient';
+import { toAbsoluteUrl } from '@/lib/api-config';
+import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from './ui/scroll-area';
 import { Separator } from './ui/separator';
 
@@ -24,7 +27,10 @@ interface ProfileModalProps {
 
 const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const { user, updateUser } = useAuth();
+  const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState({
     nombres: '',
     apellidos: '',
@@ -69,6 +75,25 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setIsUploadingAvatar(true);
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+      const result = await apiClient.postForm<{ avatarUrl: string }>(`/users/${user.id}/avatar`, formData);
+      const absoluteUrl = toAbsoluteUrl(result.avatarUrl)!;
+      updateUser({ avatar: absoluteUrl });
+      toast({ title: 'Avatar actualizado', description: 'Tu foto de perfil se actualizó correctamente.' });
+    } catch {
+      toast({ title: 'Error', description: 'No se pudo actualizar el avatar.', variant: 'destructive' });
+    } finally {
+      setIsUploadingAvatar(false);
+      e.target.value = '';
+    }
+  };
+
   if (!user) return null;
 
   // Determinar el texto del rol de forma segura y dinámica
@@ -81,12 +106,30 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       <DialogContent className="sm:max-w-[550px] h-[90vh] flex flex-col">
         <DialogHeader className="text-center border-b pb-4">
           <div className="flex flex-col items-center">
-            <Avatar className="w-24 h-24 mb-4 ring-2 ring-primary/10">
-              <AvatarImage src={user.avatar} />
-              <AvatarFallback className="bg-primary text-white text-4xl">
-                <UserIcon className="w-12 h-12" />
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative mb-4">
+              <Avatar className="w-24 h-24 ring-2 ring-primary/10">
+                <AvatarImage src={user.avatar} />
+                <AvatarFallback className="bg-primary text-white text-4xl">
+                  <UserIcon className="w-12 h-12" />
+                </AvatarFallback>
+              </Avatar>
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={isUploadingAvatar}
+                className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-1.5 hover:bg-primary/90 transition-colors disabled:opacity-50"
+                title="Cambiar foto"
+              >
+                <Camera className="w-3.5 h-3.5" />
+              </button>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarChange}
+              />
+            </div>
             <DialogTitle className="text-3xl font-bold text-foreground">
               {`${user.nombres} ${user.apellidos}`}
             </DialogTitle>

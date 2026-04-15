@@ -25,7 +25,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
-import { API_BASE_URL } from "@/lib/api-config";
+import { API_BASE_URL, toAbsoluteUrl } from "@/lib/api-config";
 import ApplyJobModal from "./ApplyJobModal";
 import { ApiApplication } from "@/services/api/applicationService";
 
@@ -95,7 +95,7 @@ export function JobDetailsModal({
             <div className="flex items-center gap-4">
               <Avatar className="h-12 w-12 border-2 border-primary/10">
                 <AvatarImage
-                  src={clientData?.fotoPerfil || clientData?.avatar || trabajo.cliente_avatar}
+                  src={toAbsoluteUrl(clientData?.fotoPerfil || clientData?.avatar || trabajo.cliente_avatar)}
                   alt={clientName}
                 />
                 <AvatarFallback className="bg-primary/5 text-primary font-bold">

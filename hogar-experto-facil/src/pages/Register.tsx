@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Camera, User as UserIcon } from 'lucide-react';
 import LocationSelects from '@/components/shared/LocationSelects';
 import { API_BASE_URL } from '@/lib/api-config';
 
@@ -29,6 +29,9 @@ const Register = () => {
   const [expandedCategoryId, setExpandedCategoryId] = useState<number | null>(null);
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string>('');
+  const avatarInputRef = useRef<HTMLInputElement>(null);
 
   // Cargar categorías si el tipo de usuario es experto
   React.useEffect(() => {
@@ -65,6 +68,13 @@ const Register = () => {
 
   const handleProvinciaChange = (value: string) => {
     setFormData(prev => ({ ...prev, provincia: value, comuna: '' }));
+  };
+
+  const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setAvatarFile(file);
+    setAvatarPreview(URL.createObjectURL(file));
   };
 
   const handleUserTypeChange = (value: string) => {
@@ -173,11 +183,26 @@ const Register = () => {
         throw new Error(data.message || 'Error en el registro');
       }
 
+      // Subir avatar si el usuario seleccionó uno
+      if (avatarFile && data.user?.id && data.token) {
+        try {
+          const avatarFormData = new FormData();
+          avatarFormData.append('avatar', avatarFile);
+          await fetch(`${API_BASE_URL}/users/${data.user.id}/avatar`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${data.token}` },
+            body: avatarFormData,
+          });
+        } catch {
+          // No bloquear el registro si falla el avatar
+        }
+      }
+
       toast({
         title: "Registro Exitoso",
         description: "Se ha creado tu cuenta correctamente. Ahora puedes iniciar sesión.",
       });
-      
+
       navigate('/');
     } catch (error: any) {
       console.error('❌ Error detallado al registrar:', error);
@@ -201,6 +226,32 @@ const Register = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4 border rounded-lg p-6 shadow-lg">
             <h3 className="text-lg font-semibold">Datos Personales</h3>
+
+            {/* Selector de avatar */}
+            <div className="flex flex-col items-center gap-2">
+              <div
+                className="relative w-24 h-24 rounded-full border-2 border-dashed border-muted-foreground/40 flex items-center justify-center cursor-pointer hover:border-primary transition-colors overflow-hidden bg-muted"
+                onClick={() => avatarInputRef.current?.click()}
+              >
+                {avatarPreview ? (
+                  <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  <UserIcon className="w-10 h-10 text-muted-foreground" />
+                )}
+                <div className="absolute bottom-1 right-1 bg-primary text-white rounded-full p-1">
+                  <Camera className="w-3 h-3" />
+                </div>
+              </div>
+              <span className="text-xs text-muted-foreground">Foto de perfil (opcional)</span>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarSelect}
+              />
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="nombres">Nombres</Label>

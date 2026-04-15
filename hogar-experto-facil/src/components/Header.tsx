@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { User, Settings, Home, LogOut, Menu } from 'lucide-react';
+import { User, Settings, Home, LogOut, Menu, MessageCircle } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -124,9 +124,13 @@ const Header = () => {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button className="flex items-center space-x-2 bg-primary text-primary-foreground hover:bg-primary/90">
-                      <div className="w-8 h-8 bg-primary-foreground/20 rounded-full flex items-center justify-center">
-                        <User className="w-4 h-4 text-primary-foreground" />
-                      </div>
+                      {user.avatar ? (
+                        <img src={user.avatar} alt="" className="w-8 h-8 rounded-full object-cover ring-2 ring-primary-foreground/30" />
+                      ) : (
+                        <div className="w-8 h-8 bg-primary-foreground/20 rounded-full flex items-center justify-center">
+                          <User className="w-4 h-4 text-primary-foreground" />
+                        </div>
+                      )}
                       <span className="hidden md:inline">{`${user.nombres} ${user.apellidos}`}</span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -146,9 +150,9 @@ const Header = () => {
                       <Home className="w-4 h-4 mr-2" />
                       Mi Dashboard
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => setIsProfileModalOpen(true)}>
-                      <User className="w-4 h-4 mr-2" />
-                      Mi Perfil
+                    <DropdownMenuItem onClick={() => navigate('/mensajes')}>
+                      <MessageCircle className="w-4 h-4 mr-2" />
+                      Mensajes directos
                     </DropdownMenuItem>
                     {user.userType === 'admin' && (
                       <DropdownMenuItem>

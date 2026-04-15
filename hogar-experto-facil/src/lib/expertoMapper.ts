@@ -1,4 +1,5 @@
 import { ExpertoCardData, PortfolioItem, Review } from '@/types/experto';
+import { toAbsoluteUrl } from '@/lib/api-config';
 
 // ─── Tipos de la respuesta del API ────────────────────────────────────────────
 interface ApiCategory {
@@ -20,6 +21,7 @@ export interface ApiExperto {
   apellidos?: string;
   apellido?: string;
   avatar?: string;
+  avatar_url?: string;      // campo real del modelo ExpertoProfile
   fotoPerfil?: string;
   Categories?: ApiCategory[];
   categories?: ApiCategory[];
@@ -107,7 +109,7 @@ export const mapApiExpertoToCardData = (experto: ApiExperto): ExpertoCardData =>
   id: experto.userId ?? experto.User?.id ?? String(experto.id),
   nombres: experto.nombres ?? experto.nombre ?? '',
   apellidos: experto.apellidos ?? experto.apellido ?? '',
-  avatar: experto.avatar ?? experto.fotoPerfil,
+  avatar: toAbsoluteUrl(experto.avatar_url ?? experto.avatar ?? experto.fotoPerfil),
   especialidades: extractCategoryNames(experto),
   calificacion: experto.avg_portfolio_rating != null
     ? parseFloat(String(experto.avg_portfolio_rating))

@@ -1,4 +1,5 @@
 import { ROLES, UserRole } from '@/constants';
+import { toAbsoluteUrl } from '@/lib/api-config';
 
 // ─── Tipo usuario normalizado ─────────────────────────────────────────────────
 export interface NormalizedUser {
@@ -93,7 +94,7 @@ export const normalizeUser = (data: unknown): NormalizedUser | null => {
     region:    coerceString(profile.region    ?? rawUser.region)    || undefined,
     provincia: coerceString(profile.provincia ?? rawUser.provincia) || undefined,
     comuna:    coerceString(profile.comuna    ?? rawUser.comuna)    || undefined,
-    avatar:    coerceString(profile.avatar_url ?? profile.avatar ?? rawUser.avatar) || undefined,
+    avatar: toAbsoluteUrl(coerceString(profile.avatar_url ?? profile.avatar ?? rawUser.avatar)) || undefined,
     token,
   };
 };

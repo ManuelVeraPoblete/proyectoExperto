@@ -3,11 +3,12 @@ import { MessageSquare } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { ApiConversation } from '@/services/api/mensajeService';
+import { toAbsoluteUrl } from '@/lib/api-config';
 
 interface ListaConversacionesProps {
   conversations: ApiConversation[];
   selectedId: string | null;
-  onSelect: (contactId: string, contactName: string) => void;
+  onSelect: (contactId: string, contactName: string, contactAvatar?: string) => void;
 }
 
 const formatRelative = (iso: string) => {
@@ -46,20 +47,27 @@ const ListaConversaciones: React.FC<ListaConversacionesProps> = ({
           const name = `${conv.contact.nombres} ${conv.contact.apellidos}`;
           const isSelected = selectedId === conv.contact.id;
           const hasUnread = conv.unreadCount > 0;
+          const avatarUrl = toAbsoluteUrl(conv.contact.avatar_url);
 
           return (
             <button
               key={conv.contact.id}
-              onClick={() => onSelect(conv.contact.id, name)}
+              onClick={() => onSelect(conv.contact.id, name, avatarUrl)}
               className={`w-full text-left px-4 py-3 transition-colors flex items-start gap-3 ${
                 isSelected
                   ? 'bg-primary/10 border-l-2 border-primary'
                   : 'hover:bg-muted/50'
               }`}
             >
-              {/* Avatar inicial */}
-              <div className="w-10 h-10 rounded-full bg-primary/20 text-primary font-semibold flex items-center justify-center shrink-0 text-sm">
-                {conv.contact.nombres.charAt(0).toUpperCase()}
+              {/* Avatar */}
+              <div className="w-10 h-10 rounded-full shrink-0 overflow-hidden bg-primary/20 flex items-center justify-center">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt={name} className="w-full h-full object-cover" />
+                ) : (
+                  <span className="text-primary font-semibold text-sm">
+                    {conv.contact.nombres.charAt(0).toUpperCase()}
+                  </span>
+                )}
               </div>
 
               <div className="flex-1 min-w-0">

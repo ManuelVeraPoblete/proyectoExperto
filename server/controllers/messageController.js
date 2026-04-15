@@ -1,6 +1,8 @@
 const { Op, literal } = require('sequelize');
 const Message = require('../models/Message');
 const User = require('../models/User');
+const ClienteProfile = require('../models/ClienteProfile');
+const ExpertoProfile = require('../models/ExpertoProfile');
 const { AppError } = require('../middleware/errorHandler');
 
 exports.getConversations = async (req, res, next) => {
@@ -39,10 +41,22 @@ exports.getConversations = async (req, res, next) => {
     const users = await User.findAll({
       where: { id: contactIds },
       attributes: ['id', 'nombres', 'apellidos', 'email'],
+      include: [
+        { model: ClienteProfile, attributes: ['avatar_url', 'telefono'], required: false },
+        { model: ExpertoProfile, as: 'ExpertoProfile', attributes: ['avatar_url', 'telefono'], required: false },
+      ],
     });
 
     const userMap = {};
-    users.forEach(u => { userMap[u.id] = u; });
+    users.forEach(u => {
+      const json = u.toJSON();
+      const profile = json.ClienteProfile || json.ExpertoProfile || {};
+      json.avatar_url = profile.avatar_url || null;
+      json.telefono   = profile.telefono   || null;
+      delete json.ClienteProfile;
+      delete json.ExpertoProfile;
+      userMap[json.id] = json;
+    });
 
     // Get last message per conversation
     const conversations = await Promise.all(rows.map(async (row) => {
@@ -81,8 +95,20 @@ exports.getMessages = async (req, res, next) => {
         ],
       },
       include: [
-        { model: User, as: 'Sender',   attributes: ['id', 'nombres', 'apellidos'] },
-        { model: User, as: 'Receiver', attributes: ['id', 'nombres', 'apellidos'] },
+        {
+          model: User, as: 'Sender', attributes: ['id', 'nombres', 'apellidos'],
+          include: [
+            { model: ClienteProfile, attributes: ['avatar_url'], required: false },
+            { model: ExpertoProfile, as: 'ExpertoProfile', attributes: ['avatar_url'], required: false },
+          ],
+        },
+        {
+          model: User, as: 'Receiver', attributes: ['id', 'nombres', 'apellidos'],
+          include: [
+            { model: ClienteProfile, attributes: ['avatar_url'], required: false },
+            { model: ExpertoProfile, as: 'ExpertoProfile', attributes: ['avatar_url'], required: false },
+          ],
+        },
       ],
       order: [['createdAt', 'ASC']],
     });

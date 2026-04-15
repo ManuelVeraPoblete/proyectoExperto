@@ -5,6 +5,9 @@ const PortfolioReaction = require('../models/PortfolioReaction');
 const PortfolioReview = require('../models/PortfolioReview');
 const User = require('../models/User');
 const { AppError } = require('../middleware/errorHandler');
+const logger = require('../config/logger');
+
+const UPLOADS_DIR = path.resolve(__dirname, '..', 'uploads');
 
 exports.getPortfolio = async (req, res, next) => {
   try {
@@ -73,11 +76,16 @@ exports.deleteItem = async (req, res, next) => {
       try {
         const paths = JSON.parse(item.image_url);
         paths.forEach((relPath) => {
-          const absPath = path.join(__dirname, '..', relPath);
+          const absPath = path.resolve(__dirname, '..', relPath);
+          // Prevenir path traversal: solo eliminar archivos dentro de uploads/
+          if (!absPath.startsWith(UPLOADS_DIR + path.sep)) {
+            logger.warn(`Path traversal bloqueado al eliminar portfolio item ${itemId}: ${relPath}`);
+            return;
+          }
           if (fs.existsSync(absPath)) fs.unlinkSync(absPath);
         });
-      } catch (_) {
-        // Si no es JSON válido, ignorar
+      } catch (parseErr) {
+        logger.warn(`No se pudo parsear image_url del portfolio item ${itemId}: ${parseErr.message}`);
       }
     }
 

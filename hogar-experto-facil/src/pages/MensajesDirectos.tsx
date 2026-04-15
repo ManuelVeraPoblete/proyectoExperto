@@ -13,9 +13,14 @@ const MensajesDirectos = () => {
   const [selectedContactName, setSelectedContactName] = useState(
     searchParams.get('contactName') ? decodeURIComponent(searchParams.get('contactName')!) : ''
   );
+  const [selectedContactAvatar, setSelectedContactAvatar] = useState<string | undefined>(undefined);
 
   const { conversations, isLoadingConversations, messages, isLoadingMessages, sendMessage, markAsRead, isSending } =
     useMensajes(selectedContactId ?? undefined);
+
+  // Derivar teléfono y avatar desde la lista de conversaciones (siempre actualizado)
+  const selectedConv = conversations.find(c => c.contact.id === selectedContactId);
+  const selectedContactPhone = selectedConv?.contact.telefono ?? undefined;
 
   // Mark as read when arriving from a direct link
   useEffect(() => {
@@ -24,9 +29,10 @@ const MensajesDirectos = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleSelect = (contactId: string, contactName: string) => {
+  const handleSelect = (contactId: string, contactName: string, contactAvatar?: string) => {
     setSelectedContactId(contactId);
     setSelectedContactName(contactName);
+    setSelectedContactAvatar(contactAvatar);
     markAsRead(contactId);
   };
 
@@ -67,6 +73,7 @@ const MensajesDirectos = () => {
               selectedId={selectedContactId}
               onSelect={handleSelect}
             />
+
           </div>
         </div>
 
@@ -81,6 +88,8 @@ const MensajesDirectos = () => {
               <ConversacionChat
                 contactName={selectedContactName}
                 contactId={selectedContactId}
+                contactAvatar={selectedContactAvatar}
+                contactPhone={selectedContactPhone}
                 messages={messages}
                 isSending={isSending}
                 onSend={handleSend}

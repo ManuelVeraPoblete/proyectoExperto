@@ -55,4 +55,5 @@ export interface Trabajo {
   // Campos aplanados por el backend
   cliente_nombres?: string;
   cliente_apellidos?: string;
+  proposalCount?: number;
 }

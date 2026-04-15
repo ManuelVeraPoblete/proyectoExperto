@@ -1,5 +1,6 @@
 const { Op } = require('sequelize');
 const Job = require('../models/Job');
+const JobApplication = require('../models/JobApplication');
 const JobPhoto = require('../models/JobPhoto');
 const ClienteProfile = require('../models/ClienteProfile');
 const Subcategory = require('../models/Subcategory');
@@ -118,6 +119,7 @@ exports.getJobs = async (req, res, next) => {
         { model: Category, as: 'Category' },
         { model: User, as: 'Cliente', attributes: ['id', 'nombres', 'apellidos'] },
         { model: User, as: 'Experto', attributes: ['id', 'nombres', 'apellidos'] },
+        { model: JobApplication, as: 'Postulaciones', attributes: ['id'] },
       ],
       order: [['createdAt', 'DESC']],
     });
@@ -127,7 +129,9 @@ exports.getJobs = async (req, res, next) => {
       const cliente = jobJson.Cliente || {};
       jobJson.cliente_nombres = cliente.nombres;
       jobJson.cliente_apellidos = cliente.apellidos;
+      jobJson.proposalCount = (jobJson.Postulaciones || []).length;
       delete jobJson.Cliente;
+      delete jobJson.Postulaciones;
       return jobJson;
     });
 

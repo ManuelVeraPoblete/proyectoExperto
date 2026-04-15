@@ -57,12 +57,19 @@ const ClientJobItem: React.FC<ClientJobItemProps> = ({
           />
           
           {job.status === 'activo' && onAssignMaestro && (
-            <ActionButton
-              icon={UserPlus}
-              text="Asignar"
-              onClick={() => onAssignMaestro(job.id)}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
-            />
+            <div className="relative inline-flex">
+              <ActionButton
+                icon={UserPlus}
+                text="Asignar"
+                onClick={() => onAssignMaestro(job.id)}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              />
+              {(job.proposalCount ?? 0) > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full min-w-[20px] h-5 flex items-center justify-center px-1">
+                  {job.proposalCount}
+                </span>
+              )}
+            </div>
           )}
           
           {job.status === 'en_proceso' && onCloseJob && (

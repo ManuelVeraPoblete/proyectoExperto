@@ -2,26 +2,33 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { mensajeService, ApiMessage, ApiConversation } from '@/services/api/mensajeService';
+import { toAbsoluteUrl } from '@/lib/api-config';
 
 export interface NormalizedMessage {
   id: number;
   sender: 'me' | 'other';
   senderName: string;
+  senderAvatar?: string;
   text: string;
   timestamp: string;
   is_read: boolean;
 }
 
-const normalizeMessages = (messages: ApiMessage[], myUserId: string): NormalizedMessage[] =>
+const normalizeMessages = (messages: ApiMessage[], myUserId: string, myAvatar?: string): NormalizedMessage[] =>
   messages.map(m => {
     const isMe = m.senderId === myUserId;
-    const senderName = m.Sender
-      ? `${m.Sender.nombres} ${m.Sender.apellidos}`
+    const senderUser = isMe ? null : m.Sender;
+    const senderName = senderUser
+      ? `${senderUser.nombres} ${senderUser.apellidos}`
       : isMe ? 'Yo' : 'Contacto';
+    const senderAvatar = isMe
+      ? myAvatar
+      : toAbsoluteUrl(m.Sender?.avatar_url);
     return {
       id: m.id,
       sender: isMe ? 'me' : 'other',
       senderName,
+      senderAvatar,
       text: m.content,
       timestamp: m.createdAt,
       is_read: m.is_read,
@@ -50,7 +57,7 @@ export const useMensajes = (otherUserId?: string) => {
   });
 
   const messages: NormalizedMessage[] = user
-    ? normalizeMessages(rawMessages, user.id)
+    ? normalizeMessages(rawMessages, user.id, user.avatar)
     : [];
 
   const sendMutation = useMutation({

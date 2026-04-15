@@ -5,7 +5,7 @@ const jobApplicationRoutes = require('./jobApplicationRoutes');
 const { upload, uploadPortfolio } = require('../middleware/upload');
 const { authenticate, authorize } = require('../middleware/auth');
 const validate = require('../middleware/validate');
-const { closeJobSchema } = require('../schemas/jobSchemas');
+const { createJobSchema, closeJobSchema } = require('../schemas/jobSchemas');
 
 /**
  * @swagger
@@ -19,7 +19,7 @@ const { closeJobSchema } = require('../schemas/jobSchemas');
  *     summary: Lista trabajos con filtros opcionales
  *     tags: [Jobs]
  */
-router.post('/', authenticate, authorize('cliente'), upload.any(), jobController.createJob);
+router.post('/', authenticate, authorize('cliente'), upload.any(), validate(createJobSchema), jobController.createJob);
 router.get('/', jobController.getJobs);
 router.patch('/:id/close', authenticate, authorize('cliente'), uploadPortfolio, validate(closeJobSchema), jobController.closeJob);
 
