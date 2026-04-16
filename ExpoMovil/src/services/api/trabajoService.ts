@@ -57,6 +57,34 @@ export const trabajoService = {
   }): Promise<Trabajo> =>
     apiClient.post<Trabajo>('/jobs', data),
 
+  createJob: (data: {
+    titulo: string;
+    descripcion: string;
+    categoria: string;
+    urgencia?: string;
+    fechaPreferida?: string;
+    region?: string;
+    provincia?: string;
+    comuna?: string;
+    presupuesto?: number;
+    images?: ImageAsset[];
+  }): Promise<Trabajo> => {
+    const formData = new FormData();
+    formData.append('title', data.titulo);
+    formData.append('description', data.descripcion);
+    formData.append('category_id', data.categoria);
+    if (data.urgencia)      formData.append('urgency',        data.urgencia);
+    if (data.fechaPreferida) formData.append('preferred_date', data.fechaPreferida);
+    if (data.region)        formData.append('region',         data.region);
+    if (data.provincia)     formData.append('provincia',      data.provincia);
+    if (data.comuna)        formData.append('comuna',         data.comuna);
+    if (data.presupuesto)   formData.append('presupuesto',    String(data.presupuesto));
+    data.images?.forEach(img => {
+      formData.append('images', { uri: img.uri, name: img.name, type: img.type } as unknown as Blob);
+    });
+    return apiClient.postForm<Trabajo>('/jobs', formData);
+  },
+
   closeJob: (id: string, data: { calificacion: number; resena?: string; images?: ImageAsset[] }): Promise<{ message: string; job: Trabajo }> => {
     if (data.images && data.images.length > 0) {
       const formData = new FormData();
