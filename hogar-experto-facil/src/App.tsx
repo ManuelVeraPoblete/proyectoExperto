@@ -19,11 +19,12 @@ import Register from "./pages/Register";
 import MensajesDirectos from "./pages/MensajesDirectos";
 import AuthDialog from "@/components/AuthDialog";
 import Layout from "@/components/Layout";
+import ChatWidget from "@/components/chat/ChatWidget";
 
 const queryClient = new QueryClient();
 
 const AppContent = () => {
-  const { authDialog, closeAuthDialog, setAuthDialogMode } = useAuth();
+  const { authDialog, closeAuthDialog, setAuthDialogMode, user, isAuthenticated } = useAuth();
 
   return (
     <Layout>
@@ -48,6 +49,9 @@ const AppContent = () => {
         mode={authDialog.mode}
         onModeChange={setAuthDialogMode}
       />
+      {isAuthenticated && user && (
+        <ChatWidget userName={user.nombres} userRole={user.userType} />
+      )}
     </Layout>
   );
 };

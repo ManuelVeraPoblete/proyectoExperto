@@ -1,7 +1,17 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { normalizeUser, NormalizedUser } from '@/lib/userNormalizer';
 import { storageService } from '@/services/storageService';
 import { logger } from '@/lib/logger';
+
+const isTokenExpired = (token?: string): boolean => {
+  if (!token) return true;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+};
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 export type User = NormalizedUser;
@@ -45,11 +55,27 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     isOpen: false,
     mode: 'login',
   });
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const inactivityRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const INACTIVITY_LIMIT = 5 * 60 * 1000;
 
-  // Recuperar sesión al iniciar
+  const doLogout = (): void => {
+    setUser(null);
+    storageService.clearUser();
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (inactivityRef.current) clearTimeout(inactivityRef.current);
+  };
+
+  // Recuperar sesión al iniciar y validar token
   useEffect(() => {
     const savedUser = storageService.getUser();
     if (!savedUser) return;
+
+    if (isTokenExpired(savedUser.token)) {
+      logger.debug('Token expirado al iniciar — cerrando sesión');
+      storageService.clearUser();
+      return;
+    }
 
     const normalized = normalizeUser(savedUser);
     if (normalized) {
@@ -59,6 +85,45 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       storageService.clearUser();
     }
   }, []);
+
+  // Verificar expiración cada minuto mientras la app está abierta
+  useEffect(() => {
+    if (!user) return;
+
+    intervalRef.current = setInterval(() => {
+      const savedUser = storageService.getUser();
+      if (isTokenExpired(savedUser?.token)) {
+        logger.debug('Token expirado — cerrando sesión automáticamente');
+        doLogout();
+      }
+    }, 60_000);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [user]);
+
+  // Cerrar sesión por inactividad (5 minutos sin interacción)
+  useEffect(() => {
+    if (!user) return;
+
+    const resetTimer = () => {
+      if (inactivityRef.current) clearTimeout(inactivityRef.current);
+      inactivityRef.current = setTimeout(() => {
+        logger.debug('Sesión cerrada por inactividad');
+        doLogout();
+      }, INACTIVITY_LIMIT);
+    };
+
+    const events = ['mousemove', 'keydown', 'click', 'scroll', 'touchstart'];
+    events.forEach(e => window.addEventListener(e, resetTimer));
+    resetTimer();
+
+    return () => {
+      events.forEach(e => window.removeEventListener(e, resetTimer));
+      if (inactivityRef.current) clearTimeout(inactivityRef.current);
+    };
+  }, [user]);
 
   // ─── Acciones ───────────────────────────────────────────────────────────────
   const login = (userData: unknown): void => {
@@ -71,10 +136,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const logout = (): void => {
-    setUser(null);
-    storageService.clearUser();
-  };
+  const logout = (): void => doLogout();
 
   const updateUser = (userData: Partial<User>): void => {
     if (!user) return;
