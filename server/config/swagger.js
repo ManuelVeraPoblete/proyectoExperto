@@ -1,5 +1,10 @@
 const swaggerJsdoc = require('swagger-jsdoc');
 
+/**
+ * Configuración de Swagger/OpenAPI.
+ * En producción usa la URL pública definida en BASE_URL.
+ * En local usa localhost para desarrollo.
+ */
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -9,7 +14,10 @@ const options = {
       description: 'API REST para el marketplace de servicios hogar-experto-facil',
     },
     servers: [
-      { url: 'http://localhost:3001', description: 'Desarrollo' },
+      {
+        url: process.env.BASE_URL || 'http://localhost:3001',
+        description: process.env.NODE_ENV === 'production' ? 'Producción' : 'Desarrollo',
+      },
     ],
     components: {
       securitySchemes: {
