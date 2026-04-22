@@ -318,7 +318,7 @@ const Register = () => {
                         const isExpanded = expandedCategoryId === category.id;
 
                         return (
-                          <div key={category.id} className={`border rounded-xl bg-white shadow-sm transition-all duration-200 ${isExpanded ? 'ring-1 ring-primary/20' : ''}`}>
+                          <div key={category.id} className={`border rounded-xl bg-card shadow-sm transition-all duration-200 ${isExpanded ? 'ring-1 ring-primary/20' : ''}`}>
                             {/* Cabecera de Categoría */}
                             <div className="flex items-center justify-between p-4 group">
                               <div className="flex items-center gap-3">

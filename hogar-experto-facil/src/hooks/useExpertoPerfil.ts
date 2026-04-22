@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { portfolioService, PortfolioItem, CreatePortfolioData } from '@/services/api/portfolioService';
 import { expertoService } from '@/services/api/expertoService';
 import { trabajoService } from '@/services/api/trabajoService';
-import { PortfolioEntry } from '@/types/experto';
+import { PortfolioEntry, PortfolioReactions } from '@/types/experto';
 import { Trabajo } from '@/types';
 import { API_BASE_URL } from '@/lib/api-config';
 
@@ -211,11 +211,11 @@ export const useExpertoPerfil = () => {
   );
 
   const myReactions = useMemo(() => {
-    if (!user?.id) return {} as Record<string, string | null>;
-    const map: Record<string, string | null> = {};
+    if (!user?.id) return {} as Record<string, keyof PortfolioReactions | null>;
+    const map: Record<string, keyof PortfolioReactions | null> = {};
     (rawPortfolio as PortfolioItem[]).forEach((item) => {
       const mine = item.Reactions?.find((r) => r.userId === user.id);
-      map[String(item.id)] = mine?.reaction ?? null;
+      map[String(item.id)] = (mine?.reaction as keyof PortfolioReactions) ?? null;
     });
     return map;
   }, [rawPortfolio, user?.id]);

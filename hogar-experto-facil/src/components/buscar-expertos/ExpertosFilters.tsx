@@ -29,7 +29,7 @@ const ExpertosFilters: React.FC<ExpertosFiltersProps> = ({
   onRatingChange,
   onSearch,
 }) => (
-  <div className="bg-white rounded-lg border border-border p-6 mb-8">
+  <div className="bg-card rounded-lg border border-border p-6 mb-8">
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
 
       {/* Búsqueda por texto */}
@@ -50,7 +50,7 @@ const ExpertosFilters: React.FC<ExpertosFiltersProps> = ({
           <SelectTrigger>
             <SelectValue placeholder="Todas las especialidades" />
           </SelectTrigger>
-          <SelectContent className="bg-white border border-border shadow-lg">
+          <SelectContent className="shadow-lg">
             <SelectItem value="all">Todas</SelectItem>
             {categories.map(cat => (
               <SelectItem key={cat.id} value={String(cat.id)}>
@@ -71,7 +71,7 @@ const ExpertosFilters: React.FC<ExpertosFiltersProps> = ({
           <SelectTrigger>
             <SelectValue placeholder="Todas las calificaciones" />
           </SelectTrigger>
-          <SelectContent className="bg-white border border-border shadow-lg">
+          <SelectContent className="shadow-lg">
             {RATING_FILTERS.map(rating => (
               <SelectItem key={rating} value={rating}>
                 <div className="flex items-center">

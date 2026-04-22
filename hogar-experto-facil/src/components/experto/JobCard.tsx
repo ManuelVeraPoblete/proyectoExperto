@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -33,13 +32,11 @@ interface JobCardProps {
   isApplied?: boolean;
 }
 
-const JobCard: React.FC<JobCardProps> = ({ job, onContact, onContactClient, onOpenJobDetails, unreadMessagesCount, isApplied }) => {
-  const handleContact = onContactClient || onContact;
-  
+const JobCard: React.FC<JobCardProps> = ({ job, onContact: _onContact, onContactClient: _onContactClient, onOpenJobDetails, unreadMessagesCount: _unreadMessagesCount, isApplied }) => {
   // Extraer los datos del cliente de la estructura aplanada de la API
-  const clientName = (job as any).cliente_nombres || job.cliente?.nombres || job.cliente?.nombre || 'Cliente';
-  const clientLastName = (job as any).cliente_apellidos || job.cliente?.apellidos || job.cliente?.apellido || '';
-  const clientId = job.clientId || job.cliente?.id;
+  const clientName = (job as any).cliente_nombres || job.cliente?.nombres || 'Cliente';
+  const clientLastName = (job as any).cliente_apellidos || job.cliente?.apellidos || '';
+  const clientId = job.cliente?.id;
 
   return (
     <Card className={`hover:shadow-md transition-shadow ${isApplied ? 'border-green-200 bg-green-50/30' : ''}`}>

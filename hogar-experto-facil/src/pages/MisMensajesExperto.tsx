@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useMensajes } from '@/hooks/useMensajes';

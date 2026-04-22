@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { mensajeService, ApiMessage, ApiConversation } from '@/services/api/mensajeService';
+import { mensajeService, ApiMessage } from '@/services/api/mensajeService';
 import { toAbsoluteUrl } from '@/lib/api-config';
 
 export interface NormalizedMessage {

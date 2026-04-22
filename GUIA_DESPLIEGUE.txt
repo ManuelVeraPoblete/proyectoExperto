@@ -1,0 +1,225 @@
+================================================================================
+        GUIA COMPLETA DE DESPLIEGUE GRATUITO - HOGAR EXPERTO FACIL
+================================================================================
+
+STACK:
+  - Frontend  : React + Vite         → Vercel (gratis)
+  - Backend   : Express.js Node      → Render.com (gratis)
+  - Base datos: MySQL (Sequelize)    → TiDB Serverless (gratis, sin pausa)
+  - Auth/RT   : Supabase             → Gratis (con ping anti-pausa)
+
+ARQUITECTURA:
+  [React/Vite] → Vercel
+       ↓
+  [Express API] → Render.com
+       ↓
+  [MySQL] → TiDB Serverless
+       +
+  [Auth/Realtime] → Supabase (con ping)
+
+================================================================================
+  PASO 1 — BASE DE DATOS MYSQL (TiDB Serverless)
+================================================================================
+
+TiDB es 100% compatible con MySQL, gratuito, 5GB, sin pausa.
+
+1.1 Crear cuenta
+    - Ve a: https://tidbcloud.com
+    - Sign Up (puedes usar GitHub)
+
+1.2 Crear cluster
+    - Click "Create Cluster" → selecciona "Serverless" (es el gratis)
+    - Elige region mas cercana (ej: us-west-2)
+    - Nombre: hogar-experto
+    - Click "Create"
+
+1.3 Obtener credenciales
+    - En el cluster → Connect → General
+    - Anota:
+        Host     : gateway01.us-west-2.prod.aws.tidbcloud.com
+        Port     : 4000
+        User     : xxxxxxxx.root
+        Password : xxxxxxxxxx
+
+1.4 Crear la base de datos
+    - En el cluster → SQL Editor → ejecuta:
+
+        CREATE DATABASE experthands_db;
+
+1.5 Importar tu schema
+    Desde tu terminal local:
+
+        cd /home/manuel/Desarrollo/proyectoExperto/server
+
+        mysql -h gateway01.us-west-2.prod.aws.tidbcloud.com \
+              -P 4000 \
+              -u <tu_user> \
+              -p \
+              --ssl-mode=REQUIRED \
+              experthands_db < schema.sql
+
+1.6 Ajuste SSL en el backend (OBLIGATORIO para TiDB)
+    Edita: server/config/database.js
+
+    Reemplaza el bloque de opciones por esto:
+
+        const sequelize = new Sequelize(
+          process.env.DB_NAME,
+          process.env.DB_USER,
+          process.env.DB_PASSWORD,
+          {
+            host: process.env.DB_HOST,
+            port: process.env.DB_PORT || 4000,
+            dialect: 'mysql',
+            logging: false,
+            dialectOptions: {
+              ssl: {
+                rejectUnauthorized: true,
+              },
+            },
+          }
+        );
+
+    Luego haz commit:
+
+        git add server/config/database.js
+        git commit -m "add SSL support for TiDB Serverless"
+
+================================================================================
+  PASO 2 — BACKEND EXPRESS (Render.com)
+================================================================================
+
+2.1 Subir codigo a GitHub (si no lo tienes)
+
+        cd /home/manuel/Desarrollo/proyectoExperto
+        git remote add origin https://github.com/<tu-usuario>/hogar-experto.git
+        git push -u origin main
+
+2.2 Crear Web Service en Render
+    - Ve a: https://render.com → Sign Up con GitHub
+    - New → Web Service
+    - Conecta tu repositorio
+    - Configuracion:
+        Name:           hogar-experto-api
+        Root Directory: server
+        Runtime:        Node
+        Build Command:  npm install
+        Start Command:  npm start
+
+2.3 Variables de entorno en Render
+    Panel de Render → Environment → agrega:
+
+        DB_HOST           = gateway01.us-west-2.prod.aws.tidbcloud.com
+        DB_PORT           = 4000
+        DB_USER           = <tu_user_tidb>
+        DB_PASSWORD       = <tu_password_tidb>
+        DB_NAME           = experthands_db
+        JWT_SECRET        = <tu_jwt_secret_actual>
+        CORS_ORIGINS      = https://tu-app.vercel.app  ← actualizar en paso 3
+        ANTHROPIC_API_KEY = <tu_key>
+        NODE_ENV          = production
+        PORT              = 10000
+
+2.4 Deploy
+    - Click "Create Web Service"
+    - Render hace el deploy automatico
+    - URL resultante: https://hogar-experto-api.onrender.com
+    - *** GUARDA ESTA URL, la necesitas en el paso 3 ***
+
+2.5 Prevenir el spin-down de Render
+    El plan gratuito duerme tras 15 min de inactividad.
+    Configura un monitor en UptimeRobot o cron-job.org:
+        URL      : https://hogar-experto-api.onrender.com/api/categories
+        Intervalo: cada 5 minutos
+
+================================================================================
+  PASO 3 — FRONTEND REACT/VITE (Vercel)
+================================================================================
+
+3.1 Actualizar la URL del API
+    Edita: hogar-experto-facil/src/lib/api-config.ts
+
+        export const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+        export const SERVER_URL = API_BASE_URL.replace(/\/api$/, '');
+
+    Crea el archivo: hogar-experto-facil/.env.production
+
+        VITE_API_URL=https://hogar-experto-api.onrender.com/api
+
+    Haz commit:
+
+        git add hogar-experto-facil/src/lib/api-config.ts
+        git add hogar-experto-facil/.env.production
+        git commit -m "use env variable for API URL"
+        git push
+
+3.2 Deploy en Vercel
+    - Ve a: https://vercel.com → Sign Up con GitHub
+    - Add New Project → importa tu repositorio
+    - Configuracion:
+        Framework Preset : Vite
+        Root Directory   : hogar-experto-facil
+        Build Command    : npm run build
+        Output Directory : dist
+
+3.3 Variables de entorno en Vercel
+    Settings → Environment Variables:
+
+        VITE_API_URL = https://hogar-experto-api.onrender.com/api
+
+3.4 Deploy
+    - Click "Deploy"
+    - En 1-2 min tendras la URL: https://hogar-experto.vercel.app
+    - *** GUARDA ESTA URL ***
+
+3.5 Actualizar CORS en Render
+    Vuelve a Render → Environment → actualiza:
+
+        CORS_ORIGINS = https://hogar-experto.vercel.app
+
+    Render redeploya automaticamente.
+
+================================================================================
+  PASO 4 — SUPABASE (ping anti-pausa)
+================================================================================
+
+    - Ve a: https://cron-job.org → nueva tarea
+    - URL      : https://<tu-proyecto>.supabase.co/rest/v1/
+    - Intervalo: cada 12 horas
+
+    Alternativa con UptimeRobot (https://uptimerobot.com):
+    - Monitor type : HTTP(s)
+    - URL          : https://<tu-proyecto>.supabase.co
+    - Intervalo    : 5 minutos (te avisa si cae)
+
+================================================================================
+  PASO 5 — VERIFICAR QUE TODO FUNCIONA
+================================================================================
+
+    1. Abre https://hogar-experto.vercel.app
+    2. Intenta registrarte / iniciar sesion
+    3. Verifica que carguen los expertos (llama al backend)
+    4. Prueba el chat (Supabase realtime)
+    5. Si algo falla, revisa los logs en Render (panel → Logs)
+
+================================================================================
+  RESUMEN FINAL
+================================================================================
+
+    Capa       | Servicio       | URL
+    -----------|----------------|------------------------------------------
+    Frontend   | Vercel         | https://hogar-experto.vercel.app
+    Backend    | Render         | https://hogar-experto-api.onrender.com
+    Base datos | TiDB Serverless| gateway01...tidbcloud.com:4000
+    Auth/RT    | Supabase       | https://xxx.supabase.co
+
+================================================================================
+  PUNTOS CRITICOS A NO OLVIDAR
+================================================================================
+
+    [!] Paso 1.6 : Agregar SSL en database.js antes de conectar a TiDB
+    [!] Paso 2.3 : Actualizar CORS_ORIGINS con la URL real de Vercel
+    [!] Paso 2.5 : Configurar ping a Render para evitar el spin-down
+    [!] Paso 4   : Configurar ping a Supabase para evitar la pausa de 7 dias
+
+================================================================================

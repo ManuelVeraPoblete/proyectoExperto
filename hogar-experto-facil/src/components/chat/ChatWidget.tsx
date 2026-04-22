@@ -13,7 +13,7 @@ interface ChatWidgetProps {
 }
 
 const GREETING: Record<UserRole, string> = {
-  cliente:  '¡Hola! Puedo ayudarte a publicar trabajos, encontrar el experto ideal y gestionar tus solicitudes. ¿En qué te ayudo?',
+  client:   '¡Hola! Puedo ayudarte a publicar trabajos, encontrar el experto ideal y gestionar tus solicitudes. ¿En qué te ayudo?',
   experto:  '¡Hola! Puedo ayudarte a encontrar trabajos, mejorar tu perfil y gestionar tus postulaciones. ¿En qué te ayudo?',
   admin:    '¡Hola! ¿En qué puedo ayudarte hoy?',
 };
@@ -41,7 +41,7 @@ const ChatWidget = ({ userName, userRole }: ChatWidgetProps) => {
     }
   };
 
-  const greeting = GREETING[userRole] ?? GREETING.cliente;
+  const greeting = GREETING[userRole] ?? GREETING.client;
 
   return (
     <>

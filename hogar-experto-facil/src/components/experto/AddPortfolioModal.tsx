@@ -126,7 +126,7 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({ isOpen, onClose, 
               onChange={(e) => set('title', e.target.value)}
               placeholder="Ej: Renovación de baño completo"
             />
-            {errors.title && <p className="text-xs text-red-500">{errors.title}</p>}
+            {errors.title && <p className="text-xs text-destructive">{errors.title}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -138,7 +138,7 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({ isOpen, onClose, 
               onChange={(e) => set('description', e.target.value)}
               placeholder="Describe el trabajo realizado..."
             />
-            {errors.description && <p className="text-xs text-red-500">{errors.description}</p>}
+            {errors.description && <p className="text-xs text-destructive">{errors.description}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -211,7 +211,7 @@ const AddPortfolioModal: React.FC<AddPortfolioModalProps> = ({ isOpen, onClose, 
                 </button>
               </>
             )}
-            {errors.photos && <p className="text-xs text-red-500">{errors.photos}</p>}
+            {errors.photos && <p className="text-xs text-destructive">{errors.photos}</p>}
           </div>
 
           <DialogFooter className="pt-2">

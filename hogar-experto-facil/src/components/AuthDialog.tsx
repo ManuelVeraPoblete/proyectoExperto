@@ -18,7 +18,7 @@ interface AuthDialogProps {
   onModeChange: (mode: 'login' | 'register') => void;
 }
 
-const AuthDialog = ({ isOpen, onClose, mode, onModeChange }: AuthDialogProps) => {
+const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange }: AuthDialogProps) => {
   const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();

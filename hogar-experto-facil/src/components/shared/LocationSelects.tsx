@@ -35,7 +35,7 @@ const LocationSelects: React.FC<LocationSelectsProps> = ({
           <SelectTrigger>
             <SelectValue placeholder="Selecciona tu región" />
           </SelectTrigger>
-          <SelectContent className="bg-white border border-border shadow-lg">
+          <SelectContent className="shadow-lg">
             {chileData.map((region) => (
               <SelectItem key={region.region} value={region.region}>
                 {region.region}
@@ -51,7 +51,7 @@ const LocationSelects: React.FC<LocationSelectsProps> = ({
           <SelectTrigger>
             <SelectValue placeholder="Selecciona tu provincia" />
           </SelectTrigger>
-          <SelectContent className="bg-white border border-border shadow-lg">
+          <SelectContent className="shadow-lg">
             {provincias?.map((provincia) => (
               <SelectItem key={provincia.nombre} value={provincia.nombre}>
                 {provincia.nombre}

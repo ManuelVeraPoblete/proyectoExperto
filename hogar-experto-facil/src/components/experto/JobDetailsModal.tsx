@@ -53,7 +53,6 @@ export function JobDetailsModal({
   const clientData = trabajo.cliente || trabajo.User || trabajo.Client;
   const clientName = trabajo.cliente_nombres || clientData?.nombres || clientData?.nombre || 'Cliente';
   const clientLastName = trabajo.cliente_apellidos || clientData?.apellidos || clientData?.apellido || '';
-  const clientId = trabajo.clientId || clientData?.id;
   const serverUrl = API_BASE_URL.replace('/api', '');
 
   // Preparar URLs de fotos
@@ -80,7 +79,7 @@ export function JobDetailsModal({
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="sm:max-w-lg bg-white rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg rounded-lg shadow-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader className="p-6">
             <DialogTitle className="text-2xl font-bold text-foreground">
               {trabajo.titulo}
@@ -159,40 +158,40 @@ export function JobDetailsModal({
 
             {/* Job Details Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
-              <div className="bg-gray-50/50 p-3 rounded-xl border border-border/50">
+              <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
                 <div className="flex items-center gap-2 mb-1">
                   <Tag className="w-4 h-4 text-primary" />
-                  <span className="font-semibold text-xs uppercase tracking-wider text-gray-500">Categoría</span>
+                  <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Categoría</span>
                 </div>
                 <span className="text-foreground font-medium pl-6 block truncate">
                   {trabajo.Category?.name || trabajo.categoria}
                 </span>
               </div>
 
-              <div className="bg-gray-50/50 p-3 rounded-xl border border-border/50">
+              <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
                 <div className="flex items-center gap-2 mb-1">
                   <MapPin className="w-4 h-4 text-primary" />
-                  <span className="font-semibold text-xs uppercase tracking-wider text-gray-500">Ubicación</span>
+                  <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Ubicación</span>
                 </div>
                 <span className="text-foreground font-medium pl-6 block">
                   {trabajo.comuna}, {trabajo.region}
                 </span>
               </div>
 
-              <div className="bg-gray-50/50 p-3 rounded-xl border border-border/50">
+              <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
                 <div className="flex items-center gap-2 mb-1">
                   <CalendarDays className="w-4 h-4 text-primary" />
-                  <span className="font-semibold text-xs uppercase tracking-wider text-gray-500">Publicado</span>
+                  <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Publicado</span>
                 </div>
                 <span className="text-foreground font-medium pl-6 block">
                   {trabajo.createdAt ? new Date(trabajo.createdAt).toLocaleDateString("es-CL", { day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A'}
                 </span>
               </div>
 
-              <div className="bg-gray-50/50 p-3 rounded-xl border border-border/50">
+              <div className="bg-muted/30 p-3 rounded-xl border border-border/50">
                 <div className="flex items-center gap-2 mb-1">
                   <Tag className="w-4 h-4 text-primary" />
-                  <span className="font-semibold text-xs uppercase tracking-wider text-gray-500">Estado</span>
+                  <span className="font-semibold text-xs uppercase tracking-wider text-muted-foreground">Estado</span>
                 </div>
                 <div className="pl-6 pt-1">
                   <Badge variant="secondary" className="bg-green-100 text-green-700 border-none capitalize text-[10px] font-bold">
@@ -217,7 +216,7 @@ export function JobDetailsModal({
             </div>
           </div>
 
-          <DialogFooter className="bg-gray-50 p-4 flex justify-end gap-2 rounded-b-lg border-t">
+          <DialogFooter className="bg-muted/50 p-4 flex justify-end gap-2 rounded-b-lg border-t">
             <Button variant="ghost" onClick={onClose}>Cerrar</Button>
             {isAlreadyApplied ? (
               <Button

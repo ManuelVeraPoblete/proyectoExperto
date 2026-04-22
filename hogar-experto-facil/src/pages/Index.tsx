@@ -1,5 +1,4 @@
 
-import React from 'react';
 import SearchHero from '@/components/SearchHero';
 import ServiceCategories from '@/components/ServiceCategories';
 import StatsSection from '@/components/StatsSection';

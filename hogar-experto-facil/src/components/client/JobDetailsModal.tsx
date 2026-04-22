@@ -10,16 +10,16 @@ interface JobDetailsModalProps {
   isOpen: boolean;
   onClose: () => void;
   job: {
-    id: number;
+    id: string;
     title: string;
-    experto: string;
+    experto: string | null;
     status: string;
     date: string;
     rating: number | null;
     description?: string;
     originalReview?: string;
   };
-  onNewReview?: (jobId: number, review: string) => void;
+  onNewReview?: (jobId: string, review: string) => void;
 }
 
 const JobDetailsModal: React.FC<JobDetailsModalProps> = ({ 

@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { trabajoService } from '@/services/api/trabajoService';
-import { JOB_STATUS, JobStatus } from '@/constants';
+import { JobStatus } from '@/constants';
 import { getStatusColor, getStatusText } from '@/utils/statusHelpers';
 import { Trabajo } from '@/types';
 

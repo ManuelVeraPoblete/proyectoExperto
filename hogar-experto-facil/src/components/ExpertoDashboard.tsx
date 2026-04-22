@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
 import { trabajoService } from '@/services/api/trabajoService';
 import { expertoService } from '@/services/api/expertoService';
@@ -20,7 +20,6 @@ import { useMyApplications } from '@/hooks/useMyApplications';
 const ExpertoDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const queryClient = useQueryClient();
   const { appliedJobIds } = useMyApplications();
   const [applyTarget, setApplyTarget] = useState<Trabajo | null>(null);
 
@@ -52,12 +51,12 @@ const ExpertoDashboard = () => {
   });
 
 
-  const myJobIds = React.useMemo(
+  const myJobIds = useMemo(
     () => new Set((rawMyJobs ?? []).map((t: Trabajo) => String(t.id))),
     [rawMyJobs],
   );
 
-  const jobOffers: ExpertoJobOffer[] = React.useMemo(() => {
+  const jobOffers: ExpertoJobOffer[] = useMemo(() => {
     if (!rawJobOffers) return [];
     return rawJobOffers
       .filter((t: Trabajo) => t.estado === 'activo' && !myJobIds.has(String(t.id)))
@@ -74,7 +73,7 @@ const ExpertoDashboard = () => {
       }));
   }, [rawJobOffers, myJobIds]);
 
-  const myJobs: ExpertoActiveJob[] = React.useMemo(() => {
+  const myJobs: ExpertoActiveJob[] = useMemo(() => {
     if (!rawMyJobs) return [];
     return rawMyJobs.map((t: Trabajo) => ({
       id: t.id as any,

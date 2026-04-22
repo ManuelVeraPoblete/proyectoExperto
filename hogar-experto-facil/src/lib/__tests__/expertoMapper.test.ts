@@ -5,7 +5,6 @@ const baseExperto: ApiExperto = {
   id: '1',
   nombres: 'Pedro',
   apellidos: 'Soto',
-  email: 'pedro@mail.com',
   rating: '4.8',
   reviewCount: 12,
   comuna: 'Providencia',

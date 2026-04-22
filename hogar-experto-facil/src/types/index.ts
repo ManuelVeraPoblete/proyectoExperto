@@ -1,5 +1,6 @@
 export * from './maestro';
 export * from './job';
+export type { UserRole } from '@/constants';
 
 export interface Message {
   id: string;

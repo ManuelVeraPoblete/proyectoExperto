@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -82,14 +82,14 @@ const SearchHero = () => {
             Encuentra el <span className="text-primary">experto perfecto</span><br />
             para tu hogar
           </h1>
-          <p className="text-xl text-black max-w-2xl mx-auto">
+          <p className="text-xl text-foreground max-w-2xl mx-auto">
             Conectamos a personas como tú con expertos calificados en reparaciones,
             construcción y mejoras para el hogar. Rápido, confiable y profesional.
           </p>
         </div>
 
         {/* Search Bar */}
-        <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div className="max-w-4xl mx-auto bg-card rounded-2xl shadow-lg p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium text-foreground block text-left">
@@ -112,7 +112,7 @@ const SearchHero = () => {
                 <SelectTrigger className="h-12">
                   <SelectValue placeholder="Todas las especialidades" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border shadow-lg">
+                <SelectContent className="shadow-lg">
                   <SelectItem value="all">Todas</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id.toString()}>

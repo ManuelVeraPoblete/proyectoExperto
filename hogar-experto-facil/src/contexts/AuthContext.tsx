@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { normalizeUser, NormalizedUser } from '@/lib/userNormalizer';
 import { storageService } from '@/services/storageService';
 import { logger } from '@/lib/logger';

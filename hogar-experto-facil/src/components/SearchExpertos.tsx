@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -64,7 +64,7 @@ const SearchExpertos = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-border p-6">
+    <div className="bg-card rounded-lg border border-border p-6">
       <h3 className="text-lg font-semibold text-foreground mb-4">Buscar Expertos</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -88,7 +88,7 @@ const SearchExpertos = () => {
             <SelectTrigger>
               <SelectValue placeholder="Todas las especialidades" />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-border shadow-lg">
+            <SelectContent className="shadow-lg">
               <SelectItem value="all">Todas</SelectItem>
               {categories.map((category) => (
                 <SelectItem key={category.id} value={category.id.toString()}>

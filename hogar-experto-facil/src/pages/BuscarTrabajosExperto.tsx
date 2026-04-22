@@ -97,7 +97,7 @@ const BuscarTrabajosExperto = () => {
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-lg border border-border p-6 mb-8">
+        <div className="bg-card rounded-lg border border-border p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
             <div>
               <label className="text-sm font-medium text-foreground mb-2 block">Buscar</label>
@@ -114,7 +114,7 @@ const BuscarTrabajosExperto = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Todas las categorías" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border shadow-lg">
+                <SelectContent className="shadow-lg">
                   <SelectItem value="all">Todas las categorías</SelectItem>
                   {categories.map((category) => (
                     <SelectItem key={category.id} value={category.id.toString()}>
@@ -199,7 +199,7 @@ const BuscarTrabajosExperto = () => {
               totalPages > 1 && (
                 <div className="mt-12 flex justify-center">
                   <Pagination>
-                    <PaginationContent className="bg-white border rounded-lg shadow-sm">
+                    <PaginationContent className="bg-card border rounded-lg shadow-sm">
                       <PaginationItem>
                         <PaginationPrevious 
                           href="#" 

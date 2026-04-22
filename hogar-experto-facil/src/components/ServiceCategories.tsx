@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import useProtectedNavigation from '@/hooks/useProtectedNavigation';
 
@@ -57,12 +56,12 @@ const ServiceCategories = () => {
       title: 'Reparaciones',
       description: 'Reparaciones generales del hogar',
       icon: '🔨',
-      color: 'bg-gray-50 hover:bg-gray-100 border-gray-200'
+      color: 'bg-muted/50 hover:bg-muted border-border'
     }
   ];
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-16 bg-card">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-foreground mb-4">

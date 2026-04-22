@@ -211,7 +211,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({
             {/* Mensaje */}
             <div className="space-y-2">
               <Label htmlFor="apply-mensaje">
-                Tu propuesta <span className="text-red-500">*</span>
+                Tu propuesta <span className="text-destructive">*</span>
               </Label>
 
               {/* Sugerencias rápidas */}
@@ -244,7 +244,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({
               />
               <div className="flex justify-between items-center">
                 {errors.mensaje
-                  ? <p className="text-xs text-red-500">{errors.mensaje}</p>
+                  ? <p className="text-xs text-destructive">{errors.mensaje}</p>
                   : <span />}
                 <p className={`text-xs ml-auto ${mensaje.length > 450 ? 'text-orange-500' : 'text-muted-foreground'}`}>
                   {mensaje.length}/500
@@ -273,7 +273,7 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({
                   }}
                 />
               </div>
-              {errors.presupuesto && <p className="text-xs text-red-500">{errors.presupuesto}</p>}
+              {errors.presupuesto && <p className="text-xs text-destructive">{errors.presupuesto}</p>}
               <p className="text-xs text-muted-foreground">
                 Indica cuánto cobrarías por este trabajo en pesos chilenos.
               </p>

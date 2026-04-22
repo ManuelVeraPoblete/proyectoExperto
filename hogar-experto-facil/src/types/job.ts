@@ -3,7 +3,7 @@ import { JobStatus } from '@/constants';
 // ─── Tipos del dominio Trabajo ────────────────────────────────────────────────
 
 export interface JobBase {
-  id: number;
+  id: string;
   title: string;
   date: string;
   status: JobStatus | string;

@@ -102,7 +102,7 @@ const PublicarTrabajo = () => {
       
       // Datos extraídos automáticamente del usuario logueado
       // El backend parece esperar clientId o userId según tu indicación
-      const clientId = user.id || user.userId || (user as any).clientId;
+      const clientId = user.id || (user as any).clientId;
       if (clientId) data.append('clientId', String(clientId));
       
       if (user.region) data.append('region', user.region);
@@ -161,7 +161,7 @@ const PublicarTrabajo = () => {
 
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Sección: Información Principal */}
-        <div className="space-y-4 border rounded-lg p-6 shadow-lg bg-white">
+        <div className="space-y-4 border rounded-lg p-6 shadow-lg bg-card">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Info className="w-5 h-5 text-primary" />
             Información del Proyecto
@@ -183,7 +183,7 @@ const PublicarTrabajo = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona una especialidad" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border shadow-lg">
+                <SelectContent className="shadow-lg">
                   {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
                   ))}
@@ -205,7 +205,7 @@ const PublicarTrabajo = () => {
         </div>
 
         {/* Sección: Planificación */}
-        <div className="space-y-4 border rounded-lg p-6 shadow-lg bg-white">
+        <div className="space-y-4 border rounded-lg p-6 shadow-lg bg-card">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Clock className="w-5 h-5 text-primary" />
             Planificación
@@ -217,7 +217,7 @@ const PublicarTrabajo = () => {
                 <SelectTrigger>
                   <SelectValue placeholder="¿Para cuándo lo necesitas?" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-border shadow-lg">
+                <SelectContent className="shadow-lg">
                   {urgencyOptions.map((opt) => (
                     <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
@@ -236,7 +236,7 @@ const PublicarTrabajo = () => {
                     {date ? format(date, "PPP", { locale: es }) : "Seleccionar fecha"}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 bg-white border border-border shadow-lg" align="start">
+                <PopoverContent className="w-auto p-0 shadow-lg" align="start">
                   <Calendar
                     mode="single"
                     selected={date}
@@ -251,7 +251,7 @@ const PublicarTrabajo = () => {
         </div>
 
         {/* Sección: Archivos Multimedia */}
-        <div className="space-y-4 border rounded-lg p-6 shadow-lg bg-white">
+        <div className="space-y-4 border rounded-lg p-6 shadow-lg bg-card">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <ImageIcon className="w-5 h-5 text-primary" />
             Fotos del Problema (Opcional)

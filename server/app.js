@@ -33,6 +33,8 @@ const applicationRoutes = require('./routes/applicationRoutes');
 const portfolioRoutes = require('./routes/portfolioRoutes');
 const messageRoutes = require('./routes/messageRoutes');
 const reportRoutes = require('./routes/reportRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const statsRoutes = require('./routes/statsRoutes');
 
 const app = express();
 
@@ -148,6 +150,8 @@ app.use('/api/applications', applicationRoutes);
 app.use('/api/portfolio', portfolioRoutes);
 app.use('/api/messages', messageRoutes);
 app.use('/api/reports', reportRoutes);
+app.use('/api/chat', chatRoutes);
+app.use('/api/stats', statsRoutes);
 
 // Health check
 app.get('/health', (req, res) => res.json({ status: 'ok', uptime: process.uptime() }));

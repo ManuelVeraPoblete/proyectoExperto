@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -19,7 +18,7 @@ const CtaSection = () => {
           <Button size="lg" className="btn-primary" onClick={() => openAuthDialog('register')}>
             Unirse como Experto
           </Button>
-          <Button size="lg" variant="outline" className="bg-white hover:bg-gray-50" onClick={() => openAuthDialog('login')}>
+          <Button size="lg" variant="outline" className="bg-card hover:bg-muted" onClick={() => openAuthDialog('login')}>
             Más Información
           </Button>
         </div>

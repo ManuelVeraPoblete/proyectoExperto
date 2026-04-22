@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,8 +22,8 @@ const ExpertoCard: React.FC<ExpertoCardProps> = ({
   reviewCount,
   comuna,
   region,
-  experience,
-  hourlyRate,
+  experience: _experience,
+  hourlyRate: _hourlyRate,
   isVerified = false,
   onContactClick,
   unreadCount = 0,
@@ -36,7 +35,7 @@ const ExpertoCard: React.FC<ExpertoCardProps> = ({
   };
 
   return (
-    <Card className="card-hover bg-white border-border">
+    <Card className="card-hover border-border">
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">

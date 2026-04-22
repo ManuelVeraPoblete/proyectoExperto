@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserCheck, AlertTriangle, BarChart3, Shield, MessageSquare, Eye, Trash2 } from 'lucide-react';
+import { Users, UserCheck, AlertTriangle, BarChart3, Shield, Eye } from 'lucide-react';
 import { toast } from "sonner";
 import { UserDetailsModal } from '@/components/admin/UserDetailsModal';
 import ReportManagement from '@/components/admin/ReportManagement';
@@ -35,33 +35,6 @@ const initialPendingApprovals = [
     specialty: 'Construcción',
     date: '22 Jun 2024',
     telefono: '+56911223344'
-  }
-];
-
-const initialRecentReports = [
-  {
-    id: 1,
-    type: 'review',
-    content: 'Lenguaje inapropiado en reseña',
-    reporter: 'Ana García',
-    date: '24 Jun 2024',
-    status: 'pending'
-  },
-  {
-    id: 2,
-    type: 'user',
-    content: 'Usuario sospechoso de spam',
-    reporter: 'Carlos Ruiz',
-    date: '23 Jun 2024',
-    status: 'reviewed'
-  },
-  {
-    id: 3,
-    type: 'post',
-    content: 'Publicación ofensiva',
-    reporter: 'María López',
-    date: '22 Jun 2024',
-    status: 'resolved'
   }
 ];
 

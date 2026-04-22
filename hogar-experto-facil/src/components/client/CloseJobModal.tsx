@@ -179,7 +179,7 @@ const CloseJobModal: React.FC<CloseJobModalProps> = ({ isOpen, onClose, job, onJ
                 </span>
               )}
             </div>
-            {errors.rating && <p className="text-xs text-red-500">{errors.rating}</p>}
+            {errors.rating && <p className="text-xs text-destructive">{errors.rating}</p>}
           </div>
 
           {/* Reseña */}
@@ -205,7 +205,7 @@ const CloseJobModal: React.FC<CloseJobModalProps> = ({ isOpen, onClose, job, onJ
             />
             <div className="flex justify-between items-center">
               {errors.review
-                ? <p className="text-xs text-red-500">{errors.review}</p>
+                ? <p className="text-xs text-destructive">{errors.review}</p>
                 : <span />}
               <p className={`text-xs ml-auto ${review.length > 450 ? 'text-orange-500' : 'text-muted-foreground'}`}>
                 {review.length}/500
@@ -259,7 +259,7 @@ const CloseJobModal: React.FC<CloseJobModalProps> = ({ isOpen, onClose, job, onJ
                 </button>
               </>
             )}
-            {errors.photos && <p className="text-xs text-red-500">{errors.photos}</p>}
+            {errors.photos && <p className="text-xs text-destructive">{errors.photos}</p>}
           </div>
 
           <DialogFooter className="pt-2">

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -50,7 +50,7 @@ export function ChatDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] flex flex-col h-[80vh]">
+      <DialogContent className="sm:max-w-[425px] flex flex-col h-[80vh] max-h-[90dvh]">
         <DialogHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div>
@@ -70,7 +70,7 @@ export function ChatDialog({
             )}
           </div>
         </DialogHeader>
-        <ScrollArea className="flex-1 p-4 bg-gray-200 dark:bg-gray-800 rounded-lg mb-4 overflow-y-auto">
+        <ScrollArea className="flex-1 p-4 bg-muted rounded-lg mb-4 overflow-y-auto">
           <div className="flex flex-col space-y-3">
             {messages.map((msg) => (
               <div
@@ -81,7 +81,7 @@ export function ChatDialog({
                   className={`max-w-[75%] p-3 rounded-lg relative shadow-sm group ${
                     msg.sender === 'me'
                       ? 'bg-green-500 text-white rounded-br-none'
-                      : 'bg-white text-gray-800 rounded-bl-none dark:bg-gray-700 dark:text-gray-200'
+                      : 'bg-card text-card-foreground rounded-bl-none'
                   }`}
                 >
                   <p className="text-sm break-words pr-10">{msg.text}</p>
@@ -107,7 +107,7 @@ export function ChatDialog({
             <div ref={messagesEndRef} />
           </div>
         </ScrollArea>
-        <div className="flex items-center gap-2 p-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-2 p-2 border-t border-border">
           <Input
             placeholder="Escribe un mensaje..."
             value={newMessage}
@@ -117,11 +117,11 @@ export function ChatDialog({
                 handleSendMessage();
               }
             }}
-            className="flex-1 rounded-full px-4 py-2 bg-gray-100 border-none focus:ring-2 focus:ring-green-500 dark:bg-gray-700 dark:text-white"
+            className="flex-1 rounded-full px-4 py-2 bg-muted border-none focus:ring-2 focus:ring-primary"
           />
           <Button 
             onClick={handleSendMessage}
-            className="rounded-full p-2 bg-green-500 text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="rounded-full p-2 bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-2 focus:ring-ring focus:ring-offset-2"
             size="icon"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-send"><path d="m22 2-7 20-4-9-9-4 20-7Z"/><path d="M15 7l-6 6"/></svg>
