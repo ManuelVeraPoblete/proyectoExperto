@@ -45,13 +45,31 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
   const [newEspecialidad, setNewEspecialidad] = useState('');
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (!form.nombres.trim()) e.nombres = 'Los nombres son requeridos';
+    if (!form.apellidos.trim()) e.apellidos = 'Los apellidos son requeridos';
+    if (!form.region.trim()) e.region = 'La región es requerida';
+    if (!form.comuna.trim()) e.comuna = 'La comuna es requerida';
+    if (!form.direccion.trim()) e.direccion = 'La dirección es requerida';
+    if (form.telefono && !/^\+?[\d\s\-()]{8,15}$/.test(form.telefono))
+      e.telefono = 'Formato inválido. Ej: +56 9 12345678';
+    if (form.hourlyRate !== undefined && form.hourlyRate < 0)
+      e.hourlyRate = 'La tarifa no puede ser negativa';
+    return e;
+  };
 
   useEffect(() => {
-    if (isOpen) setForm({ ...perfil });
+    if (isOpen) { setForm({ ...perfil }); setErrors({}); }
   }, [isOpen, perfil]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     onSave(form);
     onClose();
   };
@@ -125,12 +143,14 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ep-nombres">Nombres</Label>
-              <Input id="ep-nombres" value={form.nombres} onChange={(e) => set('nombres', e.target.value)} />
+              <Label htmlFor="ep-nombres">Nombres *</Label>
+              <Input id="ep-nombres" value={form.nombres} onChange={(e) => { set('nombres', e.target.value); if (errors.nombres) setErrors(p => ({...p, nombres: ''})); }} className={errors.nombres ? 'border-destructive' : ''} />
+              {errors.nombres && <p className="text-xs text-destructive">{errors.nombres}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="ep-apellidos">Apellidos</Label>
-              <Input id="ep-apellidos" value={form.apellidos} onChange={(e) => set('apellidos', e.target.value)} />
+              <Label htmlFor="ep-apellidos">Apellidos *</Label>
+              <Input id="ep-apellidos" value={form.apellidos} onChange={(e) => { set('apellidos', e.target.value); if (errors.apellidos) setErrors(p => ({...p, apellidos: ''})); }} className={errors.apellidos ? 'border-destructive' : ''} />
+              {errors.apellidos && <p className="text-xs text-destructive">{errors.apellidos}</p>}
             </div>
           </div>
 
@@ -148,7 +168,8 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <Label htmlFor="ep-telefono">Teléfono</Label>
-              <Input id="ep-telefono" value={form.telefono} onChange={(e) => set('telefono', e.target.value)} />
+              <Input id="ep-telefono" value={form.telefono} onChange={(e) => { set('telefono', e.target.value); if (errors.telefono) setErrors(p => ({...p, telefono: ''})); }} className={errors.telefono ? 'border-destructive' : ''} />
+              {errors.telefono && <p className="text-xs text-destructive">{errors.telefono}</p>}
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="ep-experience">Años de experiencia</Label>
@@ -158,18 +179,21 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label htmlFor="ep-region">Región</Label>
-              <Input id="ep-region" value={form.region} onChange={(e) => set('region', e.target.value)} />
+              <Label htmlFor="ep-region">Región *</Label>
+              <Input id="ep-region" value={form.region} onChange={(e) => { set('region', e.target.value); if (errors.region) setErrors(p => ({...p, region: ''})); }} className={errors.region ? 'border-destructive' : ''} />
+              {errors.region && <p className="text-xs text-destructive">{errors.region}</p>}
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="ep-comuna">Comuna</Label>
-              <Input id="ep-comuna" value={form.comuna} onChange={(e) => set('comuna', e.target.value)} />
+              <Label htmlFor="ep-comuna">Comuna *</Label>
+              <Input id="ep-comuna" value={form.comuna} onChange={(e) => { set('comuna', e.target.value); if (errors.comuna) setErrors(p => ({...p, comuna: ''})); }} className={errors.comuna ? 'border-destructive' : ''} />
+              {errors.comuna && <p className="text-xs text-destructive">{errors.comuna}</p>}
             </div>
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="ep-direccion">Dirección</Label>
-            <Input id="ep-direccion" value={form.direccion} onChange={(e) => set('direccion', e.target.value)} />
+            <Label htmlFor="ep-direccion">Dirección *</Label>
+            <Input id="ep-direccion" value={form.direccion} onChange={(e) => { set('direccion', e.target.value); if (errors.direccion) setErrors(p => ({...p, direccion: ''})); }} className={errors.direccion ? 'border-destructive' : ''} />
+            {errors.direccion && <p className="text-xs text-destructive">{errors.direccion}</p>}
           </div>
 
           <div className="space-y-1.5">
@@ -178,9 +202,11 @@ const EditPerfilModal: React.FC<EditPerfilModalProps> = ({ isOpen, onClose, perf
               id="ep-rate"
               type="number"
               value={form.hourlyRate ?? ''}
-              onChange={(e) => set('hourlyRate', Number(e.target.value))}
+              onChange={(e) => { set('hourlyRate', Number(e.target.value)); if (errors.hourlyRate) setErrors(p => ({...p, hourlyRate: ''})); }}
               placeholder="Ej: 15000"
+              className={errors.hourlyRate ? 'border-destructive' : ''}
             />
+            {errors.hourlyRate && <p className="text-xs text-destructive">{errors.hourlyRate}</p>}
           </div>
 
           <div className="space-y-1.5">

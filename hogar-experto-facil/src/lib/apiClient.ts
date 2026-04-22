@@ -21,6 +21,19 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
+// ─── Extrae el mensaje de error de una respuesta HTTP fallida ────────────────
+const extractErrorMessage = async (response: Response): Promise<string> => {
+  try {
+    const body = await response.json();
+    if (typeof body.message === 'string' && body.message) return body.message;
+    if (Array.isArray(body.message)) return body.message.join(', ');
+    if (typeof body.error === 'string' && body.error) return body.error;
+  } catch {
+    // el cuerpo no es JSON, intentar como texto
+  }
+  return response.text().catch(() => response.statusText || `Error ${response.status}`);
+};
+
 // ─── Función base de petición ────────────────────────────────────────────────
 const request = async <T>(
   method: HttpMethod,
@@ -45,7 +58,7 @@ const request = async <T>(
   });
 
   if (!response.ok) {
-    const message = await response.text().catch(() => response.statusText);
+    const message = await extractErrorMessage(response);
     logger.error(`[API] ${method} ${url} → ${response.status}`, message);
     throw new ApiError(response.status, message);
   }
@@ -66,7 +79,7 @@ const uploadForm = async <T>(endpoint: string, formData: FormData, method: 'POST
   });
 
   if (!response.ok) {
-    const message = await response.text().catch(() => response.statusText);
+    const message = await extractErrorMessage(response);
     logger.error(`[API] ${method} ${url} → ${response.status}`, message);
     throw new ApiError(response.status, message);
   }

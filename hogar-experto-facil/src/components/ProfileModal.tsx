@@ -31,6 +31,20 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (!formData.nombres.trim()) e.nombres = 'Los nombres son requeridos';
+    if (!formData.apellidos.trim()) e.apellidos = 'Los apellidos son requeridos';
+    if (!formData.email.trim()) e.email = 'El email es requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Ingresa un email válido';
+    if (formData.telefono && !/^\+?[\d\s\-()]{8,15}$/.test(formData.telefono))
+      e.telefono = 'Formato inválido. Ej: +56 9 12345678';
+    if (user?.userType === 'experto' && formData.hourlyRate < 0)
+      e.hourlyRate = 'La tarifa no puede ser negativa';
+    return e;
+  };
   const [formData, setFormData] = useState({
     nombres: '',
     apellidos: '',
@@ -66,9 +80,13 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
+    if (errors[id]) setErrors(prev => ({ ...prev, [id]: '' }));
   };
 
   const handleUpdate = () => {
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     if (user) {
       updateUser({ ...user, ...formData });
       setIsEditing(false);
@@ -191,20 +209,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                 <UserIcon className="w-5 h-5 text-primary" /> Información Personal
               </h3>
               <div className="grid gap-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="nombres" className="text-right">Nombres</Label>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="nombres" className="text-right pt-2">Nombres *</Label>
                   {isEditing ? (
-                    <Input id="nombres" value={formData.nombres} onChange={handleInputChange} className="col-span-3" />
+                    <div className="col-span-3">
+                      <Input id="nombres" value={formData.nombres} onChange={handleInputChange} className={errors.nombres ? 'border-destructive' : ''} />
+                      {errors.nombres && <p className="text-xs text-destructive mt-1">{errors.nombres}</p>}
+                    </div>
                   ) : (
-                    <p className="col-span-3 text-muted-foreground">{user.nombres}</p>
+                    <p className="col-span-3 text-muted-foreground pt-2">{user.nombres}</p>
                   )}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="apellidos" className="text-right">Apellidos</Label>
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="apellidos" className="text-right pt-2">Apellidos *</Label>
                   {isEditing ? (
-                    <Input id="apellidos" value={formData.apellidos} onChange={handleInputChange} className="col-span-3" />
+                    <div className="col-span-3">
+                      <Input id="apellidos" value={formData.apellidos} onChange={handleInputChange} className={errors.apellidos ? 'border-destructive' : ''} />
+                      {errors.apellidos && <p className="text-xs text-destructive mt-1">{errors.apellidos}</p>}
+                    </div>
                   ) : (
-                    <p className="col-span-3 text-muted-foreground">{user.apellidos}</p>
+                    <p className="col-span-3 text-muted-foreground pt-2">{user.apellidos}</p>
                   )}
                 </div>
               </div>
@@ -218,24 +242,30 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                 <Key className="w-5 h-5 text-primary" /> Contacto
               </h3>
               <div className="grid gap-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="email" className="text-right flex items-center gap-1 justify-end">
-                    <Mail className="w-4 h-4" /> Email
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="email" className="text-right flex items-center gap-1 justify-end pt-2">
+                    <Mail className="w-4 h-4" /> Email *
                   </Label>
                   {isEditing ? (
-                    <Input id="email" type="email" value={formData.email} onChange={handleInputChange} className="col-span-3" />
+                    <div className="col-span-3">
+                      <Input id="email" type="email" value={formData.email} onChange={handleInputChange} className={errors.email ? 'border-destructive' : ''} />
+                      {errors.email && <p className="text-xs text-destructive mt-1">{errors.email}</p>}
+                    </div>
                   ) : (
-                    <p className="col-span-3 text-muted-foreground">{user.email}</p>
+                    <p className="col-span-3 text-muted-foreground pt-2">{user.email}</p>
                   )}
                 </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="telefono" className="text-right flex items-center gap-1 justify-end">
+                <div className="grid grid-cols-4 items-start gap-4">
+                  <Label htmlFor="telefono" className="text-right flex items-center gap-1 justify-end pt-2">
                     <Phone className="w-4 h-4" /> Teléfono
                   </Label>
                   {isEditing ? (
-                    <Input id="telefono" value={formData.telefono} onChange={handleInputChange} className="col-span-3" />
+                    <div className="col-span-3">
+                      <Input id="telefono" value={formData.telefono} onChange={handleInputChange} className={errors.telefono ? 'border-destructive' : ''} />
+                      {errors.telefono && <p className="text-xs text-destructive mt-1">{errors.telefono}</p>}
+                    </div>
                   ) : (
-                    <p className="col-span-3 text-muted-foreground">{user.telefono || 'No especificado'}</p>
+                    <p className="col-span-3 text-muted-foreground pt-2">{user.telefono || 'No especificado'}</p>
                   )}
                 </div>
               </div>

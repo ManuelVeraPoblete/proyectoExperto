@@ -32,6 +32,31 @@ const Register = () => {
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string>('');
   const avatarInputRef = useRef<HTMLInputElement>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (!formData.nombres.trim()) e.nombres = 'Los nombres son requeridos';
+    else if (formData.nombres.trim().length < 2) e.nombres = 'Mínimo 2 caracteres';
+    if (!formData.apellidos.trim()) e.apellidos = 'Los apellidos son requeridos';
+    else if (formData.apellidos.trim().length < 2) e.apellidos = 'Mínimo 2 caracteres';
+    if (!formData.telefono.trim()) e.telefono = 'El teléfono es requerido';
+    else if (!/^\+?[\d\s\-()]{8,15}$/.test(formData.telefono)) e.telefono = 'Formato inválido. Ej: +56 9 12345678';
+    if (!formData.direccion.trim()) e.direccion = 'La dirección es requerida';
+    else if (formData.direccion.trim().length < 5) e.direccion = 'Mínimo 5 caracteres';
+    if (!formData.region) e.ubicacion = 'Selecciona región, provincia y comuna';
+    else if (!formData.provincia) e.ubicacion = 'Selecciona provincia y comuna';
+    else if (!formData.comuna) e.ubicacion = 'Selecciona una comuna';
+    if (!formData.email.trim()) e.email = 'El email es requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Ingresa un email válido';
+    if (!formData.password) e.password = 'La contraseña es requerida';
+    else if (formData.password.length < 8) e.password = 'Mínimo 8 caracteres';
+    if (!confirmPassword) e.confirmPassword = 'Confirma tu contraseña';
+    else if (formData.password !== confirmPassword) e.confirmPassword = 'Las contraseñas no coinciden';
+    if (formData.userType === 'experto' && formData.especialidades.length === 0)
+      e.especialidades = 'Selecciona al menos una especialidad';
+    return e;
+  };
 
   // Cargar categorías si el tipo de usuario es experto
   React.useEffect(() => {
@@ -60,14 +85,17 @@ const Register = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
+    if (errors[id]) setErrors(prev => ({ ...prev, [id]: '' }));
   };
 
   const handleRegionChange = (value: string) => {
     setFormData(prev => ({ ...prev, region: value, provincia: '', comuna: '' }));
+    setErrors(prev => ({ ...prev, ubicacion: '' }));
   };
 
   const handleProvinciaChange = (value: string) => {
     setFormData(prev => ({ ...prev, provincia: value, comuna: '' }));
+    setErrors(prev => ({ ...prev, ubicacion: '' }));
   };
 
   const handleAvatarSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,25 +143,9 @@ const Register = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (formData.password !== confirmPassword) {
-      toast({
-        title: "Error de Contraseña",
-        description: "Las contraseñas no coinciden. Por favor, inténtalo de nuevo.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (!formData.region || !formData.provincia || !formData.comuna) {
-      toast({
-        title: "Falta información de ubicación",
-        description: "Por favor selecciona tu región, provincia y comuna.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setIsLoading(true);
 
     try {
@@ -180,7 +192,8 @@ const Register = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Error en el registro');
+        const msg = Array.isArray(data.message) ? data.message.join(', ') : (data.message || data.error || 'Error en el registro');
+        throw new Error(msg);
       }
 
       // Subir avatar si el usuario seleccionó uno
@@ -254,16 +267,19 @@ const Register = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="nombres">Nombres</Label>
-                <Input id="nombres" type="text" autoComplete="given-name" placeholder="Tus nombres" value={formData.nombres} onChange={handleChange} required />
+                <Label htmlFor="nombres">Nombres *</Label>
+                <Input id="nombres" type="text" autoComplete="given-name" placeholder="Tus nombres" value={formData.nombres} onChange={handleChange} className={errors.nombres ? 'border-destructive' : ''} />
+                {errors.nombres && <p className="text-xs text-destructive">{errors.nombres}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="apellidos">Apellidos</Label>
-                <Input id="apellidos" type="text" autoComplete="family-name" placeholder="Tus apellidos" value={formData.apellidos} onChange={handleChange} required />
+                <Label htmlFor="apellidos">Apellidos *</Label>
+                <Input id="apellidos" type="text" autoComplete="family-name" placeholder="Tus apellidos" value={formData.apellidos} onChange={handleChange} className={errors.apellidos ? 'border-destructive' : ''} />
+                {errors.apellidos && <p className="text-xs text-destructive">{errors.apellidos}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="telefono">Teléfono</Label>
-                <Input id="telefono" type="tel" autoComplete="tel" placeholder="+56 9 12345678" value={formData.telefono} onChange={handleChange} required />
+                <Label htmlFor="telefono">Teléfono *</Label>
+                <Input id="telefono" type="tel" autoComplete="tel" placeholder="+56 9 12345678" value={formData.telefono} onChange={handleChange} className={errors.telefono ? 'border-destructive' : ''} />
+                {errors.telefono && <p className="text-xs text-destructive">{errors.telefono}</p>}
               </div>
             </div>
           </div>
@@ -271,8 +287,9 @@ const Register = () => {
           <div className="space-y-4 border rounded-lg p-6 shadow-lg">
             <h3 className="text-lg font-semibold">Dirección</h3>
             <div className="space-y-2">
-              <Label htmlFor="direccion">Dirección</Label>
-              <Input id="direccion" type="text" placeholder="Tu dirección" value={formData.direccion} onChange={handleChange} required />
+              <Label htmlFor="direccion">Dirección *</Label>
+              <Input id="direccion" type="text" placeholder="Tu dirección" value={formData.direccion} onChange={handleChange} className={errors.direccion ? 'border-destructive' : ''} />
+              {errors.direccion && <p className="text-xs text-destructive">{errors.direccion}</p>}
             </div>
             <LocationSelects
               selectedRegion={formData.region}
@@ -280,8 +297,9 @@ const Register = () => {
               selectedProvincia={formData.provincia}
               onProvinciaChange={handleProvinciaChange}
               selectedComuna={formData.comuna}
-              onComunaChange={(value) => setFormData(prev => ({ ...prev, comuna: value }))}
+              onComunaChange={(value) => { setFormData(prev => ({ ...prev, comuna: value })); setErrors(prev => ({ ...prev, ubicacion: '' })); }}
             />
+            {errors.ubicacion && <p className="text-xs text-destructive">{errors.ubicacion}</p>}
           </div>
 
           <div className="space-y-4 border rounded-lg p-6 shadow-lg">
@@ -392,18 +410,24 @@ const Register = () => {
                   )}
                 </div>
               )}
+              {errors.especialidades && (
+                <p className="text-xs text-destructive col-span-2">{errors.especialidades}</p>
+              )}
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" type="email" autoComplete="email" placeholder="tu@email.com" value={formData.email} onChange={handleChange} required />
+                <Label htmlFor="email">Email *</Label>
+                <Input id="email" type="email" autoComplete="email" placeholder="tu@email.com" value={formData.email} onChange={handleChange} className={errors.email ? 'border-destructive' : ''} />
+                {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Contraseña</Label>
-                <Input id="password" type="password" autoComplete="new-password" placeholder="Tu contraseña" value={formData.password} onChange={handleChange} required />
+                <Label htmlFor="password">Contraseña * <span className="text-muted-foreground font-normal">(mín. 8 caracteres)</span></Label>
+                <Input id="password" type="password" autoComplete="new-password" placeholder="Tu contraseña" value={formData.password} onChange={handleChange} className={errors.password ? 'border-destructive' : ''} />
+                {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Contraseña</Label>
-                <Input id="confirmPassword" type="password" autoComplete="new-password" placeholder="Repite tu contraseña" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
+                <Label htmlFor="confirmPassword">Confirmar Contraseña *</Label>
+                <Input id="confirmPassword" type="password" autoComplete="new-password" placeholder="Repite tu contraseña" value={confirmPassword} onChange={(e) => { setConfirmPassword(e.target.value); if (errors.confirmPassword) setErrors(p => ({...p, confirmPassword: ''})); }} className={errors.confirmPassword ? 'border-destructive' : ''} />
+                {errors.confirmPassword && <p className="text-xs text-destructive">{errors.confirmPassword}</p>}
               </div>
             </div>
           </div>

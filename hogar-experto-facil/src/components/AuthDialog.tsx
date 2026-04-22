@@ -27,6 +27,16 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
     password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (!formData.email.trim()) e.email = 'El email es requerido';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Ingresa un email válido';
+    if (!formData.password) e.password = 'La contraseña es requerida';
+    else if (formData.password.length < 6) e.password = 'Mínimo 6 caracteres';
+    return e;
+  };
 
   const handleSuccessfulLogin = (user: any) => {
     login(user);
@@ -54,6 +64,9 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
     setIsLoading(true);
     
     try {
@@ -69,7 +82,8 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Credenciales incorrectas');
+        const msg = Array.isArray(data.message) ? data.message.join(', ') : (data.message || data.error || 'Credenciales incorrectas');
+        throw new Error(msg);
       }
 
       // Pass full response so normalizeUser can extract both user fields and the JWT token
@@ -97,10 +111,8 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
   };
 
   const resetForm = () => {
-    setFormData({
-      email: '',
-      password: '',
-    });
+    setFormData({ email: '', password: '' });
+    setErrors({});
   };
 
   return (
@@ -125,13 +137,13 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
                   id="email"
                   type="email"
                   placeholder="tu@email.com"
-                  className="pl-10"
+                  className={`pl-10${errors.email ? ' border-destructive' : ''}`}
                   value={formData.email}
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                  required
+                  onChange={(e) => { setFormData({...formData, email: e.target.value}); if (errors.email) setErrors(p => ({...p, email: ''})); }}
                   disabled={isLoading}
                 />
               </div>
+              {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
             </div>
 
             <div className="space-y-2">
@@ -142,13 +154,13 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
                   id="password"
                   type="password"
                   placeholder="Tu contraseña"
-                  className="pl-10"
+                  className={`pl-10${errors.password ? ' border-destructive' : ''}`}
                   value={formData.password}
-                  onChange={(e) => setFormData({...formData, password: e.target.value})}
-                  required
+                  onChange={(e) => { setFormData({...formData, password: e.target.value}); if (errors.password) setErrors(p => ({...p, password: ''})); }}
                   disabled={isLoading}
                 />
               </div>
+              {errors.password && <p className="text-xs text-destructive">{errors.password}</p>}
             </div>
 
             <Button type="submit" className="w-full h-12 text-base btn-primary" disabled={isLoading}>

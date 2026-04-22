@@ -29,6 +29,18 @@ const PublicarTrabajo = () => {
   const [images, setImages] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validate = (): Record<string, string> => {
+    const e: Record<string, string> = {};
+    if (!formData.title.trim()) e.title = 'El título es requerido';
+    else if (formData.title.trim().length < 10) e.title = 'Mínimo 10 caracteres';
+    else if (formData.title.trim().length > 100) e.title = 'Máximo 100 caracteres';
+    if (!formData.category) e.category = 'Selecciona una especialidad';
+    if (!formData.description.trim()) e.description = 'La descripción es requerida';
+    else if (formData.description.trim().length < 20) e.description = 'Mínimo 20 caracteres';
+    return e;
+  };
 
   // Obtener el token de donde esté guardado (usualmente user.token o localStorage)
   const token = user?.token || (localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!).token : null);
@@ -72,15 +84,10 @@ const PublicarTrabajo = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.title || !formData.description || !formData.category) {
-      toast({
-        title: "Campos requeridos",
-        description: "Por favor completa todos los campos obligatorios (*)",
-        variant: "destructive"
-      });
-      return;
-    }
+
+    const errs = validate();
+    if (Object.keys(errs).length > 0) { setErrors(errs); return; }
+    setErrors({});
 
     if (!user) {
       toast({
@@ -173,14 +180,15 @@ const PublicarTrabajo = () => {
                 id="title"
                 placeholder="Ej: Reparar filtración en baño principal"
                 value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
-                required
+                onChange={(e) => { handleInputChange('title', e.target.value); if (errors.title) setErrors(p => ({...p, title: ''})); }}
+                className={errors.title ? 'border-destructive' : ''}
               />
+              {errors.title && <p className="text-xs text-destructive">{errors.title}</p>}
             </div>
             <div className="space-y-2 col-span-1 md:col-span-2">
               <Label>Especialidad requerida *</Label>
-              <Select value={formData.category} onValueChange={(val) => handleInputChange('category', val)}>
-                <SelectTrigger>
+              <Select value={formData.category} onValueChange={(val) => { handleInputChange('category', val); if (errors.category) setErrors(p => ({...p, category: ''})); }}>
+                <SelectTrigger className={errors.category ? 'border-destructive' : ''}>
                   <SelectValue placeholder="Selecciona una especialidad" />
                 </SelectTrigger>
                 <SelectContent className="shadow-lg">
@@ -189,6 +197,7 @@ const PublicarTrabajo = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.category && <p className="text-xs text-destructive">{errors.category}</p>}
             </div>
             <div className="space-y-2 col-span-1 md:col-span-2">
               <Label htmlFor="description">Descripción Detallada *</Label>
@@ -196,10 +205,11 @@ const PublicarTrabajo = () => {
                 id="description"
                 placeholder="Describe qué necesitas, materiales, dimensiones, etc."
                 value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={(e) => { handleInputChange('description', e.target.value); if (errors.description) setErrors(p => ({...p, description: ''})); }}
                 rows={6}
-                required
+                className={errors.description ? 'border-destructive' : ''}
               />
+              {errors.description && <p className="text-xs text-destructive">{errors.description}</p>}
             </div>
           </div>
         </div>
