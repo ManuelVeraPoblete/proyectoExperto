@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, KeyboardEvent, ReactNode } from 'react';
 import { Bot, Send, X, Trash2, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
@@ -11,6 +11,29 @@ interface ChatWidgetProps {
   userName: string;
   userRole: UserRole;
 }
+
+const formatMessage = (text: string): ReactNode[] => {
+  const parts: ReactNode[] = [];
+  const regex = /\*\*(.+?)\*\*|Hogar Experto/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+    const boldText = match[1] ?? 'Hogar Experto';
+    parts.push(<strong key={key++}>{boldText}</strong>);
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : [text];
+};
 
 const GREETING: Record<UserRole, string> = {
   client:   '¡Hola! Puedo ayudarte a publicar trabajos, encontrar el experto ideal y gestionar tus solicitudes. ¿En qué te ayudo?',
@@ -108,13 +131,16 @@ const ChatWidget = ({ userName, userRole }: ChatWidgetProps) => {
                       : 'mr-auto bg-muted text-foreground rounded-bl-sm',
                   )}
                 >
-                  {msg.content || (
-                    <span className="flex gap-1 items-center">
-                      <span className="animate-bounce">·</span>
-                      <span className="animate-bounce [animation-delay:150ms]">·</span>
-                      <span className="animate-bounce [animation-delay:300ms]">·</span>
-                    </span>
-                  )}
+                  {msg.content
+                    ? (msg.role === 'assistant' ? formatMessage(msg.content) : msg.content)
+                    : (
+                      <span className="flex gap-1 items-center">
+                        <span className="animate-bounce">·</span>
+                        <span className="animate-bounce [animation-delay:150ms]">·</span>
+                        <span className="animate-bounce [animation-delay:300ms]">·</span>
+                      </span>
+                    )
+                  }
                 </div>
               ))}
             </div>

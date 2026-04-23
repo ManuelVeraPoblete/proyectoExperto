@@ -223,3 +223,8 @@ TiDB es 100% compatible con MySQL, gratuito, 5GB, sin pausa.
     [!] Paso 4   : Configurar ping a Supabase para evitar la pausa de 7 dias
 
 ================================================================================
+
+
+
+-----------------------------
+Password BD BAdfiHP8TLPU7Z32
