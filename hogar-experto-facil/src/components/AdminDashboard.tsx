@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserCheck, AlertTriangle, BarChart3, Shield } from 'lucide-react';
+import { Users, UserCheck, AlertTriangle, BarChart3, Shield, ClipboardList } from 'lucide-react';
 import { toast } from "sonner";
 import { UserDetailsModal } from '@/components/admin/UserDetailsModal';
 import ReportManagement from '@/components/admin/ReportManagement';
 import { useReports } from '@/hooks/useReports';
-import { adminService, AdminExpertoItem, AdminStats } from '@/services/api/adminService';
+import { adminService, AdminExpertoItem, AdminStats, AuditLogItem } from '@/services/api/adminService';
 import {
   EXPERTO_STATUS,
   EXPERTO_STATUS_CONFIG,
@@ -52,7 +52,10 @@ const AdminDashboard = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedExperto, setSelectedExperto] = useState<PendingExpertoRow | null>(null);
-  const [activeTab, setActiveTab] = useState<'overview' | 'reports'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'reports' | 'audit'>('overview');
+  const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>([]);
+  const [auditTotal, setAuditTotal] = useState(0);
+  const [isLoadingAudit, setIsLoadingAudit] = useState(false);
 
   const { getPendingReports } = useReports();
   const pendingReportsCount = getPendingReports().length;
@@ -91,6 +94,93 @@ const AdminDashboard = () => {
     e => e.verificationStatus === EXPERTO_STATUS.PENDIENTE
   ).length;
 
+  const loadAuditLogs = () => {
+    setIsLoadingAudit(true);
+    adminService.getAuditLogs(50, 0)
+      .then(res => { setAuditLogs(res.logs); setAuditTotal(res.total); })
+      .catch(() => toast.error('Error al cargar el registro de auditoría'))
+      .finally(() => setIsLoadingAudit(false));
+  };
+
+  const ACTION_LABELS: Record<string, string> = {
+    UPDATE_EXPERTO_STATUS: 'Cambio de estado de experto',
+  };
+
+  const formatDetails = (log: AuditLogItem): string => {
+    if (log.action === 'UPDATE_EXPERTO_STATUS' && log.details) {
+      const d = log.details as { from?: string; to?: string; expertNombres?: string; expertApellidos?: string };
+      return `${d.expertNombres ?? ''} ${d.expertApellidos ?? ''}: ${d.from} → ${d.to}`;
+    }
+    return JSON.stringify(log.details ?? {});
+  };
+
+  if (activeTab === 'audit') {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground mb-2">Registro de Auditoría</h1>
+            <p className="text-muted-foreground">Historial de acciones realizadas por administradores</p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={loadAuditLogs} disabled={isLoadingAudit}>
+              {isLoadingAudit ? 'Cargando…' : 'Actualizar'}
+            </Button>
+            <Button variant="outline" onClick={() => setActiveTab('overview')}>
+              Volver al Panel Principal
+            </Button>
+          </div>
+        </div>
+
+        <Card>
+          <CardContent className="p-0">
+            {isLoadingAudit ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">Cargando registros…</p>
+            ) : auditLogs.length === 0 ? (
+              <p className="text-sm text-muted-foreground py-8 text-center">No hay registros de auditoría todavía.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b bg-muted/40">
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">Admin</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">Acción</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">Detalle</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">IP</th>
+                      <th className="text-left px-4 py-3 font-medium text-muted-foreground">Fecha</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {auditLogs.map(log => (
+                      <tr key={log.id} className="border-b hover:bg-muted/20 transition-colors">
+                        <td className="px-4 py-3 font-medium">{log.adminName}</td>
+                        <td className="px-4 py-3">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                            {ACTION_LABELS[log.action] ?? log.action}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground max-w-xs truncate">
+                          {formatDetails(log)}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground font-mono text-xs">{log.ip ?? '—'}</td>
+                        <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                          {new Date(log.createdAt).toLocaleString('es-CL', { dateStyle: 'short', timeStyle: 'short' })}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <p className="text-xs text-muted-foreground px-4 py-3">
+                  Mostrando {auditLogs.length} de {auditTotal} registros
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   if (activeTab === 'reports') {
     return (
       <div className="space-y-6">
@@ -116,9 +206,15 @@ const AdminDashboard = () => {
           <h1 className="text-2xl font-bold text-foreground mb-2">Panel de Administración</h1>
           <p className="text-muted-foreground">Gestiona usuarios, moderación y estadísticas de la plataforma</p>
         </div>
-        <Button onClick={() => setActiveTab('reports')}>
-          Ver Reportes ({pendingReportsCount})
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => { setActiveTab('audit'); loadAuditLogs(); }}>
+            <ClipboardList className="w-4 h-4 mr-1" />
+            Auditoría
+          </Button>
+          <Button onClick={() => setActiveTab('reports')}>
+            Ver Reportes ({pendingReportsCount})
+          </Button>
+        </div>
       </div>
 
       {/* Stats Cards */}

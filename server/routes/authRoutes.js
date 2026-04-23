@@ -4,7 +4,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 const validate = require('../middleware/validate');
 const { authenticate, authorize } = require('../middleware/auth');
-const { registerClientSchema, registerExpertSchema, loginSchema } = require('../schemas/authSchemas');
+const { registerClientSchema, registerExpertSchema, loginSchema, changePasswordSchema } = require('../schemas/authSchemas');
 
 // Límite estricto para autenticación: 10 intentos cada 15 minutos
 const authLimiter = rateLimit({
@@ -90,5 +90,56 @@ router.post('/register/admin', authenticate, authorize('admin'), authLimiter, au
  *         description: Credenciales incorrectas
  */
 router.post('/login', authLimiter, validate(loginSchema), authController.login);
+
+/**
+ * @swagger
+ * /api/auth/change-password:
+ *   post:
+ *     summary: Cambia la contraseña del usuario autenticado
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required: [currentPassword, newPassword, confirmPassword]
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *               newPassword:
+ *                 type: string
+ *                 minLength: 8
+ *               confirmPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Contraseña actualizada correctamente
+ *       400:
+ *         description: La nueva contraseña debe ser diferente a la actual
+ *       401:
+ *         description: Contraseña actual incorrecta
+ */
+router.post('/change-password', authenticate, authLimiter, validate(changePasswordSchema), authController.changePassword);
+
+/**
+ * @swagger
+ * /api/auth/verify-email:
+ *   post:
+ *     summary: Verifica el correo electrónico con el token recibido
+ *     tags: [Auth]
+ */
+router.post('/verify-email', authController.verifyEmail);
+
+/**
+ * @swagger
+ * /api/auth/resend-verification:
+ *   post:
+ *     summary: Reenvía el correo de verificación al usuario autenticado
+ *     tags: [Auth]
+ */
+router.post('/resend-verification', authenticate, authLimiter, authController.resendVerification);
 
 module.exports = router;

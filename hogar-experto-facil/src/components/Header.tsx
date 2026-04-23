@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { User, Settings, Home, LogOut, Menu, MessageCircle } from 'lucide-react';
+import { User, Settings, Home, LogOut, Menu, MessageCircle, Lock } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import {
@@ -20,6 +20,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import HowItWorksModal from './HowItWorksModal';
 import ProfileModal from './ProfileModal';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const Header = () => {
   const { user, isAuthenticated, logout, openAuthDialog } = useAuth();
@@ -27,7 +28,8 @@ const Header = () => {
   const { toast } = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
-  const [isSheetOpen, setIsSheetOpen] = useState(false); // Estado para controlar el Sheet
+  const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
@@ -154,6 +156,10 @@ const Header = () => {
                       <MessageCircle className="w-4 h-4 mr-2" />
                       Mensajes directos
                     </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => setIsChangePasswordOpen(true)}>
+                      <Lock className="w-4 h-4 mr-2" />
+                      Cambiar contraseña
+                    </DropdownMenuItem>
                     {user.userType === 'admin' && (
                       <DropdownMenuItem>
                         <Settings className="w-4 h-4 mr-2" />
@@ -269,6 +275,7 @@ const Header = () => {
       </header>
       <HowItWorksModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
       <ProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
+      <ChangePasswordModal isOpen={isChangePasswordOpen} onClose={() => setIsChangePasswordOpen(false)} />
     </>
   );
 };

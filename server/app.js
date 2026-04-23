@@ -22,6 +22,7 @@ const PortfolioReaction = require('./models/PortfolioReaction');
 const PortfolioReview = require('./models/PortfolioReview');
 const Message = require('./models/Message');
 const Report = require('./models/Report');
+const AuditLog = require('./models/AuditLog');
 
 // Rutas
 const authRoutes = require('./routes/authRoutes');
@@ -140,6 +141,10 @@ Message.belongsTo(User, { foreignKey: 'receiverId', as: 'Receiver' });
 // Reports
 Report.belongsTo(User, { foreignKey: 'reporterId', as: 'Reporter' });
 Report.belongsTo(User, { foreignKey: 'reportedUserId', as: 'ReportedUser' });
+
+// Audit Logs
+User.hasMany(AuditLog, { foreignKey: 'adminId', as: 'AuditLogs', onDelete: 'CASCADE' });
+AuditLog.belongsTo(User, { foreignKey: 'adminId', as: 'Admin' });
 
 // --- RUTAS ---
 app.use('/api/auth', authRoutes);

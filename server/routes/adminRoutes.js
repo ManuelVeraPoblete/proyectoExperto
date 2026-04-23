@@ -8,5 +8,6 @@ router.use(authenticate, authorize('admin'));
 router.get('/stats', adminController.getStats);
 router.get('/experts', adminController.getExpertos);
 router.patch('/experts/:id/status', adminController.updateExpertoStatus);
+router.get('/audit-logs', adminController.getAuditLogs);
 
 module.exports = router;

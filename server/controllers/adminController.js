@@ -3,6 +3,8 @@ const ExpertoProfile = require('../models/ExpertoProfile');
 const User = require('../models/User');
 const Job = require('../models/Job');
 const Subcategory = require('../models/Subcategory');
+const AuditLog = require('../models/AuditLog');
+const logger = require('../config/logger');
 const { AppError } = require('../middleware/errorHandler');
 
 exports.getExpertos = async (req, res, next) => {
@@ -45,7 +47,28 @@ exports.updateExpertoStatus = async (req, res, next) => {
     const profile = await ExpertoProfile.findOne({ where: { userId: id } });
     if (!profile) return next(new AppError('Experto no encontrado', 404));
 
+    const previousStatus = profile.verificationStatus;
     await profile.update({ verificationStatus: status });
+
+    const admin = await User.findByPk(req.user.id, { attributes: ['nombres', 'apellidos'] });
+
+    await AuditLog.create({
+      adminId: req.user.id,
+      adminName: admin ? `${admin.nombres} ${admin.apellidos}` : 'Admin',
+      action: 'UPDATE_EXPERTO_STATUS',
+      targetId: id,
+      targetType: 'ExpertoProfile',
+      details: {
+        from: previousStatus,
+        to: status,
+        expertNombres: profile.nombres,
+        expertApellidos: profile.apellidos,
+      },
+      ip: req.ip,
+    });
+
+    logger.info(`Admin ${req.user.id} cambió estado de experto ${id}: ${previousStatus} → ${status}`);
+
     res.json({ id, verificationStatus: status });
   } catch (err) {
     next(err);
@@ -64,6 +87,23 @@ exports.getStats = async (req, res, next) => {
     ]);
 
     res.json({ totalUsers, activeExperts, jobsThisMonth });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getAuditLogs = async (req, res, next) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit) || 50, 100);
+    const offset = parseInt(req.query.offset) || 0;
+
+    const { count, rows } = await AuditLog.findAndCountAll({
+      order: [['createdAt', 'DESC']],
+      limit,
+      offset,
+    });
+
+    res.json({ total: count, logs: rows });
   } catch (err) {
     next(err);
   }

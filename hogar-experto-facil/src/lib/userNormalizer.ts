@@ -29,6 +29,8 @@ export interface NormalizedUser {
   lastAccess?: string;
   // JWT token (set at login, used by apiClient)
   token?: string;
+  // Email verification
+  emailVerified?: boolean;
 }
 
 type RawData = Record<string, unknown>;
@@ -82,6 +84,9 @@ export const normalizeUser = (data: unknown): NormalizedUser | null => {
   const rawData = data as RawData;
   const token = coerceString(rawData.token ?? rawUser.token) || undefined;
 
+  const emailVerifiedRaw = rawUser.emailVerified;
+  const emailVerified = typeof emailVerifiedRaw === 'boolean' ? emailVerifiedRaw : undefined;
+
   return {
     ...(rawUser as Omit<NormalizedUser, 'nombres' | 'apellidos' | 'userType'>),
     id: coerceString(rawUser.id),
@@ -96,5 +101,6 @@ export const normalizeUser = (data: unknown): NormalizedUser | null => {
     comuna:    coerceString(profile.comuna    ?? rawUser.comuna)    || undefined,
     avatar: toAbsoluteUrl(coerceString(profile.avatar_url ?? profile.avatar ?? rawUser.avatar)) || undefined,
     token,
+    emailVerified,
   };
 };

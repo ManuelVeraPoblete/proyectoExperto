@@ -28,7 +28,20 @@ const User = sequelize.define('User', {
   user_type: {
     type: DataTypes.ENUM('cliente', 'experto', 'admin'),
     allowNull: false
-  }
+  },
+  emailVerified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+    allowNull: false,
+  },
+  emailVerificationToken: {
+    type: DataTypes.STRING(64),
+    allowNull: true,
+  },
+  emailVerificationExpires: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
 }, {
   tableName: 'user',
   indexes: [{ unique: true, fields: ['email'] }],
@@ -38,7 +51,13 @@ const User = sequelize.define('User', {
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(user.password, salt);
       }
-    }
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed('password')) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      }
+    },
   },
   timestamps: true
 });

@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const User = require('../models/User');
 const ClienteProfile = require('../models/ClienteProfile');
 const ExpertoProfile = require('../models/ExpertoProfile');
@@ -5,6 +6,7 @@ const Subcategory = require('../models/Subcategory');
 const sequelize = require('../config/database');
 const jwt = require('jsonwebtoken');
 const { AppError } = require('../middleware/errorHandler');
+const { sendVerificationEmail } = require('../services/emailService');
 
 const signToken = (user) =>
   jwt.sign(
@@ -12,6 +14,8 @@ const signToken = (user) =>
     process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
   );
+
+const generateVerificationToken = () => crypto.randomBytes(32).toString('hex');
 
 /**
  * @swagger
@@ -29,9 +33,14 @@ exports.registerClient = async (req, res, next) => {
 
     const finalNombres = nombres || nombre;
     const finalApellidos = apellidos || apellido;
+    const verificationToken = generateVerificationToken();
 
     const user = await User.create(
-      { email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'cliente' },
+      {
+        email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'cliente',
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
       { transaction: t }
     );
 
@@ -42,9 +51,13 @@ exports.registerClient = async (req, res, next) => {
 
     await t.commit();
 
+    sendVerificationEmail(email, verificationToken).catch(err =>
+      require('../config/logger').error('[Email] Error al enviar verificación:', err.message)
+    );
+
     res.status(201).json({
-      message: 'Cliente registrado con éxito',
-      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos },
+      message: 'Cliente registrado con éxito. Revisa tu correo para verificar tu cuenta.',
+      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: false },
       token: signToken(user),
     });
   } catch (error) {
@@ -71,9 +84,14 @@ exports.registerExpert = async (req, res, next) => {
     const finalNombres = nombres || nombre;
     const finalApellidos = apellidos || apellido;
     const ids = subcategoryIds || especialidades || experto_specialties;
+    const verificationToken = generateVerificationToken();
 
     const user = await User.create(
-      { email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'experto' },
+      {
+        email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'experto',
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      },
       { transaction: t }
     );
 
@@ -91,9 +109,13 @@ exports.registerExpert = async (req, res, next) => {
 
     await t.commit();
 
+    sendVerificationEmail(email, verificationToken).catch(err =>
+      require('../config/logger').error('[Email] Error al enviar verificación:', err.message)
+    );
+
     res.status(201).json({
-      message: 'Experto registrado con éxito',
-      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos },
+      message: 'Experto registrado con éxito. Revisa tu correo para verificar tu cuenta.',
+      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: false },
       token: signToken(user),
     });
   } catch (error) {
@@ -111,11 +133,88 @@ exports.registerAdmin = async (req, res, next) => {
       nombres: nombres || nombre,
       apellidos: apellidos || apellido,
       user_type: 'admin',
+      emailVerified: true,
     });
     res.status(201).json({
       message: 'Administrador registrado con éxito',
       user: { id: user.id, email: user.email, userType: user.user_type },
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.verifyEmail = async (req, res, next) => {
+  try {
+    const { token } = req.body;
+    if (!token) return next(new AppError('Token requerido', 400));
+
+    const user = await User.findOne({
+      where: {
+        emailVerificationToken: token,
+      },
+    });
+
+    if (!user) return next(new AppError('Token inválido o ya utilizado', 400));
+
+    if (user.emailVerificationExpires < new Date()) {
+      return next(new AppError('El token de verificación ha expirado. Solicita uno nuevo.', 400));
+    }
+
+    await user.update({
+      emailVerified: true,
+      emailVerificationToken: null,
+      emailVerificationExpires: null,
+    });
+
+    res.json({ message: 'Correo verificado correctamente. Ya puedes usar todas las funciones.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.resendVerification = async (req, res, next) => {
+  try {
+    const user = await User.findByPk(req.user.id);
+    if (!user) return next(new AppError('Usuario no encontrado', 404));
+
+    if (user.emailVerified) {
+      return next(new AppError('Tu correo ya está verificado', 400));
+    }
+
+    const verificationToken = generateVerificationToken();
+    await user.update({
+      emailVerificationToken: verificationToken,
+      emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    });
+
+    await sendVerificationEmail(user.email, verificationToken);
+
+    res.json({ message: 'Correo de verificación reenviado. Revisa tu bandeja de entrada.' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findByPk(req.user.id);
+
+    if (!user) return next(new AppError('Usuario no encontrado', 404));
+
+    if (!(await user.validPassword(currentPassword))) {
+      return next(new AppError('La contraseña actual es incorrecta', 401));
+    }
+
+    if (await user.validPassword(newPassword)) {
+      return next(new AppError('La nueva contraseña debe ser diferente a la actual', 400));
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
     next(error);
   }
@@ -161,6 +260,7 @@ exports.login = async (req, res, next) => {
         userType: user.user_type,
         nombres: user.nombres,
         apellidos: user.apellidos,
+        emailVerified: user.emailVerified,
         profile,
       },
       token: signToken(user),
