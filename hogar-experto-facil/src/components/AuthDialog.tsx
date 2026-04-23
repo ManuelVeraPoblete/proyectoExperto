@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { Mail, Lock } from 'lucide-react';
+import { Mail, Lock, AlertCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
@@ -28,6 +28,7 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [blockMessage, setBlockMessage] = useState<string | null>(null);
 
   const validate = (): Record<string, string> => {
     const e: Record<string, string> = {};
@@ -68,10 +69,12 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
     setErrors({});
     setIsLoading(true);
-    
+    setBlockMessage(null);
+    let response: Response | null = null;
+
     try {
       // Conexión real a tu API local en localhost:3000/api/auth/login
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,12 +102,18 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
       handleSuccessfulLogin(userData);
       
     } catch (error: any) {
-      console.error('Error al iniciar sesión:', error);
-      toast({
-        title: "Error al iniciar sesión",
-        description: error.message || "No se pudo conectar con el servidor.",
-        variant: "destructive"
-      });
+      logger.error('Error al iniciar sesión:', error);
+      const msg: string = error.message || "No se pudo conectar con el servidor.";
+      // HTTP 403 = cuenta bloqueada/pendiente → mostrar en el diálogo, no como toast
+      if (response && response.status === 403) {
+        setBlockMessage(msg);
+      } else {
+        toast({
+          title: "Error al iniciar sesión",
+          description: msg,
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -113,6 +122,7 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
   const resetForm = () => {
     setFormData({ email: '', password: '' });
     setErrors({});
+    setBlockMessage(null);
   };
 
   return (
@@ -128,6 +138,13 @@ const AuthDialog = ({ isOpen, onClose, mode: _mode, onModeChange: _onModeChange 
         </DialogHeader>
 
         <div className="space-y-4">
+          {blockMessage && (
+            <div className="flex gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+              <p>{blockMessage}</p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>

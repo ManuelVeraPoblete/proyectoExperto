@@ -1,3 +1,5 @@
+import { ExpertoVerificationStatus, EXPERTO_STATUS } from '@/constants';
+
 // ─── Tipos del dominio Experto ────────────────────────────────────────────────
 
 export interface ExpertoBase {
@@ -12,11 +14,15 @@ export interface ExpertoBase {
   experience: string;
   hourlyRate?: number;
   isVerified: boolean;
+  /** Estado de verificación asignado por el administrador */
+  verificationStatus: ExpertoVerificationStatus;
   avatar?: string;
   telefono: string;
   direccion: string;
   descripcion?: string;
 }
+
+export { EXPERTO_STATUS };
 
 export interface Review {
   user: string;

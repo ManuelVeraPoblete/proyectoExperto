@@ -6,7 +6,7 @@ import { expertoService } from '@/services/api/expertoService';
 import { categoriaService, CategoriaOption } from '@/services/api/categoriaService';
 import { mapApiExpertoToCardData } from '@/lib/expertoMapper';
 import { logger } from '@/lib/logger';
-import { ITEMS_PER_PAGE, RATING_FILTERS, RatingFilter } from '@/constants';
+import { ITEMS_PER_PAGE, RATING_FILTERS, RatingFilter, EXPERTO_STATUS } from '@/constants';
 import { ExpertoCardData } from '@/types/experto';
 import type { ExpertoBusquedaParams } from '@/services/api/expertoService';
 
@@ -84,7 +84,11 @@ export const useBuscarExpertos = (): BuscarExpertosState & BuscarExpertosActions
       if (user?.comuna)    params.comuna     = user.comuna;
 
       const data = await expertoService.search(params);
-      setExpertos(data.map(mapApiExpertoToCardData));
+      setExpertos(
+        data
+          .map(mapApiExpertoToCardData)
+          .filter(e => e.verificationStatus !== EXPERTO_STATUS.ANULADO),
+      );
       setCurrentPage(1);
     } catch (err) {
       logger.error('Error buscando expertos:', err);

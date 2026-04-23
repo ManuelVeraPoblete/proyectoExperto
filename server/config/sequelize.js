@@ -1,13 +1,19 @@
 require('dotenv').config();
 
+const sslOptions = process.env.TIDB_ENABLE_SSL === 'true'
+  ? { dialectOptions: { ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true } } }
+  : {};
+
 module.exports = {
   development: {
     username: process.env.DB_USER || 'root',
     password: process.env.DB_PASSWORD || null,
     database: process.env.DB_NAME || 'experthands_db',
     host: process.env.DB_HOST || 'localhost',
+    port: Number(process.env.DB_PORT || 4000),
     dialect: 'mysql',
     logging: false,
+    ...sslOptions,
   },
   test: {
     username: process.env.DB_USER_TEST || process.env.DB_USER || 'root',

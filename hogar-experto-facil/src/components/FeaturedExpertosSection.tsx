@@ -4,6 +4,7 @@ import ExpertoCard from '@/components/ExpertoCard';
 import { expertoService } from '@/services/api/expertoService';
 import { mapApiExpertoToCardData } from '@/lib/expertoMapper';
 import useProtectedNavigation from '@/hooks/useProtectedNavigation';
+import { EXPERTO_STATUS } from '@/constants';
 
 const FeaturedExpertosSection = () => {
   const { handleProtectedLink } = useProtectedNavigation();
@@ -14,7 +15,9 @@ const FeaturedExpertosSection = () => {
     staleTime: 5 * 60 * 1000,
   });
 
-  const featuredExpertos = rawExpertos.map(mapApiExpertoToCardData);
+  const featuredExpertos = rawExpertos
+    .map(mapApiExpertoToCardData)
+    .filter(e => e.verificationStatus !== EXPERTO_STATUS.ANULADO);
 
   const handleContactClick = (_expertoId: string, _expertoName: string) => {
     // Contact handled inside ExpertoCard via navigation

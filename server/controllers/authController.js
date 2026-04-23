@@ -138,6 +138,19 @@ exports.login = async (req, res, next) => {
         where: { userId: user.id },
         include: { model: Subcategory, as: 'Subcategories' },
       });
+
+      if (profile?.verificationStatus === 'pendiente') {
+        return next(new AppError(
+          'Tu cuenta está pendiente de aprobación. Un administrador revisará tu perfil y te notificará cuando esté habilitado.',
+          403
+        ));
+      }
+      if (profile?.verificationStatus === 'anulado') {
+        return next(new AppError(
+          'Tu cuenta ha sido deshabilitada. Contacta al soporte para más información.',
+          403
+        ));
+      }
     }
 
     res.json({

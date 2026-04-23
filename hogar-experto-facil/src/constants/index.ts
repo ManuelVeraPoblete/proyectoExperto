@@ -56,6 +56,26 @@ export const JOB_STATUS_CONFIG: Record<string, StatusConfig> = {
   cancelado:   { label: 'Cancelado',    colorClass: 'text-red-600 bg-red-50'       },
 };
 
+// ─── Estados de verificación del experto ─────────────────────────────────────
+export const EXPERTO_STATUS = {
+  ACTIVO:    'activo',
+  PENDIENTE: 'pendiente',
+  ANULADO:   'anulado',
+} as const;
+
+export type ExpertoVerificationStatus = (typeof EXPERTO_STATUS)[keyof typeof EXPERTO_STATUS];
+
+export interface ExpertoStatusConfig {
+  label: string;
+  colorClass: string;
+}
+
+export const EXPERTO_STATUS_CONFIG: Record<ExpertoVerificationStatus, ExpertoStatusConfig> = {
+  [EXPERTO_STATUS.ACTIVO]:    { label: 'Activo',    colorClass: 'text-green-700 bg-green-50 border-green-200'   },
+  [EXPERTO_STATUS.PENDIENTE]: { label: 'Pendiente', colorClass: 'text-yellow-700 bg-yellow-50 border-yellow-200' },
+  [EXPERTO_STATUS.ANULADO]:   { label: 'Anulado',   colorClass: 'text-red-700 bg-red-50 border-red-200'         },
+};
+
 // ─── Claves de localStorage ──────────────────────────────────────────────────
 export const STORAGE_KEYS = {
   USER: 'hogar_experto_user',

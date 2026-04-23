@@ -1,5 +1,6 @@
 import { ExpertoCardData, PortfolioItem, Review } from '@/types/experto';
 import { toAbsoluteUrl } from '@/lib/api-config';
+import { EXPERTO_STATUS, ExpertoVerificationStatus } from '@/constants';
 
 // ─── Tipos de la respuesta del API ────────────────────────────────────────────
 interface ApiCategory {
@@ -41,6 +42,9 @@ export interface ApiExperto {
   experience?: string;
   hourlyRate?: number;
   isVerified?: boolean;
+  /** Estado de verificación del administrador */
+  verificationStatus?: string;
+  status?: string;
   telefono?: string;
   direccion?: string;
   comuna?: string;
@@ -122,6 +126,9 @@ export const mapApiExpertoToCardData = (experto: ApiExperto): ExpertoCardData =>
   experience: experto.experience ?? '5+ años',
   hourlyRate: experto.hourlyRate ?? 25000,
   isVerified: experto.isVerified ?? true,
+  verificationStatus: (
+    experto.verificationStatus ?? experto.status ?? EXPERTO_STATUS.PENDIENTE
+  ) as ExpertoVerificationStatus,
   telefono: experto.telefono ?? '',
   direccion: experto.direccion ?? '',
   reviews: Array.isArray(experto.reviews_list) ? experto.reviews_list : [],
