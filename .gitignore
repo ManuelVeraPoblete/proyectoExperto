@@ -58,22 +58,22 @@ server/coverage/
 #######################################
 
 # Dependencies
-hogas-experto-facil/node_modules/
+hogar-experto-facil/node_modules/
 
 # Build
-hogas-experto-facil/dist/     # Vite
-hogas-experto-facil/build/    # CRA
+hogar-experto-facil/dist/     # Vite
+hogar-experto-facil/build/    # CRA
 
 # Cache
-hogas-experto-facil/.vite/
-hogas-experto-facil/.cache/
+hogar-experto-facil/.vite/
+hogar-experto-facil/.cache/
 
 # Testing
-hogas-experto-facil/coverage/
+hogar-experto-facil/coverage/
 
 # Env específicos React
-hogas-experto-facil/.env
-hogas-experto-facil/.env.*
+hogar-experto-facil/.env
+hogar-experto-facil/.env.*
 
 #######################################
 # DOCKER

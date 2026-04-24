@@ -67,13 +67,14 @@ exports.getExperts = async (req, res, next) => {
     if (comuna && comuna !== 'Todas') andConditions.push({ comuna });
 
     const minRating = parseFloat(rating);
-    if (!isNaN(minRating) && minRating > 0) {
+    if (!isNaN(minRating) && minRating > 0 && minRating <= 5) {
+      const safeRating = Math.min(Math.max(minRating, 0), 5);
       andConditions.push(literal(`(
         SELECT AVG(pr.rating)
         FROM portfolio_reviews pr
         INNER JOIN portfolio_items pi ON pr.portfolioItemId = pi.id
         WHERE pi.expertoId = ExpertoProfile.userId
-      ) >= ${minRating}`));
+      ) >= ${safeRating}`));
     }
 
     if (filterBySubcategory) {

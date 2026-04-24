@@ -14,6 +14,9 @@ const authenticate = (req, res, next) => {
   const token = authHeader.split(' ')[1];
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (!decoded.id || !decoded.userType) {
+      return next(new AppError('Token inválido', 401));
+    }
     req.user = decoded; // { id, userType, iat, exp }
     next();
   } catch (err) {

@@ -12,7 +12,7 @@ const signToken = (user) =>
   jwt.sign(
     { id: user.id, userType: user.user_type },
     process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '8h' }
+    { expiresIn: process.env.JWT_EXPIRES_IN || '2h' }
   );
 
 const generateVerificationToken = () => crypto.randomBytes(32).toString('hex');

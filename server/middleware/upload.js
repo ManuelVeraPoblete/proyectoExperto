@@ -32,7 +32,7 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 25 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 },
 });
 
 // Almacenamiento para fotos de trabajos del experto (hasta 3 fotos)

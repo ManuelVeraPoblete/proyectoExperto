@@ -24,6 +24,15 @@ const registerLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+// Límite estricto para cambio de contraseña: 5 intentos cada 30 minutos
+const changePasswordLimiter = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 5,
+  message: { error: 'Demasiados intentos de cambio de contraseña. Intenta en 30 minutos.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 /**
  * @swagger
  * /api/auth/register/client:
@@ -122,7 +131,7 @@ router.post('/login', authLimiter, validate(loginSchema), authController.login);
  *       401:
  *         description: Contraseña actual incorrecta
  */
-router.post('/change-password', authenticate, authLimiter, validate(changePasswordSchema), authController.changePassword);
+router.post('/change-password', authenticate, changePasswordLimiter, validate(changePasswordSchema), authController.changePassword);
 
 /**
  * @swagger

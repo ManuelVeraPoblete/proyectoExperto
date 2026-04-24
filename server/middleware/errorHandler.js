@@ -40,7 +40,6 @@ const errorHandler = (err, req, res, next) => {
   if (statusCode >= 500) {
     logger.error(`${req.method} ${req.url} → ${statusCode}: ${err.message}`, {
       stack: err.stack,
-      body: req.body,
     });
   } else {
     logger.warn(`${req.method} ${req.url} → ${statusCode}: ${err.message}`);

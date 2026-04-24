@@ -24,15 +24,21 @@ exports.createReport = async (req, res, next) => {
 
 exports.getReports = async (req, res, next) => {
   try {
-    const reports = await Report.findAll({
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
+    const offset = (page - 1) * limit;
+
+    const { count, rows: reports } = await Report.findAndCountAll({
       include: [
         { model: User, as: 'Reporter', attributes: ['id', 'nombres', 'apellidos', 'email'] },
         { model: User, as: 'ReportedUser', attributes: ['id', 'nombres', 'apellidos', 'email'] },
       ],
       order: [['createdAt', 'DESC']],
+      limit,
+      offset,
     });
 
-    res.json(reports);
+    res.json({ reports, total: count, page, totalPages: Math.ceil(count / limit) });
   } catch (err) {
     next(err);
   }
