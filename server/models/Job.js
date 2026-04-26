@@ -65,7 +65,7 @@ const Job = sequelize.define('Job', {
     references: { model: 'subcategories', key: 'id' }
   },
   expertId: {
-    type: DataTypes.CHAR(36),
+    type: DataTypes.UUID,
     allowNull: true,
     references: { model: 'user', key: 'id' }
   },

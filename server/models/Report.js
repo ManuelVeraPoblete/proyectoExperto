@@ -9,8 +9,8 @@ const Report = sequelize.define('Report', {
   },
   reason: { type: DataTypes.STRING(200), allowNull: false },
   description: { type: DataTypes.TEXT, allowNull: true },
-  reporterId: { type: DataTypes.CHAR(36), allowNull: true },
-  reportedUserId: { type: DataTypes.CHAR(36), allowNull: true },
+  reporterId: { type: DataTypes.UUID, allowNull: true },
+  reportedUserId: { type: DataTypes.UUID, allowNull: true },
   reportedContent: { type: DataTypes.TEXT, allowNull: true },
   status: {
     type: DataTypes.ENUM('pending', 'reviewed', 'resolved'),

@@ -3,6 +3,7 @@ const Job = require('../models/Job');
 const JobApplication = require('../models/JobApplication');
 const JobPhoto = require('../models/JobPhoto');
 const ClienteProfile = require('../models/ClienteProfile');
+const ExpertoProfile = require('../models/ExpertoProfile');
 const Subcategory = require('../models/Subcategory');
 const Category = require('../models/Category');
 const User = require('../models/User');
@@ -10,6 +11,47 @@ const PortfolioItem = require('../models/PortfolioItem');
 const PortfolioReview = require('../models/PortfolioReview');
 const logger = require('../config/logger');
 const { AppError } = require('../middleware/errorHandler');
+const emailService = require('../services/emailService');
+
+const notifyMatchingExperts = async (job) => {
+  const experts = await ExpertoProfile.findAll({
+    where: { verificationStatus: 'activo' },
+    include: [
+      {
+        model: Subcategory,
+        as: 'Subcategories',
+        where: { category_id: job.categoryId },
+        required: true,
+        attributes: [],
+        through: { attributes: [] },
+      },
+      {
+        model: User,
+        attributes: ['email', 'nombres', 'apellidos'],
+        required: true,
+      },
+    ],
+  });
+
+  if (experts.length === 0) {
+    logger.info(`[Jobs] Sin expertos para notificar sobre trabajo ${job.id}`);
+    return;
+  }
+
+  logger.info(`[Jobs] Notificando a ${experts.length} experto(s) sobre trabajo ${job.id}`);
+
+  const sends = experts.map(expert => {
+    const user = expert.User;
+    if (!user?.email) return Promise.resolve();
+    return emailService.sendJobNotificationEmail(
+      user.email,
+      `${expert.nombres} ${expert.apellidos}`,
+      job
+    ).catch(err => logger.error(`[Jobs] Error enviando email a ${user.email}: ${err.message}`));
+  });
+
+  await Promise.allSettled(sends);
+};
 
 /**
  * @swagger
@@ -79,6 +121,12 @@ exports.createJob = async (req, res, next) => {
     });
 
     logger.info(`Trabajo creado: ${job.id} por cliente ${clientId}`);
+
+    // Notificar expertos en segundo plano (no bloquea la respuesta)
+    notifyMatchingExperts(result).catch(err =>
+      logger.error(`[Jobs] Error en notificación de expertos para trabajo ${job.id}: ${err.message}`)
+    );
+
     res.status(201).json(result);
   } catch (error) {
     next(error);

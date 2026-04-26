@@ -12,7 +12,7 @@ const ExpertoProfile = sequelize.define('ExpertoProfile', {
   comuna: DataTypes.STRING,
   bio: DataTypes.TEXT,
   avatar_url: DataTypes.STRING,
-  userId: { type: DataTypes.STRING(36), allowNull: true },
+  userId: { type: DataTypes.UUID, allowNull: true },
   verificationStatus: {
     type: DataTypes.ENUM('pendiente', 'activo', 'anulado'),
     allowNull: false,

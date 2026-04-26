@@ -11,7 +11,7 @@ const ClienteProfile = sequelize.define('ClienteProfile', {
   provincia: DataTypes.STRING,
   comuna: DataTypes.STRING,
   avatar_url: DataTypes.STRING,
-  userId: { type: DataTypes.STRING(36), allowNull: true }
+  userId: { type: DataTypes.UUID, allowNull: true }
 }, {
   tableName: 'cliente_profile',
   timestamps: true

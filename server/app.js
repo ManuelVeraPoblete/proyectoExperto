@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, DataTypes } = require('sequelize');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -90,7 +90,7 @@ ClienteProfile.belongsTo(User, { foreignKey: 'userId' });
 User.hasOne(ExpertoProfile, { foreignKey: 'userId', as: 'ExpertoProfile', onDelete: 'CASCADE' });
 ExpertoProfile.belongsTo(User, { foreignKey: 'userId' });
 
-User.hasMany(Job, { foreignKey: { name: 'clientId', type: 'CHAR(36)' }, as: 'JobsPublicados', onDelete: 'CASCADE' });
+User.hasMany(Job, { foreignKey: { name: 'clientId', type: DataTypes.UUID }, as: 'JobsPublicados', onDelete: 'CASCADE' });
 Job.belongsTo(User, { foreignKey: 'clientId', as: 'Cliente' });
 
 Subcategory.hasMany(Job, { foreignKey: 'subcategoryId', as: 'Jobs' });
@@ -105,7 +105,7 @@ JobPhoto.belongsTo(Job, { foreignKey: 'jobId', as: 'Trabajo' });
 Job.hasMany(JobApplication, { foreignKey: 'jobId', as: 'Postulaciones', onDelete: 'CASCADE' });
 JobApplication.belongsTo(Job, { foreignKey: 'jobId', as: 'Trabajo' });
 
-User.hasMany(JobApplication, { foreignKey: { name: 'expertId', type: 'CHAR(36)' }, as: 'PostulacionesRealizadas', onDelete: 'CASCADE' });
+User.hasMany(JobApplication, { foreignKey: { name: 'expertId', type: DataTypes.UUID }, as: 'PostulacionesRealizadas', onDelete: 'CASCADE' });
 JobApplication.belongsTo(User, { foreignKey: 'expertId', as: 'Experto' });
 
 ExpertoProfile.belongsToMany(Subcategory, {

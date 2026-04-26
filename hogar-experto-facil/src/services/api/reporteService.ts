@@ -25,7 +25,8 @@ export const reporteService = {
     apiClient.post<{ message: string; report: ApiReport }>('/reports', data),
 
   getAll: (): Promise<ApiReport[]> =>
-    apiClient.get<ApiReport[]>('/reports'),
+    apiClient.get<{ reports: ApiReport[]; total: number; page: number; totalPages: number }>('/reports')
+      .then(res => res.reports),
 
   updateStatus: (id: number, status: ApiReport['status']): Promise<{ message: string; report: ApiReport }> =>
     apiClient.patch<{ message: string; report: ApiReport }>(`/reports/${id}`, { status }),
