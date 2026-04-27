@@ -68,7 +68,7 @@ const SearchHero = () => {
 
   return (
     <div
-      className="gradient-bg py-44 relative"
+      className="gradient-bg py-16 md:py-44 relative"
       style={{
         backgroundImage: 'url("/background.png")',
         backgroundSize: 'cover',
@@ -77,12 +77,12 @@ const SearchHero = () => {
       }}
     >
       <div className="container mx-auto px-4 text-center relative z-10">
-        <div className="inline-block bg-white/60 backdrop-blur-sm rounded-2xl px-10 py-8 mb-8">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-4">
+        <div className="inline-block bg-white/60 backdrop-blur-sm rounded-2xl px-4 sm:px-10 py-6 sm:py-8 mb-6 sm:mb-8 w-full sm:w-auto">
+          <h1 className="text-2xl sm:text-4xl md:text-6xl font-bold text-foreground mb-4">
             Encuentra el <span className="text-primary">experto perfecto</span><br />
             para tu hogar
           </h1>
-          <p className="text-xl text-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-xl text-foreground max-w-2xl mx-auto">
             Conectamos a personas como tú con expertos calificados en reparaciones,
             construcción y mejoras para el hogar. Rápido, confiable y profesional.
           </p>

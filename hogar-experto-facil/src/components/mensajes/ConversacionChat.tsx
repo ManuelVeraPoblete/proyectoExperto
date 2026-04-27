@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, ArrowLeft } from 'lucide-react';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const WhatsAppIcon = () => (
   <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg">
@@ -19,6 +19,7 @@ interface ConversacionChatProps {
   messages: NormalizedMessage[];
   isSending: boolean;
   onSend: (text: string) => void;
+  onBack?: () => void;
 }
 
 const formatDate = (iso: string) => {
@@ -69,6 +70,7 @@ const ConversacionChat: React.FC<ConversacionChatProps> = ({
   messages,
   isSending,
   onSend,
+  onBack,
 }) => {
   const [text, setText] = useState('');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -94,6 +96,16 @@ const ConversacionChat: React.FC<ConversacionChatProps> = ({
       {/* ── Cabecera ─────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 border-b bg-card shrink-0">
         <div className="flex items-center gap-3">
+          {onBack && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="sm:hidden -ml-2 shrink-0"
+              onClick={onBack}
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          )}
           <div className="w-9 h-9 rounded-full overflow-hidden bg-primary/20 flex items-center justify-center shrink-0">
             {contactAvatar ? (
               <img src={contactAvatar} alt={contactName} className="w-full h-full object-cover" />

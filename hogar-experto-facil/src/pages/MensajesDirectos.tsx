@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { MessageSquare } from 'lucide-react';
+import { MessageSquare, ArrowLeft } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { useMensajes } from '@/hooks/useMensajes';
 import ListaConversaciones from '@/components/mensajes/ListaConversaciones';
 import ConversacionChat from '@/components/mensajes/ConversacionChat';
+import { Button } from '@/components/ui/button';
 
 const MensajesDirectos = () => {
   const [searchParams] = useSearchParams();
@@ -34,7 +35,10 @@ const MensajesDirectos = () => {
     setSelectedContactName(contactName);
     setSelectedContactAvatar(contactAvatar);
     markAsRead(contactId);
+    setShowChat(true);
   };
+
+  const [showChat, setShowChat] = useState(!!searchParams.get('contactId'));
 
   const handleSend = (text: string) => {
     if (!selectedContactId) return;
@@ -51,8 +55,18 @@ const MensajesDirectos = () => {
 
   return (
     <div className="flex flex-col h-full min-h-0 px-4 py-4 max-w-5xl mx-auto w-full">
-      {/* Título */}
-      <div className="flex items-center gap-2 mb-3 shrink-0">
+      {/* Título — oculto en móvil cuando hay chat abierto */}
+      <div className={`flex items-center gap-2 mb-3 shrink-0 ${showChat && selectedContactId ? 'hidden sm:flex' : 'flex'}`}>
+        {showChat && selectedContactId && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="sm:hidden mr-1 -ml-2"
+            onClick={() => setShowChat(false)}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+        )}
         <MessageSquare className="w-5 h-5 text-primary" />
         <h1 className="text-xl font-bold text-foreground">Mensajes</h1>
       </div>
@@ -60,8 +74,8 @@ const MensajesDirectos = () => {
       {/* Layout split — ocupa todo el espacio restante */}
       <div className="flex-1 min-h-0 border border-border rounded-xl overflow-hidden bg-card shadow-sm flex">
 
-        {/* Panel izquierdo — conversaciones */}
-        <div className="w-72 shrink-0 border-r border-border flex flex-col">
+        {/* Panel izquierdo — conversaciones (en móvil: oculto si showChat) */}
+        <div className={`${showChat && selectedContactId ? 'hidden sm:flex' : 'flex'} w-full sm:w-72 shrink-0 border-r border-border flex-col`}>
           <div className="px-4 py-3 border-b border-border bg-muted/30 shrink-0">
             <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
               Conversaciones
@@ -73,12 +87,11 @@ const MensajesDirectos = () => {
               selectedId={selectedContactId}
               onSelect={handleSelect}
             />
-
           </div>
         </div>
 
-        {/* Panel derecho — chat */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Panel derecho — chat (en móvil: oculto si !showChat) */}
+        <div className={`${showChat && selectedContactId ? 'flex' : 'hidden sm:flex'} flex-1 flex-col overflow-hidden`}>
           {selectedContactId ? (
             isLoadingMessages ? (
               <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
@@ -93,6 +106,7 @@ const MensajesDirectos = () => {
                 messages={messages}
                 isSending={isSending}
                 onSend={handleSend}
+                onBack={() => setShowChat(false)}
               />
             )
           ) : (

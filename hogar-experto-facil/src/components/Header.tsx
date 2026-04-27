@@ -174,17 +174,17 @@ const Header = () => {
                   </DropdownMenuContent>
                 </DropdownMenu>
               ) : (
-                <div className="flex items-center space-x-2">
-                  <Button 
-                    variant="ghost" 
+                <div className="hidden md:flex items-center space-x-2">
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => openAuthDialog('login')}
                     className="text-white hover:text-primary"
                   >
                     Iniciar Sesión
                   </Button>
-                  <Button 
-                    size="sm" 
+                  <Button
+                    size="sm"
                     className="btn-primary"
                     onClick={() => navigate('/register')}
                   >
@@ -196,7 +196,7 @@ const Header = () => {
               {/* Mobile Menu Trigger */}
               <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
                 <SheetTrigger asChild className="md:hidden">
-                  <Button variant="ghost" size="icon">
+                  <Button variant="ghost" size="icon" className="text-white hover:text-primary hover:bg-white/10">
                     <Menu className="h-6 w-6" />
                     <span className="sr-only">Toggle navigation menu</span>
                   </Button>

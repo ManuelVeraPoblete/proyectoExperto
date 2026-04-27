@@ -108,7 +108,7 @@ const ExpertoDashboard = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           title="Trabajos Activos"
           value={stats ? String(stats.activeJobs) : String(myJobs.length)}
@@ -136,7 +136,7 @@ const ExpertoDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <ActionCard
           title="Buscar Trabajos"
           description="Explora nuevas oportunidades laborales"

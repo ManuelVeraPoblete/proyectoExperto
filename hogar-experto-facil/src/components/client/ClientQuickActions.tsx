@@ -8,7 +8,7 @@ const ClientQuickActions: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <ActionCard
         title="Buscar Expertos"
         description="Encuentra expertos para tu proyecto"
