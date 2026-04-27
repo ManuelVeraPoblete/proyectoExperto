@@ -12,6 +12,7 @@ const PortfolioReview = require('../models/PortfolioReview');
 const logger = require('../config/logger');
 const { AppError } = require('../middleware/errorHandler');
 const emailService = require('../services/emailService');
+const { uploadBuffer } = require('../config/cloudinary');
 
 const notifyMatchingExperts = async (job) => {
   const experts = await ExpertoProfile.findAll({
@@ -107,13 +108,11 @@ exports.createJob = async (req, res, next) => {
       fecha_preferida: fecha_preferida || preferred_date || null,
     });
 
-    // Guardar fotos (máximo 5)
     if (req.files && req.files.length > 0) {
-      const photos = req.files.slice(0, 5).map(file => ({
-        jobId: job.id,
-        photo_url: `/uploads/${file.filename}`,
-      }));
-      await JobPhoto.bulkCreate(photos);
+      const urls = await Promise.all(
+        req.files.slice(0, 5).map((f) => uploadBuffer(f.buffer, 'jobs'))
+      );
+      await JobPhoto.bulkCreate(urls.map((photo_url) => ({ jobId: job.id, photo_url })));
     }
 
     const result = await Job.findByPk(job.id, {
@@ -202,8 +201,9 @@ exports.closeJob = async (req, res, next) => {
 
     await job.update({ estado: 'completado', calificacion, resena: resena || null });
 
-    // Rutas de las fotos subidas
-    const imagePaths = (req.files ?? []).map(f => `/uploads/experto/${f.filename}`);
+    const imagePaths = await Promise.all(
+      (req.files ?? []).map((f) => uploadBuffer(f.buffer, 'jobs'))
+    );
 
     // Guardar fotos también en JobPhoto (historial del trabajo)
     if (imagePaths.length > 0) {

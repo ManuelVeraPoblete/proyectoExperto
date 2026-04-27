@@ -4,19 +4,19 @@ const ClienteProfile = require('../models/ClienteProfile');
 const ExpertoProfile = require('../models/ExpertoProfile');
 const Job = require('../models/Job');
 const { AppError } = require('../middleware/errorHandler');
+const { uploadBuffer } = require('../config/cloudinary');
 
 exports.uploadAvatar = async (req, res, next) => {
   try {
     const { userId } = req.params;
 
-    // Solo permite actualizar el propio avatar (o ser admin)
     if (req.user.id !== userId && req.user.userType !== 'admin') {
       return next(new AppError('No puedes modificar el avatar de otro usuario', 403));
     }
 
     if (!req.file) return next(new AppError('No se subió ningún archivo', 400));
 
-    const avatarUrl = `/uploads/${req.file.filename}`;
+    const avatarUrl = await uploadBuffer(req.file.buffer, 'avatars');
     const user = await User.findByPk(userId);
     if (!user) return next(new AppError('Usuario no encontrado', 404));
 

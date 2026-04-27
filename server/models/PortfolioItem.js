@@ -7,7 +7,7 @@ const PortfolioItem = sequelize.define('PortfolioItem', {
   title: { type: DataTypes.STRING(200), allowNull: false },
   description: { type: DataTypes.TEXT, allowNull: true },
   category: { type: DataTypes.STRING(100), allowNull: true },
-  image_url: { type: DataTypes.TEXT, allowNull: true }, // JSON array de rutas, ej: ["/uploads/experto/file.jpg"]
+  image_url: { type: DataTypes.TEXT, allowNull: true }, // JSON array de URLs de Cloudinary
   date: { type: DataTypes.DATEONLY, allowNull: true },
 }, {
   tableName: 'portfolio_items',

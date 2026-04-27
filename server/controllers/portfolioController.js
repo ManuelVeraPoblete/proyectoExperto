@@ -1,13 +1,9 @@
-const path = require('path');
-const fs = require('fs');
 const PortfolioItem = require('../models/PortfolioItem');
 const PortfolioReaction = require('../models/PortfolioReaction');
 const PortfolioReview = require('../models/PortfolioReview');
 const User = require('../models/User');
 const { AppError } = require('../middleware/errorHandler');
-const logger = require('../config/logger');
-
-const UPLOADS_DIR = path.resolve(__dirname, '..', 'uploads');
+const { uploadBuffer, deleteByUrl } = require('../config/cloudinary');
 
 exports.getPortfolio = async (req, res, next) => {
   try {
@@ -41,9 +37,8 @@ exports.createItem = async (req, res, next) => {
     const expertoId = req.user.id;
     const { title, description, category, date } = req.body;
 
-    // Construir array de rutas de las fotos subidas
-    const imagePaths = (req.files || []).map(
-      (f) => `/uploads/experto/${f.filename}`
+    const imagePaths = await Promise.all(
+      (req.files || []).map((f) => uploadBuffer(f.buffer, 'portfolio'))
     );
     const image_url = imagePaths.length > 0 ? JSON.stringify(imagePaths) : null;
 
@@ -71,22 +66,11 @@ exports.deleteItem = async (req, res, next) => {
     if (!item) return next(new AppError('Item no encontrado', 404));
     if (item.expertoId !== userId) return next(new AppError('No tienes permiso para eliminar este item', 403));
 
-    // Eliminar archivos físicos del disco
     if (item.image_url) {
       try {
-        const paths = JSON.parse(item.image_url);
-        paths.forEach((relPath) => {
-          const absPath = path.resolve(__dirname, '..', relPath);
-          // Prevenir path traversal: solo eliminar archivos dentro de uploads/
-          if (!absPath.startsWith(UPLOADS_DIR + path.sep)) {
-            logger.warn(`Path traversal bloqueado al eliminar portfolio item ${itemId}: ${relPath}`);
-            return;
-          }
-          if (fs.existsSync(absPath)) fs.unlinkSync(absPath);
-        });
-      } catch (parseErr) {
-        logger.warn(`No se pudo parsear image_url del portfolio item ${itemId}: ${parseErr.message}`);
-      }
+        const urls = JSON.parse(item.image_url);
+        await Promise.all(urls.map((url) => deleteByUrl(url)));
+      } catch (_) {}
     }
 
     await item.destroy();

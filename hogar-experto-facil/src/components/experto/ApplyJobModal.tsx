@@ -80,7 +80,10 @@ const ApplyJobModal: React.FC<ApplyJobModalProps> = ({
       toast({ title: 'Postulación enviada', description: 'El cliente recibirá tu propuesta en breve.' });
       queryClient.invalidateQueries({ queryKey: ['my-applications', user?.id] });
       queryClient.invalidateQueries({ queryKey: ['job-offers'] });
-      handleClose();
+      setMensaje('');
+      setPresupuesto('');
+      setErrors({});
+      onClose();
     },
     onError: (err: any) => {
       const isConflict = err?.message?.includes('409') || err?.status === 409;

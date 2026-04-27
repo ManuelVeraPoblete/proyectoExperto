@@ -77,9 +77,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- ARCHIVOS ESTÁTICOS ---
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-
 // --- SWAGGER ---
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
