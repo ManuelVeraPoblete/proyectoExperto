@@ -18,6 +18,8 @@ import NotFound from "./pages/NotFound";
 import Register from "./pages/Register";
 import MensajesDirectos from "./pages/MensajesDirectos";
 import VerifyEmail from "./pages/VerifyEmail";
+import PoliticasPrivacidad from "./pages/PoliticasPrivacidad";
+import TerminosUso from "./pages/TerminosUso";
 import AuthDialog from "@/components/AuthDialog";
 import Layout from "@/components/Layout";
 import ChatWidget from "@/components/chat/ChatWidget";
@@ -42,6 +44,8 @@ const AppContent = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/mensajes" element={<MensajesDirectos />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
+        <Route path="/privacidad" element={<PoliticasPrivacidad />} />
+        <Route path="/terminos" element={<TerminosUso />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
