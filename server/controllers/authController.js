@@ -33,13 +33,11 @@ exports.registerClient = async (req, res, next) => {
 
     const finalNombres = nombres || nombre;
     const finalApellidos = apellidos || apellido;
-    const verificationToken = generateVerificationToken();
 
     const user = await User.create(
       {
         email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'cliente',
-        emailVerificationToken: verificationToken,
-        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        emailVerified: true,
       },
       { transaction: t }
     );
@@ -51,13 +49,9 @@ exports.registerClient = async (req, res, next) => {
 
     await t.commit();
 
-    sendVerificationEmail(email, verificationToken).catch(err =>
-      require('../config/logger').error('[Email] Error al enviar verificación:', err.message)
-    );
-
     res.status(201).json({
-      message: 'Cliente registrado con éxito. Revisa tu correo para verificar tu cuenta.',
-      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: false },
+      message: 'Cliente registrado con éxito.',
+      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: true },
       token: signToken(user),
     });
   } catch (error) {
@@ -84,13 +78,11 @@ exports.registerExpert = async (req, res, next) => {
     const finalNombres = nombres || nombre;
     const finalApellidos = apellidos || apellido;
     const ids = subcategoryIds || especialidades || experto_specialties;
-    const verificationToken = generateVerificationToken();
 
     const user = await User.create(
       {
         email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'experto',
-        emailVerificationToken: verificationToken,
-        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        emailVerified: true,
       },
       { transaction: t }
     );
@@ -109,13 +101,9 @@ exports.registerExpert = async (req, res, next) => {
 
     await t.commit();
 
-    sendVerificationEmail(email, verificationToken).catch(err =>
-      require('../config/logger').error('[Email] Error al enviar verificación:', err.message)
-    );
-
     res.status(201).json({
-      message: 'Experto registrado con éxito. Revisa tu correo para verificar tu cuenta.',
-      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: false },
+      message: 'Experto registrado con éxito.',
+      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: true },
       token: signToken(user),
     });
   } catch (error) {
