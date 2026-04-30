@@ -34,10 +34,14 @@ exports.registerClient = async (req, res, next) => {
     const finalNombres = nombres || nombre;
     const finalApellidos = apellidos || apellido;
 
+    const verificationToken = generateVerificationToken();
+
     const user = await User.create(
       {
         email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'cliente',
-        emailVerified: true,
+        emailVerified: false,
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
       { transaction: t }
     );
@@ -49,9 +53,11 @@ exports.registerClient = async (req, res, next) => {
 
     await t.commit();
 
+    await sendVerificationEmail(email, verificationToken);
+
     res.status(201).json({
-      message: 'Cliente registrado con éxito.',
-      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: true },
+      message: 'Cliente registrado con éxito. Revisa tu correo para verificar tu cuenta.',
+      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: false },
       token: signToken(user),
     });
   } catch (error) {
@@ -79,10 +85,14 @@ exports.registerExpert = async (req, res, next) => {
     const finalApellidos = apellidos || apellido;
     const ids = subcategoryIds || especialidades || experto_specialties;
 
+    const verificationToken = generateVerificationToken();
+
     const user = await User.create(
       {
         email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'experto',
-        emailVerified: true,
+        emailVerified: false,
+        emailVerificationToken: verificationToken,
+        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
       },
       { transaction: t }
     );
@@ -101,9 +111,11 @@ exports.registerExpert = async (req, res, next) => {
 
     await t.commit();
 
+    await sendVerificationEmail(email, verificationToken);
+
     res.status(201).json({
-      message: 'Experto registrado con éxito.',
-      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: true },
+      message: 'Experto registrado con éxito. Revisa tu correo para verificar tu cuenta.',
+      user: { id: user.id, email: user.email, userType: user.user_type, nombres: user.nombres, apellidos: user.apellidos, emailVerified: false },
       token: signToken(user),
     });
   } catch (error) {
