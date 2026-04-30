@@ -7,6 +7,7 @@ const sequelize = require('../config/database');
 const jwt = require('jsonwebtoken');
 const { AppError } = require('../middleware/errorHandler');
 const { sendVerificationEmail } = require('../services/emailService');
+const logger = require('../config/logger');
 
 const signToken = (user) =>
   jwt.sign(
@@ -53,7 +54,9 @@ exports.registerClient = async (req, res, next) => {
 
     await t.commit();
 
-    await sendVerificationEmail(email, verificationToken);
+    sendVerificationEmail(email, verificationToken).catch(err =>
+      logger.error(`[Email] Error al enviar verificación a ${email}: ${err.message}`)
+    );
 
     res.status(201).json({
       message: 'Cliente registrado con éxito. Revisa tu correo para verificar tu cuenta.',
@@ -111,7 +114,9 @@ exports.registerExpert = async (req, res, next) => {
 
     await t.commit();
 
-    await sendVerificationEmail(email, verificationToken);
+    sendVerificationEmail(email, verificationToken).catch(err =>
+      logger.error(`[Email] Error al enviar verificación a ${email}: ${err.message}`)
+    );
 
     res.status(201).json({
       message: 'Experto registrado con éxito. Revisa tu correo para verificar tu cuenta.',
