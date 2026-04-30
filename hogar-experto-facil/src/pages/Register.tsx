@@ -213,7 +213,7 @@ const Register = () => {
 
       toast({
         title: "Registro Exitoso",
-        description: "Se ha creado tu cuenta correctamente. Ahora puedes iniciar sesión.",
+        description: "Se ha creado tu cuenta correctamente. Te enviamos un correo de verificación válido por 12 horas — revisa tu bandeja de entrada.",
       });
 
       navigate('/');

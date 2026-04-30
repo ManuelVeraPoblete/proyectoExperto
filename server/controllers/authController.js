@@ -42,7 +42,7 @@ exports.registerClient = async (req, res, next) => {
         email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'cliente',
         emailVerified: false,
         emailVerificationToken: verificationToken,
-        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        emailVerificationExpires: new Date(Date.now() + 12 * 60 * 60 * 1000),
       },
       { transaction: t }
     );
@@ -95,7 +95,7 @@ exports.registerExpert = async (req, res, next) => {
         email, password, nombres: finalNombres, apellidos: finalApellidos, user_type: 'experto',
         emailVerified: false,
         emailVerificationToken: verificationToken,
-        emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        emailVerificationExpires: new Date(Date.now() + 12 * 60 * 60 * 1000),
       },
       { transaction: t }
     );
@@ -190,7 +190,7 @@ exports.resendVerification = async (req, res, next) => {
     const verificationToken = generateVerificationToken();
     await user.update({
       emailVerificationToken: verificationToken,
-      emailVerificationExpires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+      emailVerificationExpires: new Date(Date.now() + 12 * 60 * 60 * 1000),
     });
 
     await sendVerificationEmail(user.email, verificationToken);
