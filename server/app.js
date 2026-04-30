@@ -49,7 +49,7 @@ app.use(helmet({
 // --- CORS ---
 const allowedOrigins = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(',')
-  : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080'];
+  : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:8080', 'https://experthand.cl', 'https://www.experthand.cl'];
 
 app.use(cors({
   origin: (origin, callback) => {

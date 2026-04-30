@@ -1,0 +1,9 @@
+# Variables faltantes en Render (agregar al servicio del servidor)
+RESEND_API_KEY=re_7cKCYh4r_GFML8kSEBQq7VQVLuU4Qc7x6
+EMAIL_FROM=onboarding@resend.dev
+
+# Variable faltante en server/.env local
+BASE_URL=https://experthands-api.onrender.com
+
+# Variable para el servicio frontend en Render (si aplica)
+VITE_API_URL=https://experthands-api.onrender.com/api
