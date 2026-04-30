@@ -22,24 +22,41 @@ exports.sendVerificationEmail = async (to, token) => {
     to,
     subject: 'Verifica tu correo electrónico',
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #1a1a2e;">Bienvenido a Expertos a Domicilio</h2>
-        <p>Gracias por registrarte. Haz clic en el botón de abajo para verificar tu correo electrónico.</p>
-        <a href="${link}" style="
-          display: inline-block;
-          background-color: #0f3460;
-          color: white;
-          padding: 12px 24px;
-          text-decoration: none;
-          border-radius: 6px;
-          margin: 16px 0;
-          font-weight: bold;
-        ">Verificar correo</a>
-        <p style="color: #666; font-size: 14px;">Este enlace expira en 24 horas.</p>
-        <p style="color: #666; font-size: 14px;">Si no creaste esta cuenta, ignora este mensaje.</p>
-        <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
-        <p style="color: #999; font-size: 12px;">Expertos a Domicilio</p>
-      </div>
+     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <h2 style="color: #1a1a2e;">Bienvenido a Expertos a Domicilio</h2>
+
+    <p>Gracias por registrarte. Haz clic en el botón de abajo para verificar tu correo electrónico.</p>
+
+    <a
+      href="${link}"
+      target="_blank"
+      rel="noopener noreferrer"
+      style="
+        display:inline-block;
+        background:#0f3460;
+        color:#ffffff;
+        padding:12px 24px;
+        text-decoration:none;
+        border-radius:6px;
+        margin:16px 0;
+        font-weight:bold;
+      "
+    >
+      Verificar correo
+    </a>
+
+    <p style="margin-top:20px; color:#666; font-size:14px;">
+      Si el botón no funciona, copia y pega este enlace:
+    </p>
+
+    <p style="word-break: break-all; font-size:13px;">
+      ${link}
+    </p>
+
+    <p style="color:#666; font-size:14px;">
+      Este enlace expira en 24 horas.
+    </p>
+  </div>
     `,
   });
 
