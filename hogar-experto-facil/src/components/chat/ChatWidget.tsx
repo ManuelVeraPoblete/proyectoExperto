@@ -12,27 +12,84 @@ interface ChatWidgetProps {
   userRole: UserRole;
 }
 
-const formatMessage = (text: string): ReactNode[] => {
+let _inlineKey = 0;
+
+const formatInline = (text: string): ReactNode[] => {
   const parts: ReactNode[] = [];
   const regex = /\*\*(.+?)\*\*|Hogar Experto/g;
   let lastIndex = 0;
   let match: RegExpExecArray | null;
-  let key = 0;
 
   while ((match = regex.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      parts.push(text.slice(lastIndex, match.index));
-    }
-    const boldText = match[1] ?? 'Hogar Experto';
-    parts.push(<strong key={key++}>{boldText}</strong>);
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    parts.push(<strong key={_inlineKey++}>{match[1] ?? 'Hogar Experto'}</strong>);
     lastIndex = match.index + match[0].length;
   }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts.length > 0 ? parts : [text];
+};
 
-  if (lastIndex < text.length) {
-    parts.push(text.slice(lastIndex));
+const formatMessage = (text: string): ReactNode => {
+  _inlineKey = 0;
+  const lines = text.split('\n');
+  const elements: ReactNode[] = [];
+  let key = 0;
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+
+    if (line.trim() === '') { i++; continue; }
+
+    if (/^\d+\.\s/.test(line)) {
+      const items: ReactNode[] = [];
+      while (i < lines.length && /^\d+\.\s/.test(lines[i])) {
+        const m = lines[i].match(/^(\d+)\.\s(.+)/);
+        if (m) items.push(
+          <li key={key++} className="flex gap-2 text-sm">
+            <span className="font-semibold text-primary shrink-0">{m[1]}.</span>
+            <span>{formatInline(m[2])}</span>
+          </li>
+        );
+        i++;
+      }
+      elements.push(
+        <ol key={key++} className="mt-1.5 space-y-1 border-l-2 border-primary/20 pl-2">
+          {items}
+        </ol>
+      );
+      continue;
+    }
+
+    if (/^[-•]\s/.test(line)) {
+      const items: ReactNode[] = [];
+      while (i < lines.length && /^[-•]\s/.test(lines[i])) {
+        const m = lines[i].match(/^[-•]\s(.+)/);
+        if (m) items.push(
+          <li key={key++} className="flex gap-2 text-sm">
+            <span className="text-primary shrink-0 font-bold">·</span>
+            <span>{formatInline(m[1])}</span>
+          </li>
+        );
+        i++;
+      }
+      elements.push(
+        <ul key={key++} className="mt-1.5 space-y-1 border-l-2 border-primary/20 pl-2">
+          {items}
+        </ul>
+      );
+      continue;
+    }
+
+    elements.push(
+      <p key={key++} className={cn('text-sm leading-relaxed', elements.length > 0 && 'mt-1.5')}>
+        {formatInline(line)}
+      </p>
+    );
+    i++;
   }
 
-  return parts.length > 0 ? parts : [text];
+  return <>{elements}</>;
 };
 
 const GREETING: Record<UserRole, string> = {
@@ -125,7 +182,7 @@ const ChatWidget = ({ userName, userRole }: ChatWidgetProps) => {
                 <div
                   key={i}
                   className={cn(
-                    'max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed',
+                    'max-w-[85%] rounded-2xl px-3 py-2',
                     msg.role === 'user'
                       ? 'ml-auto bg-primary text-primary-foreground rounded-br-sm'
                       : 'mr-auto bg-muted text-foreground rounded-bl-sm',
@@ -156,7 +213,7 @@ const ChatWidget = ({ userName, userRole }: ChatWidgetProps) => {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Escribe tu consulta… (Enter para enviar)"
+              placeholder="Escribe tu consulta…"
               className="max-h-28 min-h-[40px] resize-none text-sm"
               rows={1}
               disabled={isLoading}
