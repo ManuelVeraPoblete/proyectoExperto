@@ -22,40 +22,86 @@ exports.sendVerificationEmail = async (to, token) => {
     to,
     subject: 'Verifica tu correo electrónico',
     html: `
-     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-    <h2 style="color: #1a1a2e;">Bienvenido a Expertos a Domicilio</h2>
+     <div style="margin:0; padding:0; background:#f4f7fb;">
+    <div style="font-family:Arial,sans-serif; max-width:560px; margin:0 auto; padding:32px 20px;">
+      
+      <div style="
+        background:#ffffff;
+        border-radius:14px;
+        padding:32px;
+        border:1px solid #e5e7eb;
+        box-shadow:0 2px 8px rgba(0,0,0,0.05);
+      ">
 
-    <p>Gracias por registrarte. Haz clic en el botón de abajo para verificar tu correo electrónico.</p>
+        <h1 style="
+          margin:0 0 16px 0;
+          color:#0f3460;
+          font-size:28px;
+          font-weight:bold;
+        ">
+          ExpertHand
+        </h1>
 
-    <a
-      href="${link}"
-      target="_blank"
-      rel="noopener noreferrer"
-      style="
-        display:inline-block;
-        background:#0f3460;
-        color:#ffffff;
-        padding:12px 24px;
-        text-decoration:none;
-        border-radius:6px;
-        margin:16px 0;
-        font-weight:bold;
-      "
-    >
-      Verificar correo
-    </a>
+        <h2 style="
+          margin:0 0 16px 0;
+          color:#111827;
+          font-size:22px;
+        ">
+          Verifica tu correo electrónico
+        </h2>
 
-    <p style="margin-top:20px; color:#666; font-size:14px;">
-      Si el botón no funciona, copia y pega este enlace:
-    </p>
+        <p style="
+          color:#374151;
+          font-size:16px;
+          line-height:1.6;
+        ">
+          Gracias por registrarte en <strong>ExpertHand</strong>.
+          Para activar tu cuenta, haz clic en el siguiente botón:
+        </p>
 
-    <p style="word-break: break-all; font-size:13px;">
-      ${link}
-    </p>
+        <div style="margin:30px 0;">
+          <a
+            href="${link}"
+            target="_blank"
+            rel="noopener noreferrer"
+            style="
+              display:inline-block;
+              background:#0f3460;
+              color:#ffffff;
+              padding:14px 28px;
+              text-decoration:none;
+              border-radius:8px;
+              font-weight:bold;
+              font-size:15px;
+            "
+          >
+            Verificar cuenta
+          </a>
+        </div>
 
-    <p style="color:#666; font-size:14px;">
-      Este enlace expira en 24 horas.
-    </p>
+        <hr style="
+          border:none;
+          border-top:1px solid #e5e7eb;
+          margin:28px 0;
+        ">
+
+        <p style="
+          color:#6b7280;
+          font-size:13px;
+        ">
+          Este enlace expira en 24 horas. Si no solicitaste esta cuenta, puedes ignorar este mensaje.
+        </p>
+
+        <p style="
+          color:#9ca3af;
+          font-size:12px;
+          margin-top:20px;
+        ">
+          © ExpertHand
+        </p>
+
+      </div>
+    </div>
   </div>
     `,
   });
