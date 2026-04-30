@@ -5,12 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 import { ChevronDown, Camera, User as UserIcon } from 'lucide-react';
 import LocationSelects from '@/components/shared/LocationSelects';
 import { API_BASE_URL } from '@/lib/api-config';
 
 const Register = () => {
   const { toast } = useToast();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     nombres: '',
@@ -210,6 +212,8 @@ const Register = () => {
           // No bloquear el registro si falla el avatar
         }
       }
+
+      login(data);
 
       toast({
         title: "Registro Exitoso",
